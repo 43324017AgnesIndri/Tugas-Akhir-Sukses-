@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-impot { useApi } from "@/hooks/useApi";
-import { usePrrt AppShell from "@/components/AppShell";
-imporofile } from "@/hooks/useProfile";
+import AppShell from "@/components/AppShell";
+import { useApi } from "@/hooks/useApi";
+import { useProfile } from "@/hooks/useProfile";
 import { sendJson } from "@/lib/client";
 import type { AlarmRecord, ControlLogRecord } from "@/lib/types";
 import { formatDateTime, severityFromStatus } from "@/lib/utils";
