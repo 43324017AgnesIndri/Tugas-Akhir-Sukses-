@@ -59,7 +59,7 @@ export default function AlarmPage() {
             <thead>
               <tr>
                 <th>Waktu</th>
-                <th>Parameter</th>
+                <th>boas</th>
                 <th>Nilai</th>
                 <th>Status</th>
                 <th>Keterangan</th>
