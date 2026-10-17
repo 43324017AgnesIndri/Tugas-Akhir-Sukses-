@@ -104,7 +104,7 @@ export default function MonitoringPage() {
     border: "2px solid blue",
   }}
 >
-  Nilai dihitung dari rata-rata data per jendela waktu pada rentang yang dipilih.
+  Nilai dihitung dari rata-rata data per jendela waktu pada rentang yang dipilih
 </div>
     </AppShell>
   );
