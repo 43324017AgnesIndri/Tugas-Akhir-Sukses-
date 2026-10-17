@@ -1,8 +1,4 @@
-//test github
-//anjayygit add dashboard-andaliman/src/app/alarm/page.tsx
-
-gu"use client";
-//capeeeee
+"use client";
 import { useState } from "react";
 import AppShell from "@/components/AppShell";
 import { useApi } from "@/hooks/useApi";
