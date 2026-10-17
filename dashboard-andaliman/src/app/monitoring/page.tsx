@@ -194,6 +194,7 @@ export default function MonitoringPage() {
           </table>
         </div>
 
+     
         <div
           className="note tone-in"
           style={{
@@ -202,10 +203,11 @@ export default function MonitoringPage() {
             border: "2px solid blue",
           }}
         >
-          Nilai dihitung dari rata-rata data per jendela waktu
-          pada rentang yang dipilih.
+          Nilai dihitung dari rata-rata data per jendela waktu pada rentang yang dipilih.
         </div>
       </div>
+
+
     </AppShell>
   );
 }
