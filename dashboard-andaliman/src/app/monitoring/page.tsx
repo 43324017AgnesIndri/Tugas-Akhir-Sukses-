@@ -1,6 +1,4 @@
-im agnes
 "use client";
-
 import { useState } from "react";
 import AppShell from "@/components/AppShell";
 import StatCard from "@/components/StatCard";
@@ -98,8 +96,16 @@ export default function MonitoringPage() {
             </tbody>
           </table>
         </div>
-        <div className="note tone-in">Nilai dihitung dari rata-rata data per jendela waktu pada rentang yang dipilih.</div>
-      </div>
+        <div
+  className="note tone-in"
+  style={{
+    backgroundColor: "lightblue",
+    color: "black",
+    border: "2px solid blue",
+  }}
+>
+  Nilai dihitung dari rata-rata data per jendela waktu pada rentang yang dipilih.
+</div>
     </AppShell>
   );
 }
