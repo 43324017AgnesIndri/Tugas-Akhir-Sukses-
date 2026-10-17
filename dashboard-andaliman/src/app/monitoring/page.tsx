@@ -195,6 +195,8 @@ export default function MonitoringPage() {
 
      
         <div
+
+        <div
           className="note tone-in"
           style={{
             backgroundColor: "lightblue",
@@ -205,7 +207,6 @@ export default function MonitoringPage() {
           Nilai dihitung dari rata-rata data per jendela waktu pada rentang yang dipilih.
         </div>
       </div>
-
 
     </AppShell>
   );
