@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-BOAS
-=======
->>>>>>> boas
+1
 import { NextResponse } from "next/server";
 import { getServerAuth } from "@/lib/auth-server";
 import { DEVICE_ID } from "@/lib/influx";
