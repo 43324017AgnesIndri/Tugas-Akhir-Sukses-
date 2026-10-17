@@ -1,4 +1,3 @@
-Caranya seperti ini
 import type { Actuators, Mode } from "@/lib/types";
 import { ACTUATORS } from "@/lib/utils";
 
