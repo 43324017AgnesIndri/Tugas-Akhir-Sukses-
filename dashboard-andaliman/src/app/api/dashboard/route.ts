@@ -37,19 +37,43 @@ export async function GET() {
     const modeRaw = String(pick(act, "mode")?._value ?? "").toUpperCase();
     const mode = (["AUTO", "MANUAL", "SAFE"].includes(modeRaw) ? modeRaw : null) as Mode | null;
 
-    const body: DashboardData = {
-      deviceId: DEVICE_ID,
-      reading: suhu && lembap ? { t: Number(suhu._value), h: Number(lembap._value) } : null,
-      updatedAt: updatedMs ? new Date(updatedMs).toISOString() : null,
-      online: updatedMs !== null && Date.now() - updatedMs < ONLINE_WITHIN_MS,
-      mode,
-      actuators: {
+    const online = updatedMs !== null && Date.now() - updatedMs < ONLINE_WITHIN_MS;
+
+const body: DashboardData = {
+  deviceId: DEVICE_ID,
+
+  // Data lingkungan hanya dianggap sebagai data saat ini
+  // jika perangkat masih online.
+  reading:
+    online && suhu && lembap
+      ? {
+          t: Number(suhu._value),
+          h: Number(lembap._value),
+        }
+      : null,
+
+  // Tetap simpan waktu data terakhir untuk informasi status perangkat.
+  updatedAt: updatedMs ? new Date(updatedMs).toISOString() : null,
+
+  online,
+
+  // Jangan tampilkan status lama perangkat jika sudah offline.
+  mode: online ? mode : null,
+
+  actuators: online
+    ? {
         kompresor: isOn(pick(act, "kompresor")?._value),
         fan: isOn(pick(act, "fan")?._value),
         mist: isOn(pick(act, "mist")?._value),
+      }
+    : {
+        kompresor: false,
+        fan: false,
+        mist: false,
       },
-      hasActuatorState: act.length > 0,
-    };
+
+  hasActuatorState: online && act.length > 0,
+};
     return NextResponse.json(body);
   } catch (e) {
     console.error("[api/dashboard]", e);

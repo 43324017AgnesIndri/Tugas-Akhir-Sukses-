@@ -194,7 +194,7 @@ export default function MonitoringPage() {
         </div>
 
      
-        <div
+        
 
         <div
           className="note tone-in"

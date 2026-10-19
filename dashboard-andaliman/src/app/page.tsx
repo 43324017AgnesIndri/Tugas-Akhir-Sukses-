@@ -45,7 +45,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <div className="grid g4">
+      <div className="grid g3">
         <StatCard
           label="Suhu"
           value={r ? `${fmt(r.t)} °C` : "--"}
@@ -60,8 +60,7 @@ export default function DashboardPage() {
           severity={sh.severity}
           hint={`Batas: ${th.hmin} - ${th.hmax} %`}
         />
-        <StatCard label="Status pintu" value="Tertutup" badge="Normal" severity="ok" hint="Sensor pintu (opsional)" />
-        <StatCard
+        <StatCard 
           label="Status perangkat"
           value={d.online ? "Online" : "Offline"}
           badge={d.online ? "Terhubung" : "Tidak ada data baru"}
