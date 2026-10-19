@@ -58,8 +58,11 @@
             setError(null);
           }
         } catch (e) {
-          if (alive) setError(e instanceof Error ? e.message : "Gagal mengambil data.");
-        } finally {
+  if (alive) {
+    setDashboard(null);
+    setError(e instanceof Error ? e.message : "Gagal mengambil data.");
+  }
+}finally {
           if (alive) setLoading(false);
         }
       };

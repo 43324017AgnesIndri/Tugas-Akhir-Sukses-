@@ -27,7 +27,13 @@ export default function DashboardPage() {
   const r = d.reading;
   const st = r ? getStatus(r.t, th.tmin, th.tmax) : NO_DATA;
   const sh = r ? getStatus(r.h, th.hmin, th.hmax) : NO_DATA;
-  const statusText = d.loading ? "Memuat data..." : d.online ? "Perangkat online" : "Perangkat offline";
+  const statusText = d.loading
+  ? "Memuat data..."
+  : d.error
+    ? "Data perangkat tidak tersedia"
+    : d.online
+      ? "Perangkat online"
+      : "Perangkat offline";
 
   return (
     <AppShell title="Dashboard" subtitle="Pemantauan ruang penyimpanan andaliman" statusText={statusText} online={d.online}>
@@ -60,13 +66,19 @@ export default function DashboardPage() {
           severity={sh.severity}
           hint={`Batas: ${th.hmin} - ${th.hmax} %`}
         />
-        <StatCard 
-          label="Status perangkat"
-          value={d.online ? "Online" : "Offline"}
-          badge={d.online ? "Terhubung" : "Tidak ada data baru"}
-          severity={d.online ? "ok" : "bd"}
-          hint={d.updatedAt ? `Data terakhir: ${new Date(d.updatedAt).toLocaleTimeString("id-ID")}` : `ESP32 ${d.deviceId}`}
-        />
+        <StatCard
+  label="Status perangkat"
+  value={d.error ? "Tidak tersedia" : d.online ? "Online" : "Offline"}
+  badge={d.error ? "Gagal membaca data" : d.online ? "Terhubung" : "Tidak ada data baru"}
+  severity={d.error ? "bd" : d.online ? "ok" : "bd"}
+  hint={
+    d.error
+      ? "Status perangkat tidak dapat ditentukan"
+      : d.updatedAt
+        ? `Data terakhir: ${new Date(d.updatedAt).toLocaleTimeString("id-ID")}`
+        : `ESP32 ${d.deviceId}`
+  }
+/>
       </div>
 
       <div className="grid g2">
