@@ -1,3 +1,4 @@
+AGNES INDRI
 import { NextResponse } from "next/server";
 import { getServerAuth } from "@/lib/auth-server";
 import { DEVICE_ID, ONLINE_WITHIN_MS, q, queryRows } from "@/lib/influx";
