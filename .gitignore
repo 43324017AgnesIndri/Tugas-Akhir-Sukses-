@@ -1,0 +1,34 @@
+@'
+# Dependencies
+**/node_modules/
+
+# Build outputs
+**/.next/
+**/dist/
+**/build/
+**/out/
+**/.turbo/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+
+# Node-RED credentials
+**/flows_cred.json
+
+# Mosquitto credentials
+mosquitto/config/passwd
+
+# Private keys
+**/*.pem
+**/*.key
+
+# Operating system files
+Thumbs.db
+.DS_Store
+'@ | Set-Content -Path .gitignore -Encoding utf8
+# Mosquitto runtime data
+mosquitto/data/
