@@ -65,7 +65,7 @@ export default function MonitoringPage() {
   return (
     <AppShell
       title="Monitoring"
-      subtitle="Pantauan langsung kondisi ruang penyimpanan"
+      subtitle="Pemantauan data sensor dan tren kondisi ruang berdasarkan waktu"
       statusText={
         d
           ? d.online

@@ -36,7 +36,7 @@ export default function DashboardPage() {
       : "Perangkat offline";
 
   return (
-    <AppShell title="Dashboard" subtitle="Pemantauan ruang penyimpanan andaliman" statusText={statusText} online={d.online}>
+    <AppShell title="Dashboard" subtitle="Ringkasan kondisi perangkat, kontrol, threshold, dan alarm" statusText={statusText} online={d.online}>
       {d.error && (
         <div className="note tone-bd page-note">{d.error}</div>
       )}
