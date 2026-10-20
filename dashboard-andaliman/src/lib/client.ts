@@ -34,7 +34,10 @@ export async function saveThresholds(v: Thresholds): Promise<ApplyResult> {
   if (v.tmin >= v.tmax || v.hmin >= v.hmax) {
     return { ok: false, message: "Batas bawah harus lebih kecil dari batas atas." };
   }
-  const r = await sendJson<{ thresholds: Thresholds }>("PUT", "/api/threshold", v);
+  const r = await sendJson<{ thresholds: Thresholds; synced?: boolean }>("PUT", "/api/threshold", v);
   if (!r.ok) return { ok: false, message: r.error ?? "Gagal menyimpan threshold." };
-  return { ok: true, message: "Threshold tersimpan di database." };
+  if (r.data?.synced === false) {
+    return { ok: true, message: "Threshold tersimpan di database, tetapi belum terkirim ke perangkat (broker MQTT tidak terjangkau)." };
+  }
+  return { ok: true, message: "Threshold tersimpan dan dikirim ke perangkat." };
 }

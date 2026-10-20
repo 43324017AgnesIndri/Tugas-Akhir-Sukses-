@@ -1,11 +1,15 @@
-import type { ActuatorKey, ChartPoint, HistoryPoint, HistoryRange, Mode, Severity, StatusInfo, Thresholds } from "./types";
+import type { ActuatorKey, Actuators, ChartPoint, HistoryPoint, HistoryRange, Mode, Severity, StatusInfo, Thresholds } from "./types";
 
-// Daftar aktuator pada alat
+// Daftar aktuator pada alat, sesuai urutan channel relay: 1 kompresor, 2 buzzer, 3 fan, 4 mist maker
 export const ACTUATORS: { key: ActuatorKey; nama: string; ket: string }[] = [
   { key: "kompresor", nama: "Kompresor", ket: "Pendingin ruang" },
+  { key: "buzzer", nama: "Buzzer", ket: "Alarm suara" },
   { key: "fan", nama: "Fan", ket: "Sirkulasi udara" },
   { key: "mist", nama: "Mist maker", ket: "Menambah kelembapan" },
 ];
+
+// Semua aktuator mati (nilai awal sebelum perangkat mengirim status)
+export const ACTUATORS_OFF = Object.fromEntries(ACTUATORS.map((a) => [a.key, false])) as Actuators;
 
 // Daftar mode kontrol
 export const MODES: { key: Mode; ket: string }[] = [

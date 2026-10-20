@@ -1,7 +1,7 @@
 // Tipe data yang dipakai di seluruh dashboard
 
 export type Mode = "AUTO" | "MANUAL" | "SAFE";
-export type ActuatorKey = "kompresor" | "fan" | "mist";
+export type ActuatorKey = "kompresor" | "buzzer" | "fan" | "mist";
 export type Actuators = Record<ActuatorKey, boolean>;
 
 export interface Thresholds {
@@ -110,4 +110,31 @@ export interface UserInfo {
   role: Role;
   created_at: string;
   last_sign_in_at: string | null;
+}
+
+// ===== Wi-Fi perangkat =====
+export interface WifiNetwork {
+  ssid: string;
+  rssi: number; // dBm; makin dekat ke 0 makin kuat (-50 kuat, -80 lemah)
+  secure: boolean; // true jika memakai password
+}
+
+// Hasil percobaan ganti Wi-Fi terakhir (dikirim ESP32)
+export type WifiHasil = "ok" | "gagal_wifi" | "gagal_broker";
+
+export interface WifiScan {
+  id: string; // sama dengan id permintaan scan dari dashboard
+  networks: WifiNetwork[];
+}
+
+export interface WifiStatus {
+  connected: boolean; // perangkat terhubung ke Wi-Fi dan menjangkau broker (ada kabar baru-baru ini)
+  ssid: string | null; // Wi-Fi yang dipakai (atau yang terakhir diketahui jika sedang terputus)
+  rssi: number | null;
+  ip: string | null;
+  updatedAt: string | null;
+  hasil: WifiHasil | null; // hasil ganti Wi-Fi terakhir
+  target: string | null; // Wi-Fi yang dituju pada percobaan terakhir
+  resultId: string | null; // id permintaan yang menghasilkan `hasil`
+  scan: WifiScan | null; // hanya ada jika diminta dengan ?scan=1
 }
