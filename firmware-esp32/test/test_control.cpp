@@ -2,7 +2,9 @@
 // Dari folder firmware-esp32:  g++ -std=c++17 -I. test/test_control.cpp -o test_control && ./test_control
 #include <cstdio>
 #include <cmath>
+#include <string>
 #include "control_logic.h"
+#include "wifi_logic.h"
 
 static int gagal = 0, lulus = 0;
 #define CEK(kondisi, pesan)                                          \
@@ -245,6 +247,69 @@ int main() {
   // 16) Urutan channel relay
   CEK(ACT_KOMPRESOR == 0 && ACT_BUZZER == 1 && ACT_FAN == 2 && ACT_MIST == 3,
       "urutan aktuator = channel 1 kompresor, 2 buzzer, 3 fan, 4 mist");
+
+  // 17) Ganti Wi-Fi: berhasil hanya jika Wi-Fi DAN broker terjangkau
+  {
+    WifiSwitcher w(WifiSwitchSettings{20000, 30000});
+    CEK(!w.sibuk(), "wifi: awalnya tidak sibuk");
+    CEK(w.mulai(1000) && w.sibuk(), "wifi: mulai");
+    CEK(!w.mulai(1500), "wifi: percobaan kedua ditolak saat sibuk");
+    CEK(w.update(2000, false, false) == WFA_TIDAK_ADA, "wifi: menunggu");
+    CEK(w.update(5000, true, false) == WFA_TIDAK_ADA && w.tahap() == WF_VERIFIKASI, "wifi: terhubung, menunggu broker");
+    CEK(w.update(9000, true, true) == WFA_SIMPAN_BARU, "wifi: broker terjangkau -> simpan");
+    CEK(w.hasil() == WFH_OK && !w.sibuk(), "wifi: hasil ok dan selesai");
+  }
+  {
+    WifiSwitcher w(WifiSwitchSettings{20000, 30000});
+    w.mulai(0);
+    CEK(w.update(19999, false, false) == WFA_TIDAK_ADA, "wifi: belum lewat batas 20 detik");
+    CEK(w.update(20000, false, false) == WFA_KEMBALI_LAMA, "wifi: tidak terhubung 20 detik -> kembali");
+    CEK(w.hasil() == WFH_GAGAL_WIFI && !w.sibuk(), "wifi: hasil gagal_wifi");
+    CEK(w.mulai(21000), "wifi: boleh mencoba lagi setelah gagal");
+  }
+  {
+    WifiSwitcher w(WifiSwitchSettings{20000, 30000});
+    w.mulai(0);
+    w.update(4000, true, false);
+    CEK(w.update(33999, true, false) == WFA_TIDAK_ADA, "wifi: broker masih ditunggu sebelum 30 detik");
+    CEK(w.update(34000, true, false) == WFA_KEMBALI_LAMA, "wifi: broker tidak terjangkau 30 detik -> kembali");
+    CEK(w.hasil() == WFH_GAGAL_BROKER, "wifi: hasil gagal_broker");
+  }
+  {
+    WifiSwitcher w(WifiSwitchSettings{20000, 30000});
+    uint32_t t0 = 0xFFFFFF00u;  // millis() hampir meluap
+    w.mulai(t0);
+    CEK(w.update(t0 + 19000u, false, false) == WFA_TIDAK_ADA, "wifi: luapan millis, belum habis");
+    CEK(w.update(t0 + 20000u, false, false) == WFA_KEMBALI_LAMA, "wifi: luapan millis, habis tepat waktu");
+  }
+  CEK(std::string(wifiHasilNama(WFH_OK)) == "ok" && std::string(wifiHasilNama(WFH_GAGAL_WIFI)) == "gagal_wifi" &&
+      std::string(wifiHasilNama(WFH_GAGAL_BROKER)) == "gagal_broker" && std::string(wifiHasilNama(WFH_BELUM)) == "",
+      "wifi: nama hasil sama dengan yang dibaca dashboard");
+
+  // 18) Validasi isian
+  CEK(wifiSsidValid("A") && wifiSsidValid("012345678901234567890123456789ab") && !wifiSsidValid("") &&
+      !wifiSsidValid("012345678901234567890123456789abc") && !wifiSsidValid(nullptr), "ssid 1-32 byte");
+  {
+    std::string p63(63, 'a'), p64(64, 'a');
+    CEK(wifiPassValid("") && wifiPassValid("12345678") && !wifiPassValid("1234567") &&
+        wifiPassValid(p63.c_str()) && !wifiPassValid(p64.c_str()) && !wifiPassValid(nullptr),
+        "password kosong atau 8-63 karakter");
+  }
+  CEK(wifiSsidAmanJson("Rumah Budi") && wifiSsidAmanJson("Kafe \xE2\x98\x95") && !wifiSsidAmanJson("\xFF\xFEx") &&
+      !wifiSsidAmanJson("a\nb") && !wifiSsidAmanJson("\xC0\x80") && !wifiSsidAmanJson("\xE2\x98"), "ssid aman untuk JSON (UTF-8 valid)");
+
+  // 19) Daftar jaringan hasil scan
+  {
+    Jaringan in[6] = {{"Rumah", -70, true}, {"", -30, true}, {"Kafe", -60, false}, {"Rumah", -45, true}, {"\xFF" "x", -20, true}, {"Kantor", -80, true}};
+    Jaringan out[6];
+    int n = wifiPilihJaringan(in, 6, out, 8);
+    CEK(n == 3, "scan: kosong, SSID rusak dibuang, kembar digabung");
+    CEK(std::string(out[0].ssid) == "Rumah" && out[0].rssi == -45, "scan: terkuat di atas, kembar memakai sinyal terkuat");
+    CEK(std::string(out[1].ssid) == "Kafe" && std::string(out[2].ssid) == "Kantor", "scan: urut menurun");
+    n = wifiPilihJaringan(in, 6, out, 2);
+    CEK(n == 2, "scan: dibatasi maksimal");
+    CEK(wifiPilihJaringan(in, 0, out, 8) == 0, "scan: daftar kosong");
+  }
 
   std::printf("\nLulus: %d, Gagal: %d\n", lulus, gagal);
   return gagal == 0 ? 0 : 1;
