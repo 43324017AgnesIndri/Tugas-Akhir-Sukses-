@@ -58,8 +58,8 @@ export default function ThresholdPage() {
           <div className="note tone-in">
             Terakhir diubah: {thr.data?.updatedAt ? formatDateTime(thr.data.updatedAt) : "-"}
           </div>
-          <div className="note tone-wn">
-            Threshold disimpan di database. Pengiriman nilai ini ke ESP32 (untuk logika AUTO dengan histeresis dan jeda kompresor) menyusul bersama fitur kontrol MQTT.
+          <div className="note tone-in">
+            Threshold disimpan di database dan langsung dikirim ke ESP32 lewat MQTT, jadi tidak perlu upload ulang program. ESP32 yang sedang mati menerima nilai terbaru saat menyala kembali.
           </div>
         </div>
       </div>
