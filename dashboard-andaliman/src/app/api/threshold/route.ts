@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerAuth } from "@/lib/auth-server";
 import { DEVICE_ID } from "@/lib/influx";
+import { cmdTopic, publishCommand } from "@/lib/mqtt";
 import type { Thresholds } from "@/lib/types";
 
 interface DbRow {
@@ -75,5 +76,17 @@ export async function PUT(request: Request) {
     console.error("[api/threshold]", error?.message);
     return NextResponse.json({ error: "Gagal menyimpan threshold ke database." }, { status: 500 });
   }
-  return NextResponse.json({ thresholds: toThresholds(data) });
+  const saved = toThresholds(data);
+
+  // Kirim ke ESP32 sebagai pesan retained: broker menyimpannya dan mengirimnya lagi
+  // setiap kali ESP32 terhubung, jadi ESP32 yang sedang offline tetap menerima nilai terbaru.
+  let synced = true;
+  try {
+    await publishCommand(cmdTopic("threshold"), saved, 1, true);
+  } catch (e) {
+    synced = false;
+    console.error("[api/threshold] MQTT:", e instanceof Error ? e.message : e);
+  }
+
+  return NextResponse.json({ thresholds: saved, synced });
 }

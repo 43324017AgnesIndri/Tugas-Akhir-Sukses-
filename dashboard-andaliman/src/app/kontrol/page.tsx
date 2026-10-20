@@ -5,18 +5,17 @@ import ActuatorStatus from "@/components/ActuatorStatus";
 import ControlMode from "@/components/ControlMode";
 import ManualControl from "@/components/ManualControl";
 import { useApi } from "@/hooks/useApi";
+import { useControl } from "@/hooks/useControl";
 import { useProfile } from "@/hooks/useProfile";
 import type { DashboardData } from "@/lib/types";
-
-// Diubah menjadi true setelah pengiriman perintah lewat MQTT selesai dibuat
-const CONTROL_READY = false;
+import { ACTUATORS_OFF } from "@/lib/utils";
 
 export default function KontrolPage() {
   const dash = useApi<DashboardData>("/api/dashboard", 5000);
   const { profile } = useProfile();
   const isAdmin = profile?.role === "admin";
   const d = dash.data;
-  const actuators = d?.actuators ?? { kompresor: false, fan: false, mist: false };
+  const ctl = useControl(d?.mode ?? null, d?.actuators ?? ACTUATORS_OFF, d?.online ?? false);
 
   return (
     <AppShell
@@ -26,19 +25,19 @@ export default function KontrolPage() {
       online={d?.online}
     >
       {dash.error && <div className="note tone-bd page-note">{dash.error}</div>}
-      {!CONTROL_READY && (
-        <div className="note tone-wn page-note">
-          Tombol di halaman ini belum aktif karena pengiriman perintah ke ESP32 lewat MQTT belum dibuat. Yang tampil adalah status terakhir dari perangkat.
-        </div>
-      )}
+      {ctl.notice && <div className={`note tone-${ctl.notice.ok ? "ok" : "bd"} page-note`}>{ctl.notice.text}</div>}
       {profile && !isAdmin && (
         <div className="note tone-in page-note">Akun viewer tidak dapat mengubah mode atau aktuator.</div>
       )}
 
       <div className="grid g3">
-        <ControlMode mode={d?.mode ?? null} onChange={() => {}} readOnly={!CONTROL_READY || !isAdmin} />
-        <ManualControl actuators={actuators} enabled={CONTROL_READY && isAdmin && d?.mode === "MANUAL"} onChange={() => {}} />
-        <ActuatorStatus mode={d?.mode ?? null} actuators={actuators} hasState={d?.hasActuatorState ?? false} title="Status aktuator" />
+        <ControlMode mode={ctl.mode} onChange={ctl.setMode} readOnly={!isAdmin || ctl.busy} />
+        <ManualControl
+          actuators={ctl.actuators}
+          enabled={isAdmin && !ctl.busy && ctl.mode === "MANUAL"}
+          onChange={ctl.setActuator}
+        />
+        <ActuatorStatus mode={ctl.mode} actuators={ctl.actuators} hasState={d?.hasActuatorState ?? false} title="Status aktuator" />
       </div>
 
       <div className="c">
@@ -54,7 +53,7 @@ export default function KontrolPage() {
             <tbody>
               <tr>
                 <td>AUTO</td>
-                <td>ESP32 mengendalikan kompresor, fan, dan mist maker sesuai threshold suhu dan kelembapan.</td>
+                <td>ESP32 mengendalikan kompresor, fan, dan mist maker sesuai threshold suhu dan kelembapan. Buzzer berbunyi jika suhu atau kelembapan bertahan di luar threshold.</td>
               </tr>
               <tr>
                 <td>MANUAL</td>
@@ -62,7 +61,7 @@ export default function KontrolPage() {
               </tr>
               <tr>
                 <td>SAFE</td>
-                <td>Mode aman: aktuator dimatikan saat kondisi abnormal (misalnya sensor gagal dibaca).</td>
+                <td>Mode aman: semua aktuator dimatikan. Jika sensor gagal dibaca, ESP32 masuk mode ini sendiri dan buzzer berbunyi.</td>
               </tr>
             </tbody>
           </table>
