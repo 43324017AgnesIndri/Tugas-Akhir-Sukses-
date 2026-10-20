@@ -7,6 +7,15 @@
 // ===== Wi-Fi =====
 #define WIFI_SSID       "ISI_NAMA_WIFI"
 #define WIFI_PASSWORD   "ISI_PASSWORD_WIFI"
+// Dua nilai di atas adalah Wi-Fi AWAL / CADANGAN. Wi-Fi yang dipilih dari dashboard disimpan di memori
+// ESP32 dan dipakai lebih dulu. Jika Wi-Fi tersimpan tidak terjangkau lagi, ESP32 mencoba Wi-Fi ini.
+
+// ===== Ganti Wi-Fi dari dashboard =====
+#define WIFI_COBA_MS            20000UL  // batas waktu terhubung ke Wi-Fi baru
+#define WIFI_VERIFIKASI_MS      30000UL  // batas waktu menunggu broker MQTT lewat Wi-Fi baru
+#define WIFI_STATUS_INTERVAL_MS 15000UL  // kirim status Wi-Fi ke dashboard
+#define WIFI_SCAN_MAKS          8        // jumlah jaringan yang dikirim ke dashboard
+#define WIFI_SCAN_TIMEOUT_MS    12000UL
 
 // ===== MQTT =====
 // Sementara (broker di Docker laptop): isi dengan IP Wi-Fi laptop, contoh "192.168.1.23".

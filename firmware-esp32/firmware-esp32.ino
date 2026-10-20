@@ -7,6 +7,7 @@
 // Relay 4 channel: 1 = kompresor, 2 = buzzer, 3 = fan, 4 = mist maker.
 // LCD 16x2: suhu, kelembapan, jam (NTP), mode, dan ikon Wi-Fi.
 // Threshold suhu dan kelembapan diubah dari dashboard (tanpa upload ulang ke ESP32).
+// Wi-Fi juga bisa dipilih dari dashboard (scan, pilih, isi password); lihat wifi_manager.h.
 //
 // Library yang perlu dipasang (Arduino IDE -> Library Manager):
 //   Adafruit SHT4x Library, PubSubClient, ArduinoJson (v7), LiquidCrystal I2C (Frank de Brabander)
@@ -20,6 +21,7 @@
 #include "actuator.h"
 #include "waktu.h"
 #include "mqtt_client.h"
+#include "wifi_manager.h"
 #if USE_LCD
   #include "display.h"
 #endif
@@ -36,7 +38,7 @@ static uint8_t gagalBaca = 0;
 // ---------- Threshold: disimpan di memori ESP32 agar tetap ada setelah restart ----------
 static Thresholds muatThreshold() {
   Thresholds th = {TH_DEFAULT_TMIN, TH_DEFAULT_TMAX, TH_DEFAULT_HMIN, TH_DEFAULT_HMAX};
-  prefs.begin("andaliman", true);
+  prefs.begin("andaliman", false);  // false: tidak error di boot pertama saat memori belum berisi
   if (prefs.isKey("tmin")) {
     th.tmin = prefs.getFloat("tmin", th.tmin);
     th.tmax = prefs.getFloat("tmax", th.tmax);
@@ -76,24 +78,6 @@ static void onThreshold(const Thresholds &th) {
   bacaSekarang = true;
 }
 
-// ---------- Wi-Fi ----------
-static void wifiMulai() {
-  WiFi.mode(WIFI_STA);
-  WiFi.setAutoReconnect(true);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-}
-
-static void wifiJaga(uint32_t now) {
-  static uint32_t terakhirCoba = 0;
-  if (WiFi.status() == WL_CONNECTED) { terakhirCoba = now; return; }
-  if ((uint32_t)(now - terakhirCoba) >= 30000) {  // 30 detik tanpa Wi-Fi: mulai ulang koneksi
-    terakhirCoba = now;
-    Serial.println("[WiFi] terputus, mencoba lagi");
-    WiFi.disconnect();
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  }
-}
-
 void setup() {
   actuatorBegin();  // paling awal: semua relay OFF
   Serial.begin(115200);
@@ -108,12 +92,13 @@ void setup() {
   displayBegin();
 #endif
 
+  wifiMuat();   // Wi-Fi terakhir yang dipilih dari dashboard (atau yang di config.h)
   wifiMulai();
   uint32_t mulai = millis();
   while (WiFi.status() != WL_CONNECTED && millis() - mulai < 10000) delay(200);  // maksimal 10 detik
   Serial.println(WiFi.status() == WL_CONNECTED ? "[WiFi] terhubung" : "[WiFi] belum terhubung, lanjut tanpa jaringan");
 
-  MqttHandlers h = {onMode, onActuator, onThreshold};
+  MqttHandlers h = {onMode, onActuator, onThreshold, wifiPermintaan};
   mqttBegin(h);
 }
 
@@ -123,6 +108,8 @@ void loop() {
   wifiJaga(now);
   mqttEnsureConnected(now);
   mqttLoop();
+  wifiProses(now);    // scan dan ganti Wi-Fi atas perintah dashboard
+  wifiLaporkan(now);  // status Wi-Fi untuk dashboard
 
   // --- Mulai sinkronisasi jam (NTP) begitu Wi-Fi terhubung ---
   static bool ntpDimulai = false;
