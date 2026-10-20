@@ -32,6 +32,7 @@ const actPoint = (t, h, time) =>
   new Point("actuator_state")
     .tag("device_id", device)
     .intField("kompresor", t > 24 || h > 85 ? 1 : 0)
+    .intField("buzzer", 0)
     .intField("fan", 1)
     .intField("mist", h < 70 ? 1 : 0)
     .stringField("mode", "AUTO")
