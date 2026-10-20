@@ -114,7 +114,7 @@
     "type": "function",
     "z": "tab_andaliman",
     "name": "Status -> Line Protocol",
-    "func": "// Pesan MQTT: andaliman/<device>/state  {\"kompresor\":1,\"fan\":0,\"mist\":0,\"mode\":\"AUTO\"}\n// Hasil: baris Line Protocol untuk measurement \"actuator_state\".\n// Angka ditulis dengan akhiran \"i\" (integer) agar tipenya sama dengan data contoh dari seed-influx.mjs.\nconst dev = String(msg.topic).split(\"/\")[1];\nif (!/^[A-Za-z0-9_-]+$/.test(dev)) { node.warn(\"device_id tidak valid: \" + dev); return null; }\n\nconst p = msg.payload || {};\nconst on = (v) => (v === 1 || v === true || v === \"1\" ? 1 : 0);\nconst mode = String(p.mode || \"\").toUpperCase();\nif (![\"AUTO\", \"MANUAL\", \"SAFE\"].includes(mode)) { node.warn(\"mode tidak dikenal: \" + p.mode); return null; }\n\nmsg.lp = `actuator_state,device_id=${dev} kompresor=${on(p.kompresor)}i,fan=${on(p.fan)}i,mist=${on(p.mist)}i,mode=\"${mode}\"`;\nreturn msg;",
+    "func": "// Pesan MQTT: andaliman/<device>/state  {\"kompresor\":1,\"buzzer\":0,\"fan\":0,\"mist\":0,\"mode\":\"AUTO\"}\n// Hasil: baris Line Protocol untuk measurement \"actuator_state\".\n// Angka ditulis dengan akhiran \"i\" (integer) agar tipenya sama dengan data contoh dari seed-influx.mjs.\nconst dev = String(msg.topic).split(\"/\")[1];\nif (!/^[A-Za-z0-9_-]+$/.test(dev)) { node.warn(\"device_id tidak valid: \" + dev); return null; }\n\nconst p = msg.payload || {};\nconst on = (v) => (v === 1 || v === true || v === \"1\" ? 1 : 0);\nconst mode = String(p.mode || \"\").toUpperCase();\nif (![\"AUTO\", \"MANUAL\", \"SAFE\"].includes(mode)) { node.warn(\"mode tidak dikenal: \" + p.mode); return null; }\n\nmsg.lp = `actuator_state,device_id=${dev} kompresor=${on(p.kompresor)}i,buzzer=${on(p.buzzer)}i,fan=${on(p.fan)}i,mist=${on(p.mist)}i,mode=\"${mode}\"`;\nreturn msg;",
     "outputs": 1,
     "timeout": 0,
     "noerr": 0,
@@ -214,5 +214,87 @@
     "x": 1300,
     "y": 180,
     "wires": []
+  },
+  {
+    "id": "in_wifi",
+    "type": "mqtt in",
+    "z": "tab_andaliman",
+    "name": "Status Wi-Fi",
+    "topic": "andaliman/+/wifi",
+    "qos": "1",
+    "datatype": "json",
+    "broker": "broker_mqtt",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 150,
+    "y": 300,
+    "wires": [
+      [
+        "fn_wifi"
+      ]
+    ]
+  },
+  {
+    "id": "in_scan",
+    "type": "mqtt in",
+    "z": "tab_andaliman",
+    "name": "Hasil scan Wi-Fi",
+    "topic": "andaliman/+/wifi/scan",
+    "qos": "1",
+    "datatype": "json",
+    "broker": "broker_mqtt",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 150,
+    "y": 380,
+    "wires": [
+      [
+        "fn_scan"
+      ]
+    ]
+  },
+  {
+    "id": "fn_wifi",
+    "type": "function",
+    "z": "tab_andaliman",
+    "name": "Wi-Fi -> Line Protocol",
+    "func": "// Pesan MQTT: andaliman/<device>/wifi\n//   {\"connected\":1,\"ssid\":\"Rumah\",\"rssi\":-55,\"ip\":\"192.168.1.50\",\"hasil\":\"ok\",\"target\":\"Rumah\",\"id\":\"ab12cd34\"}\n// Hasil: measurement \"wifi_state\". `hasil`, `target`, `id` = hasil percobaan ganti Wi-Fi terakhir dari dashboard.\nconst dev = String(msg.topic).split(\"/\")[1];\nif (!/^[A-Za-z0-9_-]+$/.test(dev)) { node.warn(\"device_id tidak valid: \" + dev); return null; }\n\nconst esc = (s) => String(s == null ? \"\" : s).replace(/[\\u0000-\\u001f]/g, \" \").replace(/\\\\/g, \"\\\\\\\\\").replace(/\"/g, '\\\\\"');\nconst p = msg.payload || {};\nconst bulat = (v) => (Number.isFinite(Number(v)) ? Math.trunc(Number(v)) : 0);\nconst hasil = [\"ok\", \"gagal_wifi\", \"gagal_broker\"].includes(p.hasil) ? p.hasil : \"\";\nconst conn = p.connected === 1 || p.connected === true ? 1 : 0;\n\n// Angka ditulis dengan akhiran \"i\" (integer); teks di dalam tanda kutip dengan karakter khusus di-escape.\nmsg.lp = `wifi_state,device_id=${dev} connected=${conn}i,rssi=${bulat(p.rssi)}i,ssid=\"${esc(p.ssid)}\",ip=\"${esc(p.ip)}\",hasil=\"${hasil}\",target=\"${esc(p.target)}\",id=\"${esc(p.id)}\"`;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 400,
+    "y": 300,
+    "wires": [
+      [
+        "fn_write"
+      ]
+    ]
+  },
+  {
+    "id": "fn_scan",
+    "type": "function",
+    "z": "tab_andaliman",
+    "name": "Scan Wi-Fi -> Line Protocol",
+    "func": "// Pesan MQTT: andaliman/<device>/wifi/scan\n//   {\"id\":\"ab12cd34\",\"networks\":[{\"s\":\"Rumah\",\"r\":-50,\"x\":1}, ...]}\n// Hasil: measurement \"wifi_scan\". Daftar jaringan disimpan sebagai satu teks JSON (dibaca dashboard).\nconst dev = String(msg.topic).split(\"/\")[1];\nif (!/^[A-Za-z0-9_-]+$/.test(dev)) { node.warn(\"device_id tidak valid: \" + dev); return null; }\n\nconst esc = (s) => String(s == null ? \"\" : s).replace(/[\\u0000-\\u001f]/g, \" \").replace(/\\\\/g, \"\\\\\\\\\").replace(/\"/g, '\\\\\"');\nconst p = msg.payload || {};\nif (!Array.isArray(p.networks)) { node.warn(\"daftar jaringan tidak valid\"); return null; }\nconst daftar = p.networks.slice(0, 20)\n  .filter((n) => n && typeof n.s === \"string\" && n.s.length > 0)\n  .map((n) => ({ s: n.s.slice(0, 32), r: Math.trunc(Number(n.r)) || 0, x: n.x ? 1 : 0 }));\n\nmsg.lp = `wifi_scan,device_id=${dev} networks=\"${esc(JSON.stringify(daftar))}\",id=\"${esc(p.id)}\"`;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 400,
+    "y": 380,
+    "wires": [
+      [
+        "fn_write"
+      ]
+    ]
   }
 ]
