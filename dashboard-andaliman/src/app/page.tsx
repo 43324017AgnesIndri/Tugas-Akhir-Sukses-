@@ -16,7 +16,7 @@ import type { StatusInfo } from "@/lib/types";
 import { fmt, getStatus } from "@/lib/utils";
 
 // Kontrol mode dan aktuator (lewat MQTT) dibuat di tahap berikutnya
-const CONTROL_READY = false;
+const CONTROL_READY = true;
 
 const NO_DATA: StatusInfo = { label: "Belum ada data", severity: "in" };
 
