@@ -127,6 +127,8 @@ aside {
   background: var(--fo);
   color: var(--fo-tx);
   padding: 28px 16px;
+  display: flex;
+  flex-direction: column;
 }
 
 .brand {
@@ -154,6 +156,9 @@ nav {
 }
 
 nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 10px 12px;
   border-radius: 10px;
   color: var(--fo-mu);
@@ -170,6 +175,84 @@ nav a:hover {
 nav a.on {
   background: rgba(196, 167, 106, 0.16);
   color: var(--gold);
+}
+
+nav a svg {
+  flex-shrink: 0;
+}
+
+.nav-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.nav-badge {
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: var(--gold);
+  color: #14261b;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ===== Sidebar: ranting dan foto andaliman ===== */
+.side-sprig {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 100px;
+  margin-bottom: 14px;
+  opacity: 0.9;
+}
+
+.side-photo {
+  position: relative;
+  margin-top: auto;
+  height: 240px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(196, 167, 106, 0.35);
+}
+
+.side-photo img {
+  transition: transform 1.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.side-photo:hover img {
+  transform: scale(1.05);
+}
+
+.side-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 23, 17, 0.85), transparent 60%);
+}
+
+.side-photo .cap {
+  position: absolute;
+  z-index: 1;
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--fo-tx);
+}
+
+.side-photo .cap strong {
+  font-family: var(--font-serif, Georgia), Georgia, serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.side-photo .cap span {
+  font-size: 12px;
+  color: var(--fo-mu);
 }
 
 main {
@@ -821,6 +904,11 @@ td input {
     min-width: 0;
     padding: 0 4px;
     font-size: 22px;
+  }
+
+  .side-sprig,
+  .side-photo {
+    display: none;
   }
 
   /* Menu HP: 2 kolom, tanpa scroll horizontal */
