@@ -2,197 +2,885 @@
 
 /* ===== Warna (terang) ===== */
 :root {
-  --bg: #eef1ef; --sf: #fff; --tx: #18241e; --mu: #62706a; --ln: #d9dfdb;
-  --ac: #1f6b4a; --acs: #dcefe5;
-  --ok: #1f6b4a; --okb: #dcefe5;
-  --wn: #8a5a00; --wnb: #faecc8;
-  --bd: #a8261f; --bdb: #fadedb;
-  --in: #1b5a9c; --inb: #dde9f6;
-  --ct: #d4533c; --ch: #2f7fd0;
+  --bg: #eef1ef;
+  --sf: #fff;
+  --tx: #18241e;
+  --mu: #62706a;
+  --ln: #d9dfdb;
+
+  --ac: #1f6b4a;
+  --acs: #dcefe5;
+
+  --ok: #1f6b4a;
+  --okb: #dcefe5;
+
+  --wn: #8a5a00;
+  --wnb: #faecc8;
+
+  --bd: #a8261f;
+  --bdb: #fadedb;
+
+  --in: #1b5a9c;
+  --inb: #dde9f6;
+
+  --ct: #d4533c;
+  --ch: #2f7fd0;
 }
 
 /* ===== Warna (gelap, mengikuti pengaturan perangkat) ===== */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #101613; --sf: #18211c; --tx: #e6eee9; --mu: #91a299; --ln: #2a362f;
-    --ac: #6fc597; --acs: #1e3a2c;
-    --ok: #6fc597; --okb: #1e3a2c;
-    --wn: #e8b94a; --wnb: #3a2f14;
-    --bd: #f08a84; --bdb: #3d1d1b;
-    --in: #7db3ea; --inb: #172a40;
-    --ct: #ef6f58; --ch: #5aa2ec;
+    --bg: #101613;
+    --sf: #18211c;
+    --tx: #e6eee9;
+    --mu: #91a299;
+    --ln: #2a362f;
+
+    --ac: #6fc597;
+    --acs: #1e3a2c;
+
+    --ok: #6fc597;
+    --okb: #1e3a2c;
+
+    --wn: #e8b94a;
+    --wnb: #3a2f14;
+
+    --bd: #f08a84;
+    --bdb: #3d1d1b;
+
+    --in: #7db3ea;
+    --inb: #172a40;
+
+    --ct: #ef6f58;
+    --ch: #5aa2ec;
   }
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
+
+html,
 body {
   margin: 0;
+  padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
   background: var(--bg);
   color: var(--tx);
   font: 400 15px/1.5 var(--font-figtree), system-ui, sans-serif;
 }
 
 /* ===== Kerangka halaman ===== */
-.app { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
-aside { background: var(--sf); border-right: 1px solid var(--ln); padding: 20px 14px; }
-.brand { font-weight: 700; font-size: 18px; line-height: 1.2; }
-.brand small { display: block; font-weight: 400; font-size: 12px; color: var(--mu); margin-top: 4px; }
-nav { margin-top: 22px; display: flex; flex-direction: column; gap: 2px; }
-nav a { padding: 9px 12px; border-radius: 8px; color: var(--mu); text-decoration: none; font-weight: 500; }
-nav a.on { background: var(--acs); color: var(--ac); }
-main { padding: 20px; min-width: 0; }
-.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
-h1 { font-size: 22px; margin: 0; font-weight: 700; }
-.top p { margin: 0; color: var(--mu); font-size: 13px; }
-.pills { display: flex; gap: 8px; flex-wrap: wrap; }
-.pill { display: flex; gap: 8px; align-items: center; border: 1px solid var(--ln); background: var(--sf); border-radius: 20px; padding: 6px 14px; font-size: 13px; }
-.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ok); }
+.app {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  min-height: 100vh;
+}
+
+aside {
+  background: var(--sf);
+  border-right: 1px solid var(--ln);
+  padding: 20px 14px;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.brand small {
+  display: block;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--mu);
+  margin-top: 4px;
+}
+
+nav {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+nav a {
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: var(--mu);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+nav a.on {
+  background: var(--acs);
+  color: var(--ac);
+}
+
+main {
+  padding: 20px;
+  min-width: 0;
+  width: 100%;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+h1 {
+  font-size: 22px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.top p {
+  margin: 0;
+  color: var(--mu);
+  font-size: 13px;
+}
+
+.pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--ln);
+  background: var(--sf);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ok);
+}
 
 /* ===== Grid dan kartu ===== */
-.grid { display: grid; gap: 12px; margin-bottom: 12px; }
-.g4 { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
-.g2 { grid-template-columns: 2fr 1fr; }
-.g3 { grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
-.c { background: var(--sf); border: 1px solid var(--ln); border-radius: 10px; padding: 16px; min-width: 0; }
-.c h2 { font-size: 15px; margin: 0 0 12px; font-weight: 700; }
-.lbl { color: var(--mu); font-size: 13px; }
-.big { font-size: 30px; font-weight: 700; line-height: 1.2; }
-.rng { color: var(--mu); font-size: 12px; margin-top: 4px; }
+.grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 12px;
+}
 
-/* ===== Lencana dan catatan (warna ok / wn / bd / in) ===== */
-.b { display: inline-block; padding: 2px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; margin-top: 6px; }
-.note { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 13px; }
-.tone-ok { background: var(--okb); color: var(--ok); }
-.tone-wn { background: var(--wnb); color: var(--wn); }
-.tone-bd { background: var(--bdb); color: var(--bd); }
-.tone-in { background: var(--inb); color: var(--in); }
+.g4 {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.g2 {
+  grid-template-columns: 2fr 1fr;
+}
+
+.g3 {
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+}
+
+.c {
+  background: var(--sf);
+  border: 1px solid var(--ln);
+  border-radius: 10px;
+  padding: 16px;
+  min-width: 0;
+}
+
+.c h2 {
+  font-size: 15px;
+  margin: 0 0 12px;
+  font-weight: 700;
+}
+
+.lbl {
+  color: var(--mu);
+  font-size: 13px;
+}
+
+.big {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.rng {
+  color: var(--mu);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ===== Lencana dan catatan ===== */
+.b {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 6px;
+}
+
+.note {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.tone-ok {
+  background: var(--okb);
+  color: var(--ok);
+}
+
+.tone-wn {
+  background: var(--wnb);
+  color: var(--wn);
+}
+
+.tone-bd {
+  background: var(--bdb);
+  color: var(--bd);
+}
+
+.tone-in {
+  background: var(--inb);
+  color: var(--in);
+}
 
 /* ===== Baris aktuator ===== */
-.act { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-top: 1px solid var(--ln); }
-.c h2 + .act, .c h2 + div > .act:first-child { border-top: 0; }
-.st { display: flex; align-items: center; gap: 8px; }
-.st i { width: 9px; height: 9px; border-radius: 50%; background: var(--ln); display: inline-block; }
-.st i.on { background: var(--ok); }
+.act {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-top: 1px solid var(--ln);
+}
+
+.c h2 + .act,
+.c h2 + div > .act:first-child {
+  border-top: 0;
+}
+
+.st {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.st i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ln);
+  display: inline-block;
+}
+
+.st i.on {
+  background: var(--ok);
+}
 
 /* ===== Tombol dan input ===== */
-button { font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--ln); background: var(--sf); color: var(--tx); padding: 9px 12px; }
-button:focus-visible, input:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
-.modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.mode.on { background: var(--ac); color: var(--sf); border-color: var(--ac); }
-.mode small { display: block; font-size: 11px; opacity: 0.85; }
-.f { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-.f label { font-size: 13px; color: var(--mu); display: block; }
-input { width: 100%; font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--ln); background: var(--bg); color: var(--tx); }
-.apply { background: var(--ac); color: var(--sf); border-color: var(--ac); font-weight: 500; width: 100%; }
-.sw { display: flex; gap: 6px; }
-.sw button { padding: 6px 14px; }
-.sw button.on { background: var(--ac); color: var(--sf); border-color: var(--ac); }
-.sw button:disabled { opacity: 0.45; cursor: not-allowed; }
+button {
+  font: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+  border: 1px solid var(--ln);
+  background: var(--sf);
+  color: var(--tx);
+  padding: 9px 12px;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--ac);
+  outline-offset: 2px;
+}
+
+.modes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.mode.on {
+  background: var(--ac);
+  color: var(--sf);
+  border-color: var(--ac);
+}
+
+.mode small {
+  display: block;
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.f {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.f label {
+  font-size: 13px;
+  color: var(--mu);
+  display: block;
+}
+
+input {
+  width: 100%;
+  font: inherit;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--ln);
+  background: var(--bg);
+  color: var(--tx);
+}
+
+.apply {
+  background: var(--ac);
+  color: var(--sf);
+  border-color: var(--ac);
+  font-weight: 500;
+  width: 100%;
+}
+
+.sw {
+  display: flex;
+  gap: 6px;
+}
+
+.sw button {
+  padding: 6px 14px;
+}
+
+.sw button.on {
+  background: var(--ac);
+  color: var(--sf);
+  border-color: var(--ac);
+}
+
+.sw button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 
 /* ===== Tabel ===== */
-.tw { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 560px; }
-th { text-align: left; color: var(--mu); font-weight: 500; padding: 6px 8px; border-bottom: 1px solid var(--ln); }
-td { padding: 8px; border-bottom: 1px solid var(--ln); }
+.tw {
+  overflow-x: auto;
+  max-width: 100%;
+}
 
-/* ===== Layar kecil (HP) ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 560px;
+}
+
+th {
+  text-align: left;
+  color: var(--mu);
+  font-weight: 500;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--ln);
+}
+
+td {
+  padding: 8px;
+  border-bottom: 1px solid var(--ln);
+}
+
+/* ===== Layar kecil / HP ===== */
 @media (max-width: 860px) {
-  .app { grid-template-columns: 1fr; }
-  aside { border-right: 0; border-bottom: 1px solid var(--ln); padding: 14px; }
-  nav { flex-direction: row; overflow-x: auto; margin-top: 12px; }
-  nav a { white-space: nowrap; }
-  .g2 { grid-template-columns: 1fr; }
+  .app {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-width: 0;
+    width: 100%;
+  }
+
+  aside {
+    width: 100%;
+    min-width: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--ln);
+    padding: 14px;
+    overflow: hidden;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  /*
+   * MENU HP
+   * 2 kolom, tidak horizontal scroll.
+   */
+  aside nav {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    width: 100%;
+    min-width: 0;
+    margin-top: 12px;
+    overflow: visible !important;
+  }
+
+  aside nav a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    padding: 9px 6px;
+    border-radius: 8px;
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.25;
+  }
+
+  main {
+    padding: 14px;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .top {
+    align-items: flex-start;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .top > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .pills {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .pill {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .g4,
+  .g2,
+  .g3,
+  .g2e {
+    grid-template-columns: 1fr;
+  }
+
+  .c {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .note {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .big {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .modes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mode {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .f {
+    grid-template-columns: 1fr;
+  }
+
+  .row,
+  .row.between {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+/* ===== HP sangat kecil ===== */
+@media (max-width: 420px) {
+  aside {
+    padding: 12px 10px;
+  }
+
+  .brand {
+    font-size: 17px;
+  }
+
+  .brand small {
+    font-size: 11px;
+  }
+
+  aside nav {
+    gap: 5px !important;
+  }
+
+  aside nav a {
+    padding: 8px 4px;
+    font-size: 13px;
+  }
+
+  main {
+    padding: 10px;
+  }
+
+  .c {
+    padding: 14px;
+  }
+
+  .big {
+    font-size: 26px;
+  }
+
+  .modes {
+    gap: 5px;
+  }
+
+  .mode {
+    padding: 8px 4px;
+  }
+
+  .mode small {
+    font-size: 10px;
+  }
 }
 
 /* ===== F2: halaman login dan tombol nonaktif ===== */
-.login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 20px; }
-.login-card { width: 100%; max-width: 380px; background: var(--sf); border: 1px solid var(--ln); border-radius: 12px; padding: 28px; }
-.login-card h1 { font-size: 20px; }
-.login-card p { color: var(--mu); font-size: 13px; margin: 4px 0 20px; }
-.login-card label { display: block; font-size: 13px; color: var(--mu); margin-bottom: 4px; }
-.login-card .field { margin-bottom: 14px; }
-button.pill { cursor: pointer; color: var(--tx); font: inherit; font-size: 13px; }
-.mode:disabled, .apply:disabled, input:disabled { opacity: 0.5; cursor: not-allowed; }
-
-/* ===== F3: indikator perangkat offline ===== */
-.dot.off { background: var(--bd); }
-
-/* ===== F4: menu lengkap ===== */
-select { width: 100%; font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--ln); background: var(--bg); color: var(--tx); }
-select:disabled { opacity: 0.5; cursor: not-allowed; }
-td select { width: auto; padding: 4px 8px; }
-td input { padding: 4px 8px; }
-.btn { padding: 5px 12px; font-size: 13px; }
-.btn.danger { color: var(--bd); border-color: var(--bd); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.row.between { justify-content: space-between; }
-.g2e { grid-template-columns: 1fr 1fr; }
-.scroll { max-height: 420px; overflow-y: auto; }
-.muted { color: var(--mu); font-size: 13px; }
-.page-note { margin-bottom: 12px; }
-@media (max-width: 860px) { .g2e { grid-template-columns: 1fr; } }
-
-/* ===== Wi-Fi perangkat (tombol di bagian atas dan panel pilih jaringan) ===== */
-.wifi { position: relative; display: flex; }
-.wifi-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; border: 1px solid var(--ln); background: var(--sf); border-radius: 20px; padding: 3px 14px; min-width: 84px; line-height: 1.1; }
-.wifi-st { font-size: 11px; font-weight: 500; white-space: nowrap; }
-.wifi-btn.tone-t-ok { color: var(--ok); }
-.wifi-btn.tone-t-bd { color: var(--bd); }
-.wifi-btn.tone-t-wn { color: var(--wn); }
-.wifi-btn.tone-t-mu { color: var(--mu); }
-.wifi-pop { position: absolute; right: 0; top: calc(100% + 8px); width: min(360px, calc(100vw - 32px)); z-index: 30; background: var(--sf); border: 1px solid var(--ln); border-radius: 12px; padding: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18); max-height: min(560px, calc(100vh - 120px)); overflow-y: auto; }
-.wifi-pop h2 { font-size: 15px; margin: 0; font-weight: 700; }
-.wifi-now { display: flex; flex-direction: column; gap: 2px; margin-top: 10px; }
-.wifi-gap { margin-top: 12px; }
-.wifi-foot { margin: 12px 0 0; font-size: 12px; }
-.wifi-list { list-style: none; margin: 10px 0 0; padding: 0; border: 1px solid var(--ln); border-radius: 8px; overflow: hidden; }
-.wifi-list li + li { border-top: 1px solid var(--ln); }
-.wifi-empty { padding: 10px 12px; }
-.wifi-item { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; border-radius: 0; background: transparent; text-align: left; padding: 10px 12px; }
-.wifi-item:hover:not(:disabled) { background: var(--acs); }
-.wifi-item.on { background: var(--acs); }
-.wifi-item:disabled { cursor: default; opacity: 0.85; }
-.wifi-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.wifi-item .b { margin-top: 0; }
-.bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 16px; }
-.bars i { width: 3px; border-radius: 1px; background: var(--ln); display: inline-block; }
-.bars i.on { background: var(--ok); }
-.wifi-form { display: flex; flex-direction: column; gap: 8px; padding: 4px 12px 12px; background: var(--acs); }
-.wifi-form .note { margin-top: 0; }
-@media (max-width: 860px) {
-  .wifi { position: static; }
-  .wifi-pop { position: fixed; left: 16px; right: 16px; top: 84px; width: auto; }
+.login-wrap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
 }
 
-/* ===== Wi-Fi perangkat (tombol di bagian atas dan panel pilih jaringan) ===== */
-.wifi { position: relative; display: flex; }
-.wifi-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; border: 1px solid var(--ln); background: var(--sf); border-radius: 20px; padding: 3px 14px; min-width: 84px; line-height: 1.1; }
-.wifi-st { font-size: 11px; font-weight: 500; white-space: nowrap; }
-.wifi-btn.tone-t-ok { color: var(--ok); }
-.wifi-btn.tone-t-bd { color: var(--bd); }
-.wifi-btn.tone-t-wn { color: var(--wn); }
-.wifi-btn.tone-t-mu { color: var(--mu); }
-.wifi-pop { position: absolute; right: 0; top: calc(100% + 8px); width: min(360px, calc(100vw - 32px)); z-index: 30; background: var(--sf); border: 1px solid var(--ln); border-radius: 12px; padding: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18); max-height: min(560px, calc(100vh - 120px)); overflow-y: auto; }
-.wifi-pop h2 { font-size: 15px; margin: 0; font-weight: 700; }
-.wifi-now { display: flex; flex-direction: column; gap: 2px; margin-top: 10px; }
-.wifi-gap { margin-top: 12px; }
-.wifi-foot { margin: 12px 0 0; font-size: 12px; }
-.wifi-list { list-style: none; margin: 10px 0 0; padding: 0; border: 1px solid var(--ln); border-radius: 8px; overflow: hidden; }
-.wifi-list li + li { border-top: 1px solid var(--ln); }
-.wifi-empty { padding: 10px 12px; }
-.wifi-item { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; border-radius: 0; background: transparent; text-align: left; padding: 10px 12px; }
-.wifi-item:hover:not(:disabled) { background: var(--acs); }
-.wifi-item.on { background: var(--acs); }
-.wifi-item:disabled { cursor: default; opacity: 0.85; }
-.wifi-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.wifi-item .b { margin-top: 0; }
-.bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 16px; }
-.bars i { width: 3px; border-radius: 1px; background: var(--ln); display: inline-block; }
-.bars i.on { background: var(--ok); }
-.wifi-form { display: flex; flex-direction: column; gap: 8px; padding: 4px 12px 12px; background: var(--acs); }
-.wifi-form .note { margin-top: 0; }
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--sf);
+  border: 1px solid var(--ln);
+  border-radius: 12px;
+  padding: 28px;
+}
+
+.login-card h1 {
+  font-size: 20px;
+}
+
+.login-card p {
+  color: var(--mu);
+  font-size: 13px;
+  margin: 4px 0 20px;
+}
+
+.login-card label {
+  display: block;
+  font-size: 13px;
+  color: var(--mu);
+  margin-bottom: 4px;
+}
+
+.login-card .field {
+  margin-bottom: 14px;
+}
+
+button.pill {
+  cursor: pointer;
+  color: var(--tx);
+  font: inherit;
+  font-size: 13px;
+}
+
+.mode:disabled,
+.apply:disabled,
+input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== F3: indikator perangkat offline ===== */
+.dot.off {
+  background: var(--bd);
+}
+
+/* ===== F4: menu lengkap ===== */
+select {
+  width: 100%;
+  font: inherit;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--ln);
+  background: var(--bg);
+  color: var(--tx);
+}
+
+select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+td select {
+  width: auto;
+  padding: 4px 8px;
+}
+
+td input {
+  padding: 4px 8px;
+}
+
+.btn {
+  padding: 5px 12px;
+  font-size: 13px;
+}
+
+.btn.danger {
+  color: var(--bd);
+  border-color: var(--bd);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.row.between {
+  justify-content: space-between;
+}
+
+.g2e {
+  grid-template-columns: 1fr 1fr;
+}
+
+.scroll {
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.muted {
+  color: var(--mu);
+  font-size: 13px;
+}
+
+.page-note {
+  margin-bottom: 12px;
+}
+
 @media (max-width: 860px) {
-  .wifi { position: static; }
-  .wifi-pop { position: fixed; left: 16px; right: 16px; top: 84px; width: auto; }
+  .g2e {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Wi-Fi perangkat ===== */
+.wifi {
+  position: relative;
+  display: flex;
+}
+
+.wifi-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  border: 1px solid var(--ln);
+  background: var(--sf);
+  border-radius: 20px;
+  padding: 3px 14px;
+  min-width: 84px;
+  line-height: 1.1;
+}
+
+.wifi-st {
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.wifi-btn.tone-t-ok {
+  color: var(--ok);
+}
+
+.wifi-btn.tone-t-bd {
+  color: var(--bd);
+}
+
+.wifi-btn.tone-t-wn {
+  color: var(--wn);
+}
+
+.wifi-btn.tone-t-mu {
+  color: var(--mu);
+}
+
+.wifi-pop {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: min(360px, calc(100vw - 32px));
+  z-index: 30;
+  background: var(--sf);
+  border: 1px solid var(--ln);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  max-height: min(560px, calc(100vh - 120px));
+  overflow-y: auto;
+}
+
+.wifi-pop h2 {
+  font-size: 15px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.wifi-now {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 10px;
+}
+
+.wifi-gap {
+  margin-top: 12px;
+}
+
+.wifi-foot {
+  margin: 12px 0 0;
+  font-size: 12px;
+}
+
+.wifi-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  border: 1px solid var(--ln);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wifi-list li + li {
+  border-top: 1px solid var(--ln);
+}
+
+.wifi-empty {
+  padding: 10px 12px;
+}
+
+.wifi-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+  padding: 10px 12px;
+}
+
+.wifi-item:hover:not(:disabled) {
+  background: var(--acs);
+}
+
+.wifi-item.on {
+  background: var(--acs);
+}
+
+.wifi-item:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.wifi-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wifi-item .b {
+  margin-top: 0;
+}
+
+.bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+}
+
+.bars i {
+  width: 3px;
+  border-radius: 1px;
+  background: var(--ln);
+  display: inline-block;
+}
+
+.bars i.on {
+  background: var(--ok);
+}
+
+.wifi-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 12px 12px;
+  background: var(--acs);
+}
+
+.wifi-form .note {
+  margin-top: 0;
+}
+
+@media (max-width: 860px) {
+  .wifi {
+    position: static;
+  }
+
+  .wifi-pop {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    top: 84px;
+    width: auto;
+  }
 }
