@@ -9,19 +9,18 @@ import ControlMode from "@/components/ControlMode";
 import ThresholdForm from "@/components/ThresholdForm";
 import ManualControl from "@/components/ManualControl";
 import AlarmTable from "@/components/AlarmTable";
+import { useControl } from "@/hooks/useControl";
 import { useDevice } from "@/hooks/useDevice";
 import { useProfile } from "@/hooks/useProfile";
 import { useApi } from "@/hooks/useApi";
 import type { StatusInfo } from "@/lib/types";
 import { fmt, getStatus } from "@/lib/utils";
 
-// Kontrol mode dan aktuator (lewat MQTT) dibuat di tahap berikutnya
-const CONTROL_READY = true;
-
 const NO_DATA: StatusInfo = { label: "Belum ada data", severity: "in" };
 
 export default function DashboardPage() {
   const d = useDevice();
+  const ctl = useControl(d.mode, d.actuators, d.online);
   const { profile } = useProfile();
   const mqtt = useApi<{ connected: boolean; error: string | null }>("/api/mqtt/status", 5000);
   const [showMqttConnected, setShowMqttConnected] = useState(false);
@@ -61,6 +60,9 @@ export default function DashboardPage() {
         <div className="note tone-in page-note">
           Anda login sebagai viewer. Anda dapat melihat data, tetapi tidak dapat mengubah pengaturan.
         </div>
+      )}
+      {ctl.notice && (
+        <div className={`note tone-${ctl.notice.ok ? "ok" : "bd"} page-note`}>{ctl.notice.text}</div>
       )}
       {mqtt.error ? (
         <div className="note tone-bd page-note">
@@ -111,15 +113,15 @@ export default function DashboardPage() {
 
       <div className="grid g2">
         <EnvChart data={d.history} />
-        <ActuatorStatus mode={d.mode} actuators={d.actuators} hasState={d.hasActuatorState} />
+        <ActuatorStatus mode={ctl.mode} actuators={ctl.actuators} hasState={d.hasActuatorState} />
       </div>
 
       <div className="grid g3">
-       <ControlMode
-          mode={d.mode}
+        <ControlMode
+          mode={ctl.mode}
           safeReason={d.safeReason}
-          onChange={() => {}}
-          readOnly={!CONTROL_READY || !isAdmin}
+          onChange={ctl.setMode}
+          readOnly={!isAdmin || ctl.busy}
         />
         <ThresholdForm
           key={d.thresholdsLoaded ? "loaded" : "loading"}
@@ -128,9 +130,9 @@ export default function DashboardPage() {
           readOnly={!isAdmin}
         />
         <ManualControl
-          actuators={d.actuators}
-          enabled={CONTROL_READY && isAdmin && d.mode === "MANUAL"}
-          onChange={() => {}}
+          actuators={ctl.actuators}
+          enabled={isAdmin && !ctl.busy && ctl.mode === "MANUAL"}
+          onChange={ctl.setActuator}
         />
       </div>
 
