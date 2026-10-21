@@ -52,7 +52,6 @@ export default function DashboardPage() {
           Kontrol mode dan aktuator dari dashboard belum aktif (menunggu MQTT). Tampilan mode dan aktuator adalah status terakhir dari perangkat.
         </div>
       )}
-
       <div className="grid g3">
         <StatCard
           label="Suhu"
