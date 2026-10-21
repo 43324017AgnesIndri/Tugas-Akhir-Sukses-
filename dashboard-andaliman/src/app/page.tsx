@@ -38,8 +38,10 @@ export default function DashboardPage() {
   return (
     <AppShell title="Dashboard" subtitle="Ringkasan kondisi perangkat, kontrol, threshold, dan alarm" statusText={statusText} online={d.online}>
       {d.error && (
-        <div className="note tone-bd page-note">{d.error}</div>
-      )}
+  <div className="note tone-bd page-note">
+    Data perangkat sedang tidak dapat diakses. Silakan coba lagi beberapa saat.
+  </div>
+)}
       {profile && !isAdmin && (
         <div className="note tone-in page-note">
           Anda login sebagai viewer. Anda dapat melihat data, tetapi tidak dapat mengubah pengaturan.
