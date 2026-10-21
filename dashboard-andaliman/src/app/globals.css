@@ -1,63 +1,85 @@
 @import "tailwindcss";
 
+/* =========================================================
+   ANDALIMAN STORAGE - DESIGN SYSTEM (PREMIUM NATURAL)
+   Nama variabel lama (--bg, --sf, --tx, dst.) dipertahankan
+   agar semua komponen yang sudah ada tetap bekerja.
+   ========================================================= */
+
 /* ===== Warna (terang) ===== */
 :root {
-  --bg: #eef1ef;
-  --sf: #fff;
-  --tx: #18241e;
-  --mu: #62706a;
-  --ln: #d9dfdb;
+  --bg: #f2f1e7;      /* ivory */
+  --sf: #fbfaf4;      /* permukaan kartu */
+  --tx: #1c201d;      /* charcoal */
+  --mu: #5d675f;
+  --ln: #dcdccd;
 
-  --ac: #1f6b4a;
-  --acs: #dcefe5;
+  --ac: #17432d;      /* deep forest green (tombol utama) */
+  --acs: #dfe8e2;     /* sage lembut */
 
   --ok: #1f6b4a;
   --okb: #dcefe5;
 
-  --wn: #8a5a00;
-  --wnb: #faecc8;
+  --wn: #7a5300;
+  --wnb: #f3e7c4;
 
   --bd: #a8261f;
-  --bdb: #fadedb;
+  --bdb: #f4dcd6;
 
   --in: #1b5a9c;
   --inb: #dde9f6;
 
   --ct: #d4533c;
   --ch: #2f7fd0;
+
+  /* Token baru */
+  --fo: #0f2b1d;      /* panel sidebar */
+  --fo-tx: #e9eadf;
+  --fo-mu: #a8b8a0;
+  --em: #1f7a52;      /* emerald (hover) */
+  --gold: #c4a76a;    /* champagne */
+  --radius: 14px;
+  --ease: 0.45s ease;
 }
 
 /* ===== Warna (gelap, mengikuti pengaturan perangkat) ===== */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #101613;
-    --sf: #18211c;
-    --tx: #e6eee9;
-    --mu: #91a299;
-    --ln: #2a362f;
+    --bg: #0c1a13;
+    --sf: #12251a;
+    --tx: #ecebe0;
+    --mu: #9fab9f;
+    --ln: #254033;
 
     --ac: #6fc597;
-    --acs: #1e3a2c;
+    --acs: #1b3a2a;
 
     --ok: #6fc597;
-    --okb: #1e3a2c;
+    --okb: #1b3a2a;
 
     --wn: #e8b94a;
-    --wnb: #3a2f14;
+    --wnb: #3a3420;
 
     --bd: #f08a84;
-    --bdb: #3d1d1b;
+    --bdb: #3d2622;
 
     --in: #7db3ea;
     --inb: #172a40;
 
     --ct: #ef6f58;
     --ch: #5aa2ec;
+
+    --fo: #0a1711;
+    --em: #6fc597;
   }
 }
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html,
@@ -71,58 +93,87 @@ body {
 body {
   background: var(--bg);
   color: var(--tx);
-  font: 400 15px/1.5 var(--font-figtree), system-ui, sans-serif;
+  font-family: var(--font-sans, var(--font-figtree, system-ui)), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tekstur grain sangat halus */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+h1,
+h2 {
+  font-family: var(--font-serif, Georgia), Georgia, serif;
 }
 
 /* ===== Kerangka halaman ===== */
 .app {
   display: grid;
-  grid-template-columns: 230px 1fr;
+  grid-template-columns: 240px 1fr;
   min-height: 100vh;
 }
 
 aside {
-  background: var(--sf);
-  border-right: 1px solid var(--ln);
-  padding: 20px 14px;
+  background: var(--fo);
+  color: var(--fo-tx);
+  padding: 28px 16px;
 }
 
 .brand {
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 1.2;
+  font-family: var(--font-serif, Georgia), Georgia, serif;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.15;
+  padding: 0 12px;
 }
 
 .brand small {
   display: block;
+  font-family: var(--font-sans, var(--font-figtree, system-ui)), system-ui, sans-serif;
   font-weight: 400;
   font-size: 12px;
-  color: var(--mu);
-  margin-top: 4px;
+  color: var(--fo-mu);
+  margin-top: 6px;
 }
 
 nav {
-  margin-top: 22px;
+  margin-top: 28px;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
 nav a {
-  padding: 9px 12px;
-  border-radius: 8px;
-  color: var(--mu);
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--fo-mu);
   text-decoration: none;
   font-weight: 500;
+  transition: background var(--ease), color var(--ease);
+}
+
+nav a:hover {
+  color: var(--fo-tx);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 nav a.on {
-  background: var(--acs);
-  color: var(--ac);
+  background: rgba(196, 167, 106, 0.16);
+  color: var(--gold);
 }
 
 main {
-  padding: 20px;
+  padding: 28px;
   min-width: 0;
   width: 100%;
 }
@@ -133,17 +184,19 @@ main {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 h1 {
-  font-size: 22px;
+  font-size: 32px;
+  line-height: 1.1;
   margin: 0;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .top p {
-  margin: 0;
+  margin: 4px 0 0;
   color: var(--mu);
   font-size: 13px;
 }
@@ -175,8 +228,8 @@ h1 {
 /* ===== Grid dan kartu ===== */
 .grid {
   display: grid;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .g4 {
@@ -194,15 +247,20 @@ h1 {
 .c {
   background: var(--sf);
   border: 1px solid var(--ln);
-  border-radius: 10px;
-  padding: 16px;
+  border-radius: var(--radius);
+  padding: 20px;
   min-width: 0;
+  transition: border-color var(--ease);
+}
+
+.c:hover {
+  border-color: var(--gold);
 }
 
 .c h2 {
-  font-size: 15px;
-  margin: 0 0 12px;
-  font-weight: 700;
+  font-size: 20px;
+  margin: 0 0 14px;
+  font-weight: 600;
 }
 
 .lbl {
@@ -211,9 +269,10 @@ h1 {
 }
 
 .big {
-  font-size: 30px;
-  font-weight: 700;
-  line-height: 1.2;
+  font-family: var(--font-serif, Georgia), Georgia, serif;
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 1.15;
 }
 
 .rng {
@@ -235,7 +294,7 @@ h1 {
 .note {
   margin-top: 10px;
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 13px;
 }
 
@@ -264,7 +323,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 9px 0;
+  padding: 10px 0;
   border-top: 1px solid var(--ln);
 }
 
@@ -295,16 +354,23 @@ h1 {
 button {
   font: inherit;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid var(--ln);
   background: var(--sf);
   color: var(--tx);
   padding: 9px 12px;
+  transition: background var(--ease), color var(--ease), border-color var(--ease);
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--gold);
 }
 
 button:focus-visible,
-input:focus-visible {
-  outline: 2px solid var(--ac);
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
 
@@ -329,8 +395,8 @@ input:focus-visible {
 .f {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .f label {
@@ -342,11 +408,12 @@ input:focus-visible {
 input {
   width: 100%;
   font: inherit;
-  padding: 8px 10px;
-  border-radius: 8px;
+  padding: 9px 11px;
+  border-radius: 10px;
   border: 1px solid var(--ln);
   background: var(--bg);
   color: var(--tx);
+  transition: border-color var(--ease);
 }
 
 .apply {
@@ -355,6 +422,11 @@ input {
   border-color: var(--ac);
   font-weight: 500;
   width: 100%;
+}
+
+.apply:hover:not(:disabled) {
+  background: var(--em);
+  border-color: var(--em);
 }
 
 .sw {
@@ -394,186 +466,13 @@ th {
   text-align: left;
   color: var(--mu);
   font-weight: 500;
-  padding: 6px 8px;
-  border-bottom: 1px solid var(--ln);
-}
-
-td {
   padding: 8px;
   border-bottom: 1px solid var(--ln);
 }
 
-/* ===== Layar kecil / HP ===== */
-@media (max-width: 860px) {
-  .app {
-    display: grid;
-    grid-template-columns: 1fr;
-    min-width: 0;
-    width: 100%;
-  }
-
-  aside {
-    width: 100%;
-    min-width: 0;
-    border-right: 0;
-    border-bottom: 1px solid var(--ln);
-    padding: 14px;
-    overflow: hidden;
-  }
-
-  .brand {
-    min-width: 0;
-  }
-
-  /*
-   * MENU HP
-   * 2 kolom, tidak horizontal scroll.
-   */
-  aside nav {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 6px !important;
-    width: 100%;
-    min-width: 0;
-    margin-top: 12px;
-    overflow: visible !important;
-  }
-
-  aside nav a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-width: 0;
-    padding: 9px 6px;
-    border-radius: 8px;
-    text-align: center;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    line-height: 1.25;
-  }
-
-  main {
-    padding: 14px;
-    min-width: 0;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-
-  .top {
-    align-items: flex-start;
-    width: 100%;
-    min-width: 0;
-  }
-
-  .top > * {
-    min-width: 0;
-    max-width: 100%;
-  }
-
-  .pills {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-  }
-
-  .pill {
-    min-width: 0;
-    max-width: 100%;
-    overflow-wrap: anywhere;
-  }
-
-  .g4,
-  .g2,
-  .g3,
-  .g2e {
-    grid-template-columns: 1fr;
-  }
-
-  .c {
-    min-width: 0;
-    max-width: 100%;
-    overflow: hidden;
-  }
-
-  .note {
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-
-  .big {
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-
-  .modes {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .mode {
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-
-  .f {
-    grid-template-columns: 1fr;
-  }
-
-  .row,
-  .row.between {
-    min-width: 0;
-    max-width: 100%;
-  }
-}
-
-/* ===== HP sangat kecil ===== */
-@media (max-width: 420px) {
-  aside {
-    padding: 12px 10px;
-  }
-
-  .brand {
-    font-size: 17px;
-  }
-
-  .brand small {
-    font-size: 11px;
-  }
-
-  aside nav {
-    gap: 5px !important;
-  }
-
-  aside nav a {
-    padding: 8px 4px;
-    font-size: 13px;
-  }
-
-  main {
-    padding: 10px;
-  }
-
-  .c {
-    padding: 14px;
-  }
-
-  .big {
-    font-size: 26px;
-  }
-
-  .modes {
-    gap: 5px;
-  }
-
-  .mode {
-    padding: 8px 4px;
-  }
-
-  .mode small {
-    font-size: 10px;
-  }
+td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--ln);
 }
 
 /* ===== F2: halaman login dan tombol nonaktif ===== */
@@ -582,25 +481,28 @@ td {
   display: grid;
   place-items: center;
   padding: 20px;
+  background: radial-gradient(ellipse at 50% 0%, var(--acs), var(--bg) 70%);
 }
 
 .login-card {
+  position: relative;
+  z-index: 2;
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   background: var(--sf);
   border: 1px solid var(--ln);
-  border-radius: 12px;
-  padding: 28px;
+  border-radius: 18px;
+  padding: 34px;
 }
 
 .login-card h1 {
-  font-size: 20px;
+  font-size: 28px;
 }
 
 .login-card p {
   color: var(--mu);
   font-size: 13px;
-  margin: 4px 0 20px;
+  margin: 6px 0 22px;
 }
 
 .login-card label {
@@ -637,8 +539,8 @@ input:disabled {
 select {
   width: 100%;
   font: inherit;
-  padding: 8px 10px;
-  border-radius: 8px;
+  padding: 9px 11px;
+  border-radius: 10px;
   border: 1px solid var(--ln);
   background: var(--bg);
   color: var(--tx);
@@ -659,7 +561,7 @@ td input {
 }
 
 .btn {
-  padding: 5px 12px;
+  padding: 6px 14px;
   font-size: 13px;
 }
 
@@ -700,12 +602,6 @@ td input {
 
 .page-note {
   margin-bottom: 12px;
-}
-
-@media (max-width: 860px) {
-  .g2e {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ===== Wi-Fi perangkat ===== */
@@ -758,17 +654,17 @@ td input {
   z-index: 30;
   background: var(--sf);
   border: 1px solid var(--ln);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   max-height: min(560px, calc(100vh - 120px));
   overflow-y: auto;
 }
 
 .wifi-pop h2 {
-  font-size: 15px;
+  font-size: 18px;
   margin: 0;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .wifi-now {
@@ -792,7 +688,7 @@ td input {
   margin: 10px 0 0;
   padding: 0;
   border: 1px solid var(--ln);
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -816,10 +712,7 @@ td input {
   padding: 10px 12px;
 }
 
-.wifi-item:hover:not(:disabled) {
-  background: var(--acs);
-}
-
+.wifi-item:hover:not(:disabled),
 .wifi-item.on {
   background: var(--acs);
 }
@@ -871,7 +764,160 @@ td input {
   margin-top: 0;
 }
 
-@media (max-width: 860px) {
+/* ===== Komponen yang desktop-nya tabel, HP-nya daftar ===== */
+.alarm-mobile,
+.alarm-page-mobile,
+.control-log-page-mobile,
+.riwayat-table-mobile,
+.monitoring-statistics-mobile,
+.user-mobile-list,
+.perangkat-table-mobile {
+  display: none;
+}
+
+.monitoring-statistics-desktop {
+  display: block;
+}
+
+.user-table-desktop {
+  display: table !important;
+  width: 100%;
+}
+
+.perangkat-table-desktop {
+  display: block;
+}
+
+/* ===== Animasi: hormati preferensi pengguna ===== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  * {
+    transition: none !important;
+  }
+}
+
+/* =========================================================
+   LAYAR KECIL / HP  (maks 860px)
+   ========================================================= */
+@media screen and (max-width: 860px) {
+  .app {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-width: 0;
+    width: 100%;
+  }
+
+  aside {
+    width: 100%;
+    min-width: 0;
+    padding: 16px 14px;
+    overflow: hidden;
+  }
+
+  .brand {
+    min-width: 0;
+    padding: 0 4px;
+    font-size: 22px;
+  }
+
+  /* Menu HP: 2 kolom, tanpa scroll horizontal */
+  aside nav {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    width: 100%;
+    min-width: 0;
+    margin-top: 14px;
+    overflow: visible !important;
+  }
+
+  aside nav a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    padding: 9px 6px;
+    border-radius: 10px;
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.25;
+  }
+
+  main {
+    padding: 16px 14px;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .top {
+    align-items: flex-start;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .top > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .pills {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .pill {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .g4,
+  .g2,
+  .g3,
+  .g2e,
+  .f {
+    grid-template-columns: 1fr;
+  }
+
+  .c {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .note,
+  .big {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .modes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mode {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .row,
+  .row.between {
+    min-width: 0;
+    max-width: 100%;
+  }
+
   .wifi {
     position: static;
   }
@@ -883,22 +929,73 @@ td input {
     top: 84px;
     width: auto;
   }
-}
-/* ===== Alarm: responsive khusus HP ===== */
 
-.alarm-mobile {
-  display: none;
-}
+  /* ---------- Penjelasan mode ---------- */
+  .mode-explanation .tw {
+    width: 100%;
+    min-width: 0;
+    overflow: visible !important;
+  }
 
-@media screen and (max-width: 860px) {
+  .mode-explanation-table {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .mode-explanation-table thead {
+    display: none !important;
+  }
+
+  .mode-explanation-table tbody {
+    display: block !important;
+    width: 100%;
+  }
+
+  .mode-explanation-table tbody tr {
+    display: block !important;
+    width: 100% !important;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .mode-explanation-table tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .mode-explanation-table tbody td {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 3px 0;
+    border: 0 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .mode-explanation-table tbody td:first-child {
+    color: var(--tx);
+    font-size: 13px;
+    font-weight: 700;
+    padding-bottom: 6px;
+  }
+
+  .mode-explanation-table tbody td:last-child {
+    color: var(--mu);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* ---------- Alarm (ringkas, di dashboard) ---------- */
   .alarm-desktop {
     display: none !important;
-    visibility: hidden !important;
   }
 
   .alarm-mobile {
     display: block !important;
-    visibility: visible !important;
     width: 100%;
   }
 
@@ -939,158 +1036,8 @@ td input {
     text-align: center;
     font-size: 13px;
   }
-}
 
-@media screen and (max-width: 360px) {
-  .alarm-row {
-    grid-template-columns: 78px minmax(0, 1fr);
-    gap: 8px;
-  }
-}
-/* =========================================================
-   PENJELASAN MODE - MOBILE
-   Desktop tetap tabel
-   HP menjadi tampilan vertikal
-   ========================================================= */
-
-@media screen and (max-width: 860px) {
-  .mode-explanation .tw {
-    width: 100%;
-    min-width: 0;
-    overflow: visible !important;
-  }
-
-  .mode-explanation-table {
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    table-layout: auto;
-  }
-
-  .mode-explanation-table thead {
-    display: none !important;
-  }
-
-  .mode-explanation-table tbody {
-    display: block !important;
-    width: 100%;
-  }
-
-  .mode-explanation-table tbody tr {
-    display: block !important;
-    width: 100% !important;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--ln);
-  }
-
-  .mode-explanation-table tbody tr:last-child {
-    border-bottom: 0;
-  }
-
-  .mode-explanation-table tbody td {
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    padding: 3px 0;
-    border: 0 !important;
-    white-space: normal !important;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-
-  .mode-explanation-table tbody td:first-child {
-    color: var(--tx);
-    font-size: 13px;
-    font-weight: 700;
-    padding-bottom: 6px;
-  }
-
-  .mode-explanation-table tbody td:last-child {
-    color: var(--mu);
-    font-size: 13px;
-    line-height: 1.5;
-  }
-}
-/* =========================================================
-   PENJELASAN MODE - MOBILE
-   Desktop tetap tabel
-   HP menjadi tampilan vertikal
-   ========================================================= */
-
-@media screen and (max-width: 860px) {
-  .mode-explanation .tw {
-    width: 100%;
-    min-width: 0;
-    overflow: visible !important;
-  }
-
-  .mode-explanation-table {
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    table-layout: auto;
-  }
-
-  .mode-explanation-table thead {
-    display: none !important;
-  }
-
-  .mode-explanation-table tbody {
-    display: block !important;
-    width: 100%;
-  }
-
-  .mode-explanation-table tbody tr {
-    display: block !important;
-    width: 100% !important;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--ln);
-  }
-
-  .mode-explanation-table tbody tr:last-child {
-    border-bottom: 0;
-  }
-
-  .mode-explanation-table tbody td {
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    padding: 3px 0;
-    border: 0 !important;
-    white-space: normal !important;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-
-  .mode-explanation-table tbody td:first-child {
-    color: var(--tx);
-    font-size: 13px;
-    font-weight: 700;
-    padding-bottom: 6px;
-  }
-
-  .mode-explanation-table tbody td:last-child {
-    color: var(--mu);
-    font-size: 13px;
-    line-height: 1.5;
-  }
-}
-
-/* =========================================================
-   RIWAYAT DATA - RESPONSIVE
-   Desktop = tabel
-   HP = vertikal
-   ========================================================= */
-
-.riwayat-table-mobile {
-  display: none;
-}
-
-@media screen and (max-width: 860px) {
+  /* ---------- Riwayat data ---------- */
   .riwayat-table-desktop {
     display: none !important;
   }
@@ -1137,68 +1084,31 @@ td input {
     overflow-wrap: anywhere;
     word-break: break-word;
   }
-}
 
-@media screen and (max-width: 360px) {
-  .riwayat-data-row {
-    grid-template-columns: 90px minmax(0, 1fr);
-    gap: 8px;
-  }
-}
-
-
-
-/* =========================================================
-   STATISTIK MONITORING
-   ========================================================= */
-
-/* DESKTOP */
-.monitoring-statistics-desktop {
-  display: block;
-}
-
-.monitoring-statistics-mobile {
-  display: none;
-}
-
-
-/* =========================================================
-   HP
-   ========================================================= */
-
-@media screen and (max-width: 860px) {
-
-  /* Card statistik tidak boleh melebar */
+  /* ---------- Statistik monitoring ---------- */
   .c.monitoring-statistics {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
-    box-sizing: border-box !important;
     overflow: hidden !important;
   }
 
-  /* MATIKAN TABEL DESKTOP */
   .c.monitoring-statistics > .monitoring-statistics-desktop {
     display: none !important;
   }
 
-  /* NYALAKAN TAMPILAN HP */
   .c.monitoring-statistics > .monitoring-statistics-mobile {
     display: block !important;
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
-    box-sizing: border-box !important;
     overflow: hidden !important;
   }
 
-  /* Setiap parameter */
   .monitoring-stat-item {
     display: block !important;
     width: 100% !important;
-    max-width: 100% !important;
     min-width: 0 !important;
-    box-sizing: border-box !important;
     padding: 10px 0 !important;
     border-bottom: 1px solid var(--ln);
   }
@@ -1214,21 +1124,14 @@ td input {
     color: var(--tx) !important;
   }
 
-  /* Baris Terendah / Rata-rata / Tertinggi */
   .monitoring-stat-row {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-
     width: 100% !important;
-    max-width: 100% !important;
     min-width: 0 !important;
-
-    box-sizing: border-box !important;
-
     padding: 7px 0 !important;
     gap: 10px !important;
-
     border-bottom: 1px solid var(--ln);
   }
 
@@ -1252,36 +1155,18 @@ td input {
     font-weight: 600 !important;
   }
 
-  /* Catatan */
   .c.monitoring-statistics > .monitoring-stat-note {
     width: 100% !important;
-    max-width: 100% !important;
     min-width: 0 !important;
-    box-sizing: border-box !important;
     margin-top: 12px !important;
     overflow-wrap: anywhere !important;
   }
-}
 
-
-/* HP sangat kecil */
-@media screen and (max-width: 360px) {
-  .monitoring-stat-row {
-    gap: 6px !important;
-  }
-}
-
-/* =========================================================
-   THRESHOLD - TABEL NILAI YANG BERLAKU
-   KHUSUS HP
-   ========================================================= */
-
-@media screen and (max-width: 860px) {
+  /* ---------- Threshold: tabel nilai yang berlaku ---------- */
   .threshold-current {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
-    box-sizing: border-box !important;
     overflow: hidden !important;
   }
 
@@ -1292,7 +1177,6 @@ td input {
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
-    box-sizing: border-box !important;
   }
 
   .threshold-current-table table {
@@ -1301,24 +1185,12 @@ td input {
     max-width: 100% !important;
     min-width: 0 !important;
     table-layout: fixed !important;
-    box-sizing: border-box !important;
-  }
-
-  .threshold-current-table thead,
-  .threshold-current-table tbody {
-    width: 100% !important;
-  }
-
-  .threshold-current-table tr {
-    width: 100% !important;
   }
 
   .threshold-current-table th,
   .threshold-current-table td {
     min-width: 0 !important;
-    max-width: none !important;
     width: auto !important;
-    box-sizing: border-box !important;
     white-space: normal !important;
     overflow: hidden !important;
     overflow-wrap: anywhere !important;
@@ -1332,11 +1204,7 @@ td input {
   }
 
   .threshold-current-table th:nth-child(2),
-  .threshold-current-table td:nth-child(2) {
-    width: 27.5% !important;
-    text-align: center !important;
-  }
-
+  .threshold-current-table td:nth-child(2),
   .threshold-current-table th:nth-child(3),
   .threshold-current-table td:nth-child(3) {
     width: 27.5% !important;
@@ -1345,220 +1213,12 @@ td input {
 
   .threshold-current > .note {
     width: 100% !important;
-    max-width: 100% !important;
     min-width: 0 !important;
-    box-sizing: border-box !important;
     overflow-wrap: anywhere !important;
     word-break: normal !important;
   }
-}
 
-/* =========================================================
-   ALARM & LOG - RESPONSIVE HP
-   Desktop tidak berubah
-   ========================================================= */
-
-.alarm-page-mobile,
-.control-log-page-mobile {
-  display: none;
-}
-
-@media screen and (max-width: 860px) {
-  /* =========================
-     ALARM
-     ========================= */
-
-  .alarm-page-desktop {
-    display: none !important;
-  }
-
-  .alarm-page-mobile {
-    display: block !important;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-  }
-
-  .alarm-page-header {
-    display: block !important;
-    width: 100%;
-    min-width: 0;
-  }
-
-  .alarm-page-header h2 {
-    margin-bottom: 12px !important;
-  }
-
-  .alarm-page-actions {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 8px !important;
-    width: 100%;
-    min-width: 0;
-  }
-
-  .alarm-page-actions .btn {
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-  }
-
-  .alarm-page-item {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--ln);
-  }
-
-  .alarm-page-item:last-child {
-    border-bottom: 0;
-  }
-
-  .alarm-page-row {
-    display: grid;
-    grid-template-columns: minmax(80px, 35%) minmax(0, 1fr);
-    align-items: start;
-    gap: 10px;
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-    padding: 7px 0;
-  }
-
-  .alarm-page-row > span:first-child {
-    color: var(--mu);
-    font-size: 13px;
-    min-width: 0;
-  }
-
-  .alarm-page-row > strong {
-    color: var(--tx);
-    font-size: 13px;
-    font-weight: 500;
-    min-width: 0;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    text-align: right;
-  }
-
-  .alarm-page-row > span:last-child {
-    min-width: 0;
-    text-align: right;
-    overflow-wrap: anywhere;
-  }
-
-  .alarm-page-description {
-    align-items: start;
-  }
-
-  .alarm-page-empty {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 24px 8px;
-    text-align: center;
-    color: var(--mu);
-    font-size: 13px;
-  }
-
-  /* =========================
-     LOG PERINTAH
-     ========================= */
-
-  .control-log-page-desktop {
-    display: none !important;
-  }
-
-  .control-log-page-mobile {
-    display: block !important;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-  }
-
-  .control-log-page-item {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--ln);
-  }
-
-  .control-log-page-item:last-child {
-    border-bottom: 0;
-  }
-
-  .control-log-page-row {
-    display: grid;
-    grid-template-columns: minmax(80px, 35%) minmax(0, 1fr);
-    align-items: start;
-    gap: 10px;
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-    padding: 7px 0;
-  }
-
-  .control-log-page-row > span:first-child {
-    color: var(--mu);
-    font-size: 13px;
-    min-width: 0;
-  }
-
-  .control-log-page-row > strong {
-    color: var(--tx);
-    font-size: 13px;
-    font-weight: 500;
-    min-width: 0;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    text-align: right;
-  }
-
-  .control-log-page-description > strong {
-    text-align: left;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-
-  .control-log-page-empty {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 24px 8px;
-    text-align: center;
-    color: var(--mu);
-    font-size: 13px;
-  }
-}
-
-@media screen and (max-width: 360px) {
-  .alarm-page-row,
-  .control-log-page-row {
-    grid-template-columns: 75px minmax(0, 1fr);
-    gap: 8px;
-  }
-
-  .alarm-page-row > strong,
-  .control-log-page-row > strong {
-    font-size: 12px;
-  }
-}
-
-/* =========================================================
-   FINAL MOBILE - ALARM & LOG
-   ========================================================= */
-
-.alarm-page-mobile,
-.control-log-page-mobile {
-  display: none;
-}
-
-@media screen and (max-width: 860px) {
-
+  /* ---------- Halaman Alarm & Log ---------- */
   .alarm-page-desktop,
   .control-log-page-desktop {
     display: none !important;
@@ -1570,13 +1230,17 @@ td input {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
-    box-sizing: border-box !important;
     overflow: hidden !important;
   }
 
   .alarm-page-header {
     display: block !important;
     width: 100% !important;
+    min-width: 0;
+  }
+
+  .alarm-page-header h2 {
+    margin-bottom: 12px !important;
   }
 
   .alarm-page-actions {
@@ -1588,7 +1252,7 @@ td input {
 
   .alarm-page-actions .btn {
     width: 100% !important;
-    box-sizing: border-box !important;
+    min-width: 0;
   }
 
   .alarm-page-item,
@@ -1597,10 +1261,14 @@ td input {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
-    box-sizing: border-box !important;
     padding: 12px 0 !important;
     border-bottom: 1px solid var(--ln);
     overflow: hidden !important;
+  }
+
+  .alarm-page-item:last-child,
+  .control-log-page-item:last-child {
+    border-bottom: 0;
   }
 
   .alarm-page-row,
@@ -1610,9 +1278,7 @@ td input {
     gap: 8px !important;
     align-items: start !important;
     width: 100% !important;
-    max-width: 100% !important;
     min-width: 0 !important;
-    box-sizing: border-box !important;
     padding: 7px 0 !important;
   }
 
@@ -1627,11 +1293,22 @@ td input {
   .control-log-page-row > strong {
     min-width: 0 !important;
     max-width: 100% !important;
+    color: var(--tx);
     font-size: 13px;
     font-weight: 500;
     overflow-wrap: anywhere !important;
     word-break: break-word !important;
     text-align: right !important;
+  }
+
+  .alarm-page-row > span:last-child {
+    min-width: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .alarm-page-description {
+    align-items: start;
   }
 
   .alarm-page-description > strong,
@@ -1642,218 +1319,17 @@ td input {
   .alarm-page-empty,
   .control-log-page-empty {
     width: 100% !important;
-    box-sizing: border-box !important;
     padding: 24px 8px !important;
     text-align: center !important;
     color: var(--mu);
+    font-size: 13px;
   }
-}
 
-@media screen and (max-width: 360px) {
-  .alarm-page-row,
-  .control-log-page-row {
-    grid-template-columns: 78px minmax(0, 1fr) !important;
-    gap: 6px !important;
-  }
-}
-
-/* =========================================================
-   PENGGUNA - RESPONSIVE HP
-   ========================================================= */
-
-.user-table-wrap {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden !important;
-}
-
-.user-table {
-  width: 100% !important;
-  min-width: 0 !important;
-  table-layout: fixed !important;
-}
-
-.user-table th,
-.user-table td {
-  min-width: 0 !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  overflow-wrap: anywhere !important;
-  word-break: break-word !important;
-}
-
-/* Kolom email */
-.user-table th:nth-child(1),
-.user-table td:nth-child(1) {
-  width: 38% !important;
-}
-
-/* Kolom nama */
-.user-table th:nth-child(2),
-.user-table td:nth-child(2) {
-  width: 24% !important;
-}
-
-/* Kolom role */
-.user-table th:nth-child(3),
-.user-table td:nth-child(3) {
-  width: 20% !important;
-}
-
-/* Sembunyikan informasi tambahan di HP */
-.user-table th:nth-child(4),
-.user-table td:nth-child(4),
-.user-table th:nth-child(5),
-.user-table td:nth-child(5) {
-  display: none !important;
-}
-
-/* Kolom aksi */
-.user-table th:nth-child(6),
-.user-table td:nth-child(6) {
-  width: 18% !important;
-  text-align: center !important;
-}
-
-/* Select role jangan melebar keluar card */
-.user-table select {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  box-sizing: border-box !important;
-  padding: 7px 4px !important;
-}
-
-/* Tombol hapus tetap muat */
-.user-table .btn {
-  max-width: 100% !important;
-  padding: 7px 8px !important;
-  white-space: normal !important;
-}
-
-/* =========================================================
-   PENGGUNA - DESKTOP / HP
-   ========================================================= */
-
-.user-mobile-list {
-  display: none;
-}
-
-.user-mobile-card {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.user-mobile-field {
-  display: grid;
-  grid-template-columns: 110px minmax(0, 1fr);
-  align-items: center;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--ln);
-}
-
-.user-mobile-field > span {
-  color: var(--mu);
-  font-size: 13px;
-}
-
-.user-mobile-field > strong {
-  min-width: 0;
-  color: var(--tx);
-  font-size: 14px;
-  font-weight: 500;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-.user-mobile-field > strong small {
-  color: var(--mu);
-  font-weight: 400;
-}
-
-.user-mobile-field select {
-  width: 100%;
-  max-width: 150px;
-  box-sizing: border-box;
-}
-
-.user-mobile-delete {
-  margin-top: 12px;
-}
-
-@media screen and (max-width: 860px) {
+  /* ---------- Pengguna ---------- */
   .user-table-desktop {
     display: none !important;
   }
 
-  .user-mobile-card {
-    padding: 4px 0 16px 0;
-    margin-bottom: 16px;
-    border-bottom: 1px solid var(--ln);
-  }
-
-  .user-mobile-card:last-child {
-    margin-bottom: 0;
-    border-bottom: 0;
-  }
-
-  .user-mobile-field {
-    grid-template-columns: 105px minmax(0, 1fr);
-    width: 100%;
-    min-width: 0;
-  }
-
-  .user-mobile-field > strong {
-    min-width: 0;
-    max-width: 100%;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-
-  .user-mobile-field select {
-    min-width: 0;
-    max-width: 140px;
-  }
-
-  .user-mobile-delete {
-    width: auto !important;
-    max-width: 100%;
-  }
-}
-
-@media screen and (max-width: 360px) {
-  .user-mobile-field {
-    grid-template-columns: 90px minmax(0, 1fr);
-    gap: 8px;
-  }
-}
-
-/* =========================================================
-   PENGGUNA - RESPONSIVE
-   ========================================================= */
-
-/* DEFAULT: DESKTOP */
-.user-table-desktop {
-  display: table !important;
-  width: 100%;
-}
-
-.user-mobile-list {
-  display: none !important;
-}
-
-/* =========================================================
-   HP
-   ========================================================= */
-
-@media screen and (max-width: 860px) {
-  /* Sembunyikan tabel desktop */
-  .user-table-desktop {
-    display: none !important;
-  }
-
-  /* Tampilkan daftar pengguna versi HP */
   .user-mobile-list {
     display: flex !important;
     flex-direction: column;
@@ -1861,7 +1337,6 @@ td input {
     max-width: 100%;
     min-width: 0;
     gap: 10px;
-    box-sizing: border-box;
   }
 
   .user-mobile-card {
@@ -1870,7 +1345,6 @@ td input {
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    box-sizing: border-box;
     padding: 12px 0;
     border-bottom: 1px solid var(--ln);
     gap: 8px;
@@ -1887,7 +1361,6 @@ td input {
     gap: 10px;
     width: 100%;
     min-width: 0;
-    box-sizing: border-box;
   }
 
   .user-mobile-field > span {
@@ -1897,6 +1370,7 @@ td input {
 
   .user-mobile-field > strong {
     min-width: 0;
+    max-width: 100%;
     color: var(--tx);
     font-size: 13px;
     font-weight: 500;
@@ -1904,14 +1378,21 @@ td input {
     word-break: break-word;
   }
 
+  .user-mobile-field > strong small {
+    color: var(--mu);
+    font-weight: 400;
+  }
+
   .user-mobile-field > select {
     width: 100%;
     min-width: 0;
-    box-sizing: border-box;
+    max-width: 150px;
   }
 
   .user-mobile-delete {
     align-self: flex-start;
+    width: auto !important;
+    max-width: 100%;
     margin-top: 4px;
   }
 
@@ -1919,37 +1400,9 @@ td input {
     width: 100%;
     text-align: center;
     padding: 20px 10px;
-    box-sizing: border-box;
-  }
-}
-
-/* HP sangat kecil */
-@media screen and (max-width: 420px) {
-  .user-mobile-field {
-    grid-template-columns: 95px minmax(0, 1fr);
-    gap: 8px;
   }
 
-  .user-mobile-field > span,
-  .user-mobile-field > strong {
-    font-size: 13px;
-  }
-} 
-/* =========================================================
-   PERANGKAT - RESPONSIVE
-   ========================================================= */
-
-/* Desktop: hanya tampilkan tabel */
-.perangkat-table-desktop {
-  display: block !important;
-}
-
-.perangkat-table-mobile {
-  display: none !important;
-}
-
-/* HP */
-@media screen and (max-width: 860px) {
+  /* ---------- Perangkat ---------- */
   .perangkat-table-desktop {
     display: none !important;
   }
@@ -1962,7 +1415,6 @@ td input {
 
   .perangkat-item {
     width: 100%;
-    box-sizing: border-box;
     padding: 12px 0;
     border-bottom: 1px solid var(--ln);
   }
@@ -1989,5 +1441,94 @@ td input {
 
   .perangkat-actions .btn {
     flex: 1;
+  }
+}
+
+/* =========================================================
+   HP SANGAT KECIL (maks 420px)
+   ========================================================= */
+@media screen and (max-width: 420px) {
+  aside {
+    padding: 14px 10px;
+  }
+
+  .brand {
+    font-size: 20px;
+  }
+
+  .brand small {
+    font-size: 11px;
+  }
+
+  aside nav {
+    gap: 5px !important;
+  }
+
+  aside nav a {
+    padding: 8px 4px;
+    font-size: 13px;
+  }
+
+  main {
+    padding: 12px 10px;
+  }
+
+  .c {
+    padding: 16px;
+  }
+
+  .big {
+    font-size: 30px;
+  }
+
+  .modes {
+    gap: 5px;
+  }
+
+  .mode {
+    padding: 8px 4px;
+  }
+
+  .mode small {
+    font-size: 10px;
+  }
+
+  .user-mobile-field {
+    grid-template-columns: 95px minmax(0, 1fr);
+    gap: 8px;
+  }
+}
+
+/* =========================================================
+   HP KECIL (maks 360px)
+   ========================================================= */
+@media screen and (max-width: 360px) {
+  .alarm-row {
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .riwayat-data-row {
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .monitoring-stat-row {
+    gap: 6px !important;
+  }
+
+  .alarm-page-row,
+  .control-log-page-row {
+    grid-template-columns: 78px minmax(0, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .alarm-page-row > strong,
+  .control-log-page-row > strong {
+    font-size: 12px;
+  }
+
+  .user-mobile-field {
+    grid-template-columns: 90px minmax(0, 1fr);
   }
 }
