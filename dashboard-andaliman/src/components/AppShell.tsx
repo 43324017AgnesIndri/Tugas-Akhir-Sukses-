@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "./Sidebar";
+import WifiButton from "./WifiButton";
 import { useProfile } from "@/hooks/useProfile";
 import { signOut } from "@/lib/auth";
 
@@ -47,6 +48,7 @@ export default function AppShell({ title, subtitle, statusText, online, children
             {subtitle && <p>{subtitle}</p>}
           </div>
           <div className="pills">
+            <WifiButton isAdmin={profile?.role === "admin"} />
             <div className="pill">
               {online !== undefined && <span className={`dot ${online ? "" : "off"}`} />}
               <span>{text}</span>
