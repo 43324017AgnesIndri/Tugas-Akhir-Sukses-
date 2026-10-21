@@ -11,7 +11,25 @@ import mqtt, { MqttClient } from "mqtt";
 import { DEVICE_ID } from "./influx";
 
 // Disimpan di globalThis supaya reload otomatis Next.js (npm run dev) tidak membuat koneksi baru terus-menerus
-const g = globalThis as unknown as { __andalimanMqtt?: MqttClient };
+const g = globalThis as unknown as {
+  __andalimanMqtt?: MqttClient;
+  __andalimanMqttError?: string | null;
+};
+
+function statusError(err: Error): string {
+  const reason = err as Error & { code?: number | string; reasonCode?: number };
+  if (
+    reason.reasonCode === 5 ||
+    reason.code === 5 ||
+    /not authori[sz]ed|bad user ?name or password/i.test(err.message)
+  ) {
+    return "Autentikasi Mosquitto ditolak. Periksa MQTT_USERNAME dan MQTT_PASSWORD.";
+  }
+  if (/ECONNREFUSED|ENOTFOUND|EHOSTUNREACH|ETIMEDOUT|EAI_AGAIN/i.test(err.message)) {
+    return "Broker MQTT tidak dapat dijangkau. Periksa MQTT_URL dan pastikan Mosquitto berjalan.";
+  }
+  return "Koneksi ke broker MQTT gagal. Periksa konfigurasi Mosquitto.";
+}
 
 function getClient(): MqttClient {
   if (g.__andalimanMqtt) return g.__andalimanMqtt;
@@ -24,9 +42,26 @@ function getClient(): MqttClient {
     connectTimeout: 5000,
   });
 
-  client.on("error", (err) => console.error("[MQTT] error:", err.message));
+  g.__andalimanMqttError = null;
+  client.on("connect", () => {
+    g.__andalimanMqttError = null;
+  });
+  client.on("error", (err) => {
+    g.__andalimanMqttError = statusError(err);
+    console.error("[MQTT] error:", err.message);
+  });
   g.__andalimanMqtt = client;
   return client;
+}
+
+export function getMqttStatus(): { connected: boolean; error: string | null } {
+  const client = getClient();
+  return {
+    connected: client.connected,
+    error: client.connected
+      ? null
+      : g.__andalimanMqttError ?? "Sedang menghubungkan ke broker MQTT.",
+  };
 }
 
 // Topik perintah: andaliman/<DEVICE_ID>/cmd/<jenis>

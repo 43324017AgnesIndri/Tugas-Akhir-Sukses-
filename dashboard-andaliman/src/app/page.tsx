@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import AppShell from "@/components/AppShell";
 import StatCard from "@/components/StatCard";
 import EnvChart from "@/components/EnvChart";
@@ -10,6 +11,7 @@ import ManualControl from "@/components/ManualControl";
 import AlarmTable from "@/components/AlarmTable";
 import { useDevice } from "@/hooks/useDevice";
 import { useProfile } from "@/hooks/useProfile";
+import { useApi } from "@/hooks/useApi";
 import type { StatusInfo } from "@/lib/types";
 import { fmt, getStatus } from "@/lib/utils";
 
@@ -21,6 +23,19 @@ const NO_DATA: StatusInfo = { label: "Belum ada data", severity: "in" };
 export default function DashboardPage() {
   const d = useDevice();
   const { profile } = useProfile();
+  const mqtt = useApi<{ connected: boolean; error: string | null }>("/api/mqtt/status", 5000);
+  const [showMqttConnected, setShowMqttConnected] = useState(false);
+
+  useEffect(() => {
+    if (mqtt.data?.connected !== true) return;
+
+    const showTimer = setTimeout(() => setShowMqttConnected(true), 0);
+    const timeout = setTimeout(() => setShowMqttConnected(false), 3000);
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(timeout);
+    };
+  }, [mqtt.data?.connected]);
 
   const isAdmin = profile?.role === "admin";
   const th = d.thresholds;
@@ -47,9 +62,21 @@ export default function DashboardPage() {
           Anda login sebagai viewer. Anda dapat melihat data, tetapi tidak dapat mengubah pengaturan.
         </div>
       )}
-      {!CONTROL_READY && (
-        <div className="note tone-wn page-note">
-          Kontrol mode dan aktuator dari dashboard belum aktif (menunggu MQTT). Tampilan mode dan aktuator adalah status terakhir dari perangkat.
+      {mqtt.error ? (
+        <div className="note tone-bd page-note">
+          Status koneksi MQTT tidak dapat diperiksa: {mqtt.error}
+        </div>
+      ) : mqtt.loading && !mqtt.data ? (
+        <div className="note tone-wn page-note">Memeriksa koneksi ke broker MQTT...</div>
+      ) : mqtt.data?.connected ? (
+        showMqttConnected && (
+          <div className="note tone-ok page-note">Broker MQTT terhubung.</div>
+        )
+      ) : mqtt.data?.error === "Sedang menghubungkan ke broker MQTT." ? (
+        <div className="note tone-wn page-note">{mqtt.data.error}</div>
+      ) : (
+        <div className="note tone-bd page-note">
+          {mqtt.data?.error ?? "Broker MQTT belum terhubung."}
         </div>
       )}
       <div className="grid g3">
