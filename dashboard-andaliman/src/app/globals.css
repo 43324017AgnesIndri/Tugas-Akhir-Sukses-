@@ -87,6 +87,10 @@ body {
   margin: 0;
   padding: 0;
   max-width: 100%;
+}
+
+/* overflow-x hanya di html (bukan di body) agar sidebar sticky tetap berfungsi */
+html {
   overflow-x: hidden;
 }
 
@@ -126,16 +130,23 @@ h2 {
 aside {
   background: var(--fo);
   color: var(--fo-tx);
-  padding: 28px 16px;
+  padding: 34px 18px 22px;
   display: flex;
   flex-direction: column;
+  /* sidebar setinggi layar dan tetap saat halaman di-scroll,
+     sehingga foto selalu menempel di dasar */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  align-self: start;
+  overflow-y: auto;
 }
 
 .brand {
   font-family: var(--font-serif, Georgia), Georgia, serif;
   font-weight: 600;
-  font-size: 24px;
-  line-height: 1.15;
+  font-size: 28px;
+  line-height: 1.12;
   padding: 0 12px;
 }
 
@@ -149,18 +160,20 @@ aside {
 }
 
 nav {
-  margin-top: 28px;
+  margin-top: 34px;
+  margin-bottom: 30px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 5px;
 }
 
 nav a {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 10px;
+  gap: 14px;
+  padding: 13px 14px;
+  border-radius: 12px;
+  font-size: 15.5px;
   color: var(--fo-mu);
   text-decoration: none;
   font-weight: 500;
@@ -202,33 +215,43 @@ nav a svg {
   display: block;
   width: 100%;
   height: auto;
-  max-height: 100px;
-  margin-bottom: 14px;
+  max-height: 120px;
+  margin-bottom: 22px;
   opacity: 0.9;
 }
 
 .side-photo {
   position: relative;
-  margin-top: auto;
-  height: 240px;
-  border-radius: 18px;
+  flex: 0 0 auto;
+  height: 280px;               /* tinggi tetap: sama di semua halaman */
+  margin: auto -18px -22px;    /* menempel ke dasar, melebar ke tepi sidebar */
+  border: 0;
+  border-radius: 0;
   overflow: hidden;
-  border: 1px solid rgba(196, 167, 106, 0.35);
+  /* bagian atas foto memudar ke hijau sidebar */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 40%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 40%);
 }
 
-.side-photo img {
-  transition: transform 1.6s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-.side-photo:hover img {
-  transform: scale(1.05);
+/* Foto dipasang sebagai background (tanpa <img>) agar tidak ada
+   efek membesar/mengecil saat halaman berpindah */
+.side-photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--photo) center / cover no-repeat;
+  filter: saturate(0.7) brightness(1.15) contrast(0.92);
+  transform: none;
+  transition: none;
 }
 
 .side-photo::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(10, 23, 17, 0.85), transparent 60%);
+  background:
+    linear-gradient(to top, rgba(15, 43, 29, 0.92), rgba(15, 43, 29, 0.15) 65%),
+    rgba(31, 122, 82, 0.22); /* tint hijau agar senada */
 }
 
 .side-photo .cap {
@@ -894,6 +917,8 @@ td input {
   }
 
   aside {
+    position: static;
+    height: auto;
     width: 100%;
     min-width: 0;
     padding: 16px 14px;
@@ -919,6 +944,7 @@ td input {
     width: 100%;
     min-width: 0;
     margin-top: 14px;
+    margin-bottom: 0;
     overflow: visible !important;
   }
 

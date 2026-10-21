@@ -1,18 +1,21 @@
-import type { Metadata } from "next";
-import { Figtree } from "next/font/google";
+"use client";
+
+import type { ReactNode } from "react";
 import "./globals.css";
+import Sidebar from "@/components/Sidebar";
+import { useProfile } from "@/hooks/useProfile";
 
-const figtree = Figtree({ variable: "--font-figtree", subsets: ["latin"] });
+export default function AppLayout({ children }: { children: ReactNode }) {
+  const { profile } = useProfile();
 
-export const metadata: Metadata = {
-  title: "Andaliman Storage - Dashboard",
-  description: "Sistem kontrol lingkungan IoT untuk ruang penyimpanan andaliman",
-};
-
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="id">
-      <body className={figtree.variable}>{children}</body>
+      <body>
+        <div className="app">
+          <Sidebar isAdmin={profile?.role === "admin"} />
+          {children}
+        </div>
+      </body>
     </html>
   );
 }
