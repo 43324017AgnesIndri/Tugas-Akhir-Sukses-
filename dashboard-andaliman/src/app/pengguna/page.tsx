@@ -420,19 +420,15 @@ export default function PenggunaPage() {
           </div>
         </div>
 
+
         <button
           type="button"
           className="apply"
-          style={{
-            width: "auto",
-            padding: "9px 20px",
-          }}
+          style={{ width: "auto", padding: "9px 20px" }}
           disabled={busy}
           onClick={addUser}
         >
-          {busy
-            ? "Memproses..."
-            : "Buat pengguna"}
+          {busy ? "Memproses..." : "Buat pengguna"}
         </button>
       </div>
     </AppShell>
