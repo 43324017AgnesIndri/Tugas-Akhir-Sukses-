@@ -1146,199 +1146,8 @@ td input {
   }
 }
 
-/* =========================================================
-   DAFTAR PERANGKAT - RESPONSIVE
-   Desktop = tabel
-   HP = kartu vertikal
-   ========================================================= */
 
-.perangkat-table-mobile {
-  /* =========================================================
-   PERANGKAT - RESPONSIVE HP
-   Desktop tetap tabel
-   HP menjadi kartu vertikal
-   ========================================================= */
 
-.perangkat-table-mobile {
-  display: none !important;
-}
-
-.perangkat-table-desktop {
-  display: block;
-}
-
-@media screen and (max-width: 860px) {
-  /* Sembunyikan tabel desktop */
-  .perangkat-table-desktop {
-    display: none !important;
-  }
-
-  /* Tampilkan kartu HP */
-  .perangkat-table-mobile {
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    overflow: visible !important;
-  }
-
-  .perangkat-empty {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 16px 0;
-    color: var(--mu);
-    text-align: center;
-    font-size: 13px;
-  }
-
-  .perangkat-item {
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--ln);
-  }
-
-  .perangkat-item:last-child {
-    border-bottom: 0;
-  }
-
-  /* Baris label + nilai */
-  .perangkat-row {
-    display: grid !important;
-    grid-template-columns: 105px minmax(0, 1fr) !important;
-    gap: 10px !important;
-    align-items: start !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box;
-    padding: 6px 0 !important;
-    margin: 0 !important;
-  }
-
-  .perangkat-row > span:first-child {
-    display: block !important;
-    color: var(--mu);
-    font-size: 13px;
-    line-height: 1.4;
-  }
-
-  .perangkat-row strong {
-    display: block !important;
-    min-width: 0 !important;
-    color: var(--tx);
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1.4;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-
-  .perangkat-row input {
-    display: block;
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-  }
-
-  /* Status */
-  .perangkat-row > .b {
-    justify-self: start;
-    width: auto;
-  }
-
-  /* Tombol Ubah / Simpan / Batal */
-  .perangkat-actions {
-    display: flex !important;
-    flex-wrap: wrap;
-    gap: 8px;
-    width: 100%;
-    box-sizing: border-box;
-    margin-top: 8px;
-    padding-top: 10px;
-    border-top: 1px solid var(--ln);
-  }
-
-  .perangkat-actions .btn {
-    flex: 0 0 auto;
-  }
-}
-
-@media screen and (max-width: 360px) {
-  .perangkat-row {
-    grid-template-columns: 85px minmax(0, 1fr) !important;
-    gap: 8px !important;
-  }
-}
-
-  .perangkat-table-mobile {
-    display: block !important;
-    width: 100%;
-  }
-
-  .perangkat-empty {
-    padding: 16px 0;
-    color: var(--mu);
-    text-align: center;
-    font-size: 13px;
-  }
-
-  .perangkat-item {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--ln);
-  }
-
-  .perangkat-item:last-child {
-    border-bottom: 0;
-  }
-
-  .perangkat-row {
-    display: grid;
-    grid-template-columns: 105px minmax(0, 1fr);
-    gap: 10px;
-    align-items: center;
-    padding: 6px 0;
-  }
-
-  .perangkat-row > span:first-child {
-    color: var(--mu);
-    font-size: 12px;
-  }
-
-  .perangkat-row strong {
-    min-width: 0;
-    color: var(--tx);
-    font-size: 13px;
-    font-weight: 500;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-
-  .perangkat-row input {
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-  }
-
-  .perangkat-actions {
-    display: flex;
-    gap: 6px;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--ln);
-  }
-
-  .perangkat-actions .btn {
-    flex: 1;
-  }
-}
-
-@media screen and (max-width: 360px) {
-  .perangkat-row {
-    grid-template-columns: 90px minmax(0, 1fr);
-    gap: 8px;
-  }
-}
 /* =========================================================
    STATISTIK MONITORING
    ========================================================= */
@@ -1978,14 +1787,6 @@ td input {
     display: none !important;
   }
 
-  .user-mobile-list {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    overflow: visible !important;
-  }
-
   .user-mobile-card {
     padding: 4px 0 16px 0;
     margin-bottom: 16px;
@@ -2134,3 +1935,59 @@ td input {
     font-size: 13px;
   }
 } 
+/* =========================================================
+   PERANGKAT - RESPONSIVE
+   ========================================================= */
+
+/* Desktop: hanya tampilkan tabel */
+.perangkat-table-desktop {
+  display: block !important;
+}
+
+.perangkat-table-mobile {
+  display: none !important;
+}
+
+/* HP */
+@media screen and (max-width: 860px) {
+  .perangkat-table-desktop {
+    display: none !important;
+  }
+
+  .perangkat-table-mobile {
+    display: block !important;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .perangkat-item {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .perangkat-row {
+    display: grid;
+    grid-template-columns: 105px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+    min-width: 0;
+  }
+
+  .perangkat-row > * {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .perangkat-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .perangkat-actions .btn {
+    flex: 1;
+  }
+}
