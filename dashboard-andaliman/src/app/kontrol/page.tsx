@@ -31,7 +31,12 @@ export default function KontrolPage() {
       )}
 
       <div className="grid g3">
-        <ControlMode mode={ctl.mode} onChange={ctl.setMode} readOnly={!isAdmin || ctl.busy} />
+        <ControlMode
+          mode={ctl.mode}
+          safeReason={d?.safeReason ?? null}
+          onChange={ctl.setMode}
+          readOnly={!isAdmin || ctl.busy}
+        />
         <ManualControl
           actuators={ctl.actuators}
           enabled={isAdmin && !ctl.busy && ctl.mode === "MANUAL"}

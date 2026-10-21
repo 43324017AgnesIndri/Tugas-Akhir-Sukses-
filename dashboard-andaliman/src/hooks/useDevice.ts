@@ -11,9 +11,7 @@
     HistoryPoint,
     Thresholds,
   } from "@/lib/types";
-  import { DEFAULT_THRESHOLDS, severityFromStatus } from "@/lib/utils";
-
-  const EMPTY_ACTUATORS = { kompresor: false, fan: false, mist: false };
+  import { ACTUATORS_OFF, DEFAULT_THRESHOLDS, severityFromStatus } from "@/lib/utils";
 
   const jam = (iso: string) =>
     new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
@@ -173,8 +171,9 @@
       updatedAt: dashboard?.updatedAt ?? null,
       online: dashboard?.online ?? false,
       mode: dashboard?.mode ?? null,
-      actuators: dashboard?.actuators ?? EMPTY_ACTUATORS,
+      actuators: dashboard?.actuators ?? ACTUATORS_OFF,
       hasActuatorState: dashboard?.hasActuatorState ?? false,
+      safeReason: dashboard?.safeReason ?? null,
       history,
       alarms,
       thresholds,

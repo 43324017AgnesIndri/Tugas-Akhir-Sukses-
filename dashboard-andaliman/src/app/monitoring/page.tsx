@@ -15,6 +15,7 @@ import type {
 } from "@/lib/types";
 import {
   DEFAULT_THRESHOLDS,
+  ACTUATORS_OFF,
   RANGES,
   fmt,
   getStatus,
@@ -150,13 +151,7 @@ export default function MonitoringPage() {
 
         <ActuatorStatus
           mode={d?.mode ?? null}
-          actuators={
-            d?.actuators ?? {
-              kompresor: false,
-              fan: false,
-              mist: false,
-            }
-          }
+          actuators={d?.actuators ?? ACTUATORS_OFF}
           hasState={d?.hasActuatorState ?? false}
         />
       </div>
