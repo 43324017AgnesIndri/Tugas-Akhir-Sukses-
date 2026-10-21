@@ -132,3 +132,67 @@ td input { padding: 4px 8px; }
 .muted { color: var(--mu); font-size: 13px; }
 .page-note { margin-bottom: 12px; }
 @media (max-width: 860px) { .g2e { grid-template-columns: 1fr; } }
+
+/* ===== Wi-Fi perangkat (tombol di bagian atas dan panel pilih jaringan) ===== */
+.wifi { position: relative; display: flex; }
+.wifi-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; border: 1px solid var(--ln); background: var(--sf); border-radius: 20px; padding: 3px 14px; min-width: 84px; line-height: 1.1; }
+.wifi-st { font-size: 11px; font-weight: 500; white-space: nowrap; }
+.wifi-btn.tone-t-ok { color: var(--ok); }
+.wifi-btn.tone-t-bd { color: var(--bd); }
+.wifi-btn.tone-t-wn { color: var(--wn); }
+.wifi-btn.tone-t-mu { color: var(--mu); }
+.wifi-pop { position: absolute; right: 0; top: calc(100% + 8px); width: min(360px, calc(100vw - 32px)); z-index: 30; background: var(--sf); border: 1px solid var(--ln); border-radius: 12px; padding: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18); max-height: min(560px, calc(100vh - 120px)); overflow-y: auto; }
+.wifi-pop h2 { font-size: 15px; margin: 0; font-weight: 700; }
+.wifi-now { display: flex; flex-direction: column; gap: 2px; margin-top: 10px; }
+.wifi-gap { margin-top: 12px; }
+.wifi-foot { margin: 12px 0 0; font-size: 12px; }
+.wifi-list { list-style: none; margin: 10px 0 0; padding: 0; border: 1px solid var(--ln); border-radius: 8px; overflow: hidden; }
+.wifi-list li + li { border-top: 1px solid var(--ln); }
+.wifi-empty { padding: 10px 12px; }
+.wifi-item { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; border-radius: 0; background: transparent; text-align: left; padding: 10px 12px; }
+.wifi-item:hover:not(:disabled) { background: var(--acs); }
+.wifi-item.on { background: var(--acs); }
+.wifi-item:disabled { cursor: default; opacity: 0.85; }
+.wifi-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wifi-item .b { margin-top: 0; }
+.bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 16px; }
+.bars i { width: 3px; border-radius: 1px; background: var(--ln); display: inline-block; }
+.bars i.on { background: var(--ok); }
+.wifi-form { display: flex; flex-direction: column; gap: 8px; padding: 4px 12px 12px; background: var(--acs); }
+.wifi-form .note { margin-top: 0; }
+@media (max-width: 860px) {
+  .wifi { position: static; }
+  .wifi-pop { position: fixed; left: 16px; right: 16px; top: 84px; width: auto; }
+}
+
+/* ===== Wi-Fi perangkat (tombol di bagian atas dan panel pilih jaringan) ===== */
+.wifi { position: relative; display: flex; }
+.wifi-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; border: 1px solid var(--ln); background: var(--sf); border-radius: 20px; padding: 3px 14px; min-width: 84px; line-height: 1.1; }
+.wifi-st { font-size: 11px; font-weight: 500; white-space: nowrap; }
+.wifi-btn.tone-t-ok { color: var(--ok); }
+.wifi-btn.tone-t-bd { color: var(--bd); }
+.wifi-btn.tone-t-wn { color: var(--wn); }
+.wifi-btn.tone-t-mu { color: var(--mu); }
+.wifi-pop { position: absolute; right: 0; top: calc(100% + 8px); width: min(360px, calc(100vw - 32px)); z-index: 30; background: var(--sf); border: 1px solid var(--ln); border-radius: 12px; padding: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18); max-height: min(560px, calc(100vh - 120px)); overflow-y: auto; }
+.wifi-pop h2 { font-size: 15px; margin: 0; font-weight: 700; }
+.wifi-now { display: flex; flex-direction: column; gap: 2px; margin-top: 10px; }
+.wifi-gap { margin-top: 12px; }
+.wifi-foot { margin: 12px 0 0; font-size: 12px; }
+.wifi-list { list-style: none; margin: 10px 0 0; padding: 0; border: 1px solid var(--ln); border-radius: 8px; overflow: hidden; }
+.wifi-list li + li { border-top: 1px solid var(--ln); }
+.wifi-empty { padding: 10px 12px; }
+.wifi-item { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; border-radius: 0; background: transparent; text-align: left; padding: 10px 12px; }
+.wifi-item:hover:not(:disabled) { background: var(--acs); }
+.wifi-item.on { background: var(--acs); }
+.wifi-item:disabled { cursor: default; opacity: 0.85; }
+.wifi-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wifi-item .b { margin-top: 0; }
+.bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 16px; }
+.bars i { width: 3px; border-radius: 1px; background: var(--ln); display: inline-block; }
+.bars i.on { background: var(--ok); }
+.wifi-form { display: flex; flex-direction: column; gap: 8px; padding: 4px 12px 12px; background: var(--acs); }
+.wifi-form .note { margin-top: 0; }
+@media (max-width: 860px) {
+  .wifi { position: static; }
+  .wifi-pop { position: fixed; left: 16px; right: 16px; top: 84px; width: auto; }
+}
