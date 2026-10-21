@@ -36,6 +36,11 @@ export async function GET() {
 
     const modeRaw = String(pick(act, "mode")?._value ?? "").toUpperCase();
     const mode = (["AUTO", "MANUAL", "SAFE"].includes(modeRaw) ? modeRaw : null) as Mode | null;
+    const safeReasonRaw = String(pick(act, "safe_reason")?._value ?? "");
+const safeReason =
+  safeReasonRaw === "sensor_gagal" || safeReasonRaw === "dipilih_pengguna"
+    ? safeReasonRaw
+    : null;
 
     const body: DashboardData = {
       deviceId: DEVICE_ID,
@@ -43,6 +48,7 @@ export async function GET() {
       updatedAt: updatedMs ? new Date(updatedMs).toISOString() : null,
       online: updatedMs !== null && Date.now() - updatedMs < ONLINE_WITHIN_MS,
       mode,
+      safeReason,
       actuators: {
         kompresor: isOn(pick(act, "kompresor")?._value),
         buzzer: isOn(pick(act, "buzzer")?._value),

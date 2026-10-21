@@ -87,7 +87,12 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid g3">
-        <ControlMode mode={d.mode} onChange={() => {}} readOnly={!CONTROL_READY || !isAdmin} />
+       <ControlMode
+  mode={d.mode}
+  safeReason={d.safeReason}
+  onChange={() => {}}
+  readOnly={!CONTROL_READY || !isAdmin}
+/>
         <ThresholdForm
           key={d.thresholdsLoaded ? "loaded" : "loading"}
           thresholds={d.thresholds}

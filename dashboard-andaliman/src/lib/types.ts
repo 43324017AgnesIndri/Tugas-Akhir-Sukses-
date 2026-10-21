@@ -58,10 +58,11 @@ export interface Profile {
 // ===== F3: bentuk data dari API =====
 export interface DashboardData {
   deviceId: string;
-  reading: Reading | null; // null jika belum ada data di InfluxDB
-  updatedAt: string | null; // waktu data terakhir (ISO)
-  online: boolean; // true jika ada data baru dalam 3 menit terakhir
+  reading: Reading | null;
+  updatedAt: string | null;
+  online: boolean;
   mode: Mode | null;
+  safeReason: "sensor_gagal" | "dipilih_pengguna" | null;
   actuators: Actuators;
   hasActuatorState: boolean;
 }

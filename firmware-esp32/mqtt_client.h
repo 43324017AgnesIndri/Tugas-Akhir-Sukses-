@@ -172,11 +172,27 @@ inline bool mqttPublishData(float suhu, float lembap) {
   return mqtt.publish(tData, buf);
 }
 
-inline bool mqttPublishState(ControlMode mode, bool kompresor, bool buzzer, bool fan, bool mist) {
+inline bool mqttPublishState(ControlMode mode, bool autoSafe, bool kompresor, bool buzzer, bool fan, bool mist) {
   if (!mqtt.connected()) return false;
-  char buf[128];
-  snprintf(buf, sizeof(buf), "{\"kompresor\":%d,\"buzzer\":%d,\"fan\":%d,\"mist\":%d,\"mode\":\"%s\"}",
-           kompresor ? 1 : 0, buzzer ? 1 : 0, fan ? 1 : 0, mist ? 1 : 0, modeName(mode));
+
+  const char *safeReason = "";
+  if (mode == MODE_SAFE) {
+    safeReason = autoSafe ? "sensor_gagal" : "dipilih_pengguna";
+  }
+
+  char buf[192];
+  snprintf(
+    buf,
+    sizeof(buf),
+    "{\"kompresor\":%d,\"buzzer\":%d,\"fan\":%d,\"mist\":%d,\"mode\":\"%s\",\"safe_reason\":\"%s\"}",
+    kompresor ? 1 : 0,
+    buzzer ? 1 : 0,
+    fan ? 1 : 0,
+    mist ? 1 : 0,
+    modeName(mode),
+    safeReason
+  );
+
   return mqtt.publish(tState, buf);
 }
 

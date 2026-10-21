@@ -10,13 +10,22 @@ const NOTE: Record<Mode, { text: string; tone: Severity }> = {
 };
 
 interface Props {
-  mode: Mode | null; // null jika perangkat belum mengirim status
+  mode: Mode | null;
+  safeReason: "sensor_gagal" | "dipilih_pengguna" | null;
   onChange: (m: Mode) => void;
   readOnly?: boolean;
 }
 
-export default function ControlMode({ mode, onChange, readOnly = false }: Props) {
+export default function ControlMode({ mode, safeReason, onChange, readOnly = false }: Props) {
   const note = mode ? NOTE[mode] : { text: "Belum ada data mode dari perangkat.", tone: "in" as Severity };
+  const safeText =
+  mode === "SAFE"
+    ? safeReason === "sensor_gagal"
+      ? "SAFE aktif karena sensor gagal."
+      : safeReason === "dipilih_pengguna"
+        ? "SAFE aktif karena dipilih pengguna."
+        : "Alasan SAFE belum tersedia."
+    : null;
 
   return (
     <div className="c">
@@ -35,7 +44,10 @@ export default function ControlMode({ mode, onChange, readOnly = false }: Props)
           </button>
         ))}
       </div>
-      <div className={`note tone-${note.tone}`}>{note.text}</div>
+      <div className={`note tone-${note.tone}`}>
+  {note.text}
+  {safeText && <div>{safeText}</div>}
+</div>
     </div>
   );
 }
