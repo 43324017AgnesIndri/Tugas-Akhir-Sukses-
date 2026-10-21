@@ -4,12 +4,13 @@
 // Wi-Fi yang dipilih dari dashboard disimpan di memori ESP32 (NVS) dan dipakai lebih dulu saat menyala.
 // Jika Wi-Fi tersimpan tidak terjangkau, ESP32 bergantian mencoba Wi-Fi awal di config.h.
 //
-// Catatan: perintah dari dashboard lewat MQTT, jadi ESP32 harus sedang terhubung ke broker.
-// Jika Wi-Fi hilang total, ESP32 tidak bisa menerima perintah apa pun dari dashboard.
+// Jika ESP32 kehilangan Wi-Fi atau broker, portal setup lokal menyediakan jalur pemulihan
+// tanpa dashboard. Portal hanya aktif sementara selama koneksi belum pulih.
 
 #pragma once
 #include <WiFi.h>
 #include <Preferences.h>
+#include <WebServer.h>
 #include "config.h"
 #include "wifi_logic.h"
 #include "mqtt_client.h"
@@ -36,7 +37,119 @@ static bool scanBerjalan = false;
 static uint32_t scanMulai = 0;
 static char scanId[16] = "";
 
+static WebServer wifiSetupServer(80);
+static bool wifiPortalAktif = false;
+static char wifiPortalSsid[32] = "";
+static char wifiPortalPassword[9] = "";
+
 static void salin(char *tujuan, size_t ukuran, const char *sumber) { snprintf(tujuan, ukuran, "%s", sumber ? sumber : ""); }
+inline void wifiPermintaan(const char *aksi, const char *ssid, const char *pass, const char *id);
+
+// ---------- Portal lokal untuk pemulihan saat ESP32 tidak terhubung ke Wi-Fi ----------
+inline void wifiPortalMulai() {
+  if (wifiPortalAktif) return;
+  static uint32_t percobaanTerakhir = 0;
+  static bool pernahMencoba = false;
+  const uint32_t now = millis();
+  if (pernahMencoba && (uint32_t)(now - percobaanTerakhir) < 10000) return;
+  pernahMencoba = true;
+  percobaanTerakhir = now;
+
+  const uint64_t mac = ESP.getEfuseMac();
+  snprintf(wifiPortalSsid, sizeof(wifiPortalSsid), "ANDALIMAN-SETUP-%04X", (unsigned)(mac & 0xFFFF));
+  snprintf(wifiPortalPassword, sizeof(wifiPortalPassword), "%08X", (unsigned)(mac >> 16));
+
+  WiFi.mode(WIFI_AP_STA);
+  if (!WiFi.softAP(wifiPortalSsid, wifiPortalPassword)) {
+    Serial.println("[WiFi] gagal menyalakan portal setup");
+    return;
+  }
+
+  wifiSetupServer.on("/", HTTP_GET, []() {
+    static const char halaman[] = R"HTML(
+<!doctype html><html lang="id"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><title>Setup Wi-Fi Andaliman</title>
+<style>body{font:16px system-ui;max-width:520px;margin:32px auto;padding:0 16px;color:#18202a}input,select,button{box-sizing:border-box;width:100%;padding:12px;margin:8px 0}button{cursor:pointer}#status{padding:12px;background:#eef3f7;border-radius:8px}</style>
+<h1>Setup Wi-Fi Andaliman</h1><p>Pilih jaringan 2,4 GHz yang dapat menjangkau broker MQTT.</p>
+<button id="scan" type="button">Cari jaringan</button><form method="post" action="/connect">
+<label>Nama Wi-Fi (SSID)<select id="networks" name="ssid" required><option value="">Pilih jaringan...</option></select></label>
+<label>Password Wi-Fi<input name="password" type="password" maxlength="63" autocomplete="current-password"></label>
+<button type="submit">Hubungkan dan simpan</button></form><p id="status">Perangkat menunggu pengaturan.</p>
+<script>
+const list=document.querySelector("#networks"),status=document.querySelector("#status");
+document.querySelector("#scan").onclick=async()=>{status.textContent="Memindai jaringan...";try{const r=await fetch("/scan"),d=await r.json();list.replaceChildren(new Option("Pilih jaringan...",""));for(const n of d.networks){const o=new Option(`${n.ssid} (${n.rssi} dBm)${n.secure?" 🔒":""}`,n.ssid);list.add(o)}status.textContent=d.networks.length?`${d.networks.length} jaringan ditemukan.`:"Tidak ada jaringan ditemukan."}catch{status.textContent="Gagal memindai jaringan."}};
+async function check(){try{const r=await fetch("/status"),s=await r.json();if(s.result==="ok"){status.textContent="Berhasil terhubung ke Wi-Fi dan broker. Perangkat menyimpan jaringan ini.";return}if(s.result==="gagal_wifi")status.textContent="Gagal terhubung ke Wi-Fi. Periksa password dan sinyal.";else if(s.result==="gagal_broker")status.textContent="Wi-Fi terhubung tetapi broker MQTT tidak dapat dijangkau. Periksa jaringan dan alamat broker.";else if(s.connecting)status.textContent=`Sedang menguji koneksi ke ${s.target}...`;else if(s.mqtt)status.textContent=`Online melalui ${s.ssid}; siap menerima pengaturan.`}catch{}setTimeout(check,2000)}check();
+</script></html>)HTML";
+    wifiSetupServer.send(200, "text/html; charset=utf-8", halaman);
+  });
+
+  wifiSetupServer.on("/scan", HTTP_GET, []() {
+    const int count = WiFi.scanNetworks(false, false);
+    JsonDocument doc;
+    JsonArray networks = doc["networks"].to<JsonArray>();
+    for (int i = 0; i < count; i++) {
+      const String ssid = WiFi.SSID(i);
+      if (ssid.isEmpty()) continue;
+      JsonObject network = networks.add<JsonObject>();
+      network["ssid"] = ssid;
+      network["rssi"] = WiFi.RSSI(i);
+      network["secure"] = WiFi.encryptionType(i) != WIFI_AUTH_OPEN;
+    }
+    String response;
+    serializeJson(doc, response);
+    WiFi.scanDelete();
+    wifiSetupServer.send(200, "application/json", response);
+  });
+
+  wifiSetupServer.on("/connect", HTTP_POST, []() {
+    const String ssid = wifiSetupServer.arg("ssid");
+    const String password = wifiSetupServer.arg("password");
+    if (!wifiSsidValid(ssid.c_str()) || !wifiPassValid(password.c_str())) {
+      wifiSetupServer.send(400, "text/plain; charset=utf-8", "Nama atau password Wi-Fi tidak valid. Kembali dan periksa isian.");
+      return;
+    }
+    if (wifiSwitch.sibuk()) {
+      wifiSetupServer.send(409, "text/plain; charset=utf-8", "Perangkat sedang mencoba jaringan lain. Tunggu percobaan selesai.");
+      return;
+    }
+    wifiPermintaan("connect", ssid.c_str(), password.c_str(), "portal");
+    wifiSetupServer.send(200, "text/html; charset=utf-8",
+      "<meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>"
+      "<p>Pengaturan diterima. Biarkan halaman ini terbuka; perangkat sedang menguji Wi-Fi dan koneksi broker MQTT.</p>"
+      "<p><a href='/'>Kembali ke status</a></p>");
+  });
+
+  wifiSetupServer.on("/status", HTTP_GET, []() {
+    JsonDocument doc;
+    doc["mqtt"] = mqtt.connected();
+    doc["connecting"] = wifiSwitch.sibuk();
+    doc["ssid"] = WiFi.SSID();
+    doc["target"] = targetTerakhir;
+    const WifiHasil result = wifiSwitch.sibuk() ? WFH_BELUM : hasilTerakhir;
+    doc["result"] = wifiHasilNama(result);
+    String response;
+    serializeJson(doc, response);
+    wifiSetupServer.send(200, "application/json", response);
+  });
+
+  wifiSetupServer.onNotFound([]() {
+    wifiSetupServer.sendHeader("Location", "/", true);
+    wifiSetupServer.send(302, "text/plain", "");
+  });
+  wifiSetupServer.begin();
+  wifiPortalAktif = true;
+  Serial.printf("[WiFi] portal setup aktif\n  SSID: %s\n  Password: %s\n  Buka: http://192.168.4.1\n",
+                wifiPortalSsid, wifiPortalPassword);
+}
+
+static void wifiPortalBerhenti() {
+  if (!wifiPortalAktif) return;
+  wifiSetupServer.stop();
+  WiFi.softAPdisconnect(true);
+  WiFi.mode(WIFI_STA);
+  wifiPortalAktif = false;
+  Serial.println("[WiFi] portal setup dimatikan; Wi-Fi tersimpan dan broker terhubung");
+}
 
 // ---------- Penyimpanan Wi-Fi di memori ESP32 ----------
 inline void wifiMuat() {
@@ -74,8 +187,24 @@ static bool adaCadangan() { return strcmp(wifiSsid, WIFI_SSID) != 0 || strcmp(wi
 
 inline void wifiJaga(uint32_t now) {
   static uint32_t terakhirCoba = 0;
+  static uint32_t mulaiOffline = 0;
+  static bool pernahOnline = false;
   static bool pakaiCadangan = false;
-  if (wifiSwitch.sibuk() || WiFi.status() == WL_CONNECTED) { terakhirCoba = now; return; }
+  if (wifiSwitch.sibuk()) { terakhirCoba = now; return; }
+  if (WiFi.status() == WL_CONNECTED && mqtt.connected()) {
+    pernahOnline = true;
+    mulaiOffline = 0;
+    terakhirCoba = now;
+    wifiPortalBerhenti();
+    return;
+  }
+  if (mulaiOffline == 0) mulaiOffline = now;
+  const bool gagalWiFiSaatBoot = !pernahOnline && WiFi.status() != WL_CONNECTED && now >= 10000;
+  const bool offlineLama = (uint32_t)(now - mulaiOffline) >= 60000;
+  if (!wifiPortalAktif && (gagalWiFiSaatBoot || offlineLama)) {
+    wifiPortalMulai();
+  }
+  if (WiFi.status() == WL_CONNECTED) { terakhirCoba = now; return; }
   if ((uint32_t)(now - terakhirCoba) >= 30000) {  // 30 detik tanpa Wi-Fi: coba lagi
     terakhirCoba = now;
     WiFi.disconnect();
@@ -151,6 +280,8 @@ static void kerjakanScan(uint32_t now) {
 
 // Dipanggil tiap putaran loop()
 inline void wifiProses(uint32_t now) {
+  if (wifiPortalAktif) wifiSetupServer.handleClient();
+
   // 1. Mulai mencoba Wi-Fi baru
   if (reqConnect) {
     reqConnect = false;
@@ -180,6 +311,7 @@ inline void wifiProses(uint32_t now) {
       hasilTerakhir = WFH_OK;
       statusSegera = true;
       Serial.printf("[WiFi] berhasil pindah ke \"%s\" dan disimpan\n", wifiSsid);
+      wifiPortalBerhenti();
     } else if (a == WFA_KEMBALI_LAMA) {
       hasilTerakhir = wifiSwitch.hasil();
       Serial.printf("[WiFi] gagal pindah ke \"%s\" (%s), kembali ke \"%s\"\n", cobaSsid, wifiHasilNama(hasilTerakhir), wifiSsid);

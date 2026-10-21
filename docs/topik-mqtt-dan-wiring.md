@@ -86,11 +86,23 @@ Aturan keselamatan di ESP32 (`wifi_logic.h`, diuji di `test/`):
 - Wi-Fi yang tersimpan dipakai lebih dulu saat ESP32 menyala. Jika tidak terjangkau, ESP32 bergantian mencoba Wi-Fi di `config.h`.
 - Selama pindah Wi-Fi, ESP32 terputus dari dashboard sekitar 5-60 detik. Kontrol AUTO tetap berjalan.
 
-Batasan:
-- Perintah dikirim lewat MQTT, jadi ESP32 harus sedang online. Jika Wi-Fi hilang total (misalnya perangkat dibawa ke gedung lain), dashboard tidak bisa mengaturnya. Untuk kasus itu, perlu mode setup hotspot di ESP32 (belum dibuat) atau ubah `config.h`.
+Catatan:
+- Dashboard hanya dapat mengirim perintah selama ESP32 terhubung ke broker MQTT. Jika ESP32 offline, gunakan setup portal lokal di bawah ini.
 - ESP32 hanya mendeteksi Wi-Fi 2,4 GHz. Wi-Fi tersembunyi tidak muncul di daftar.
 - Password Wi-Fi lewat broker. Di jaringan lokal dengan port 1883 tanpa TLS, ini tidak terenkripsi. Saat broker dipindah online, wajib TLS (port 8883).
 - Wi-Fi dengan halaman login (hotel, kampus dengan captive portal) tidak bisa dipakai.
+
+## Setup Wi-Fi lokal saat ESP32 offline
+
+Jika ESP32 gagal terhubung ke Wi-Fi saat boot, ESP32 menyalakan access point sementara setelah 10 detik. Jika Wi-Fi atau broker MQTT terputus setelah perangkat pernah online, access point setup menyala setelah 60 detik offline. Fitur ini tidak memerlukan dashboard, broker MQTT, atau Node-RED untuk mengirim kredensial.
+
+1. Buka Serial Monitor Arduino IDE pada 115200 baud.
+2. Cari pesan `[WiFi] portal setup aktif`; catat nama jaringan `ANDALIMAN-SETUP-XXXX` dan password unik yang dicetak.
+3. Hubungkan laptop/HP ke jaringan setup tersebut. Koneksi internet perangkat akan terputus sementara.
+4. Buka `http://192.168.4.1`, tekan **Cari jaringan**, pilih Wi-Fi 2,4 GHz, isi password, lalu hubungkan.
+5. Perangkat menguji Wi-Fi baru dan koneksi ke broker MQTT. Kredensial hanya disimpan jika keduanya berhasil. Jika gagal, Wi-Fi sebelumnya tetap dipakai dan portal tetap tersedia untuk percobaan ulang.
+
+Setelah berhasil, portal setup dimatikan dan ESP32 kembali memakai Wi-Fi baru. Pastikan jaringan tersebut dapat menjangkau alamat `MQTT_HOST` di `config.h`; tanpa broker, perangkat tidak akan menyimpan Wi-Fi baru.
 
 ## Pin I2C
 

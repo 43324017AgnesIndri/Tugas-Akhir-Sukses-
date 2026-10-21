@@ -133,7 +133,8 @@ export default function WifiButton({ isAdmin }: { isAdmin: boolean }) {
                 <strong>Tidak terhubung</strong>
                 <span className="muted">
                   {w.status?.ssid ? `Terakhir terhubung ke "${w.status.ssid}". ` : ""}
-                  Perangkat harus online untuk menerima pengaturan Wi-Fi.
+                  Dashboard tidak dapat mengirim pengaturan saat perangkat offline. Sambungkan laptop/HP ke access point setup ESP32
+                  (nama dan password tampil di Serial Monitor 115200 baud), lalu buka http://192.168.4.1.
                 </span>
               </>
             )}
