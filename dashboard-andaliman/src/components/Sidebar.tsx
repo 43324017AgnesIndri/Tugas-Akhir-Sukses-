@@ -35,16 +35,10 @@ function Icon({ name }: { name: IconName }) {
   }
 }
 
-/* Ilustrasi ranting andaliman (SVG) */
+/* Ilustrasi ranting andaliman (SVG). Ukurannya diatur di globals.css (.side-sprig) */
 function Sprig() {
   return (
-    <svg
-      className="side-sprig"
-      viewBox="0 0 240 100"
-      fill="none"
-      aria-hidden="true"
-      style={{ display: "block", width: "100%", height: "auto", maxHeight: 100, marginBottom: 14 }}
-    >
+    <svg className="side-sprig" viewBox="0 0 240 100" fill="none" aria-hidden="true">
       <g stroke="var(--fo-mu)" strokeWidth="1.2" strokeLinejoin="round">
         <path d="M120 78C92 70 56 62 24 38C64 34 98 50 120 78Z" fill="rgba(168,184,160,.18)" />
         <path d="M120 78C148 70 184 62 216 38C176 34 142 50 120 78Z" fill="rgba(168,184,160,.18)" />
@@ -94,37 +88,16 @@ export default function Sidebar({
         })}
       </nav>
 
-      {/* Foto: style inline memastikan foto terkurung di kotak ini */}
-      <div
-        className="side-photo"
-        style={{
-          position: "relative",
-          marginTop: "auto",
-          height: 240,
-          borderRadius: 18,
-          overflow: "hidden",
-        }}
-      >
+      {/* Foto: ukuran dan efek diatur di globals.css (.side-photo) */}
+      <div className="side-photo">
         <Image
-          src="/images/andaliman3.png"
+          src="/images/andaliman-side.jpg"
           alt="Buah andaliman"
           fill
           sizes="240px"
           style={{ objectFit: "cover" }}
         />
-        <div
-          className="cap"
-          style={{
-            position: "absolute",
-            zIndex: 1,
-            left: 14,
-            right: 14,
-            bottom: 12,
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-          }}
-        >
+        <div className="cap">
           <strong>Postharvest Andaliman Storage</strong>
           <span>Pemantauan real-time untuk kualitas terbaik</span>
         </div>
