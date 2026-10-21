@@ -39,17 +39,44 @@ export default function PerangkatPage() {
   };
 
   const addDevice = async () => {
-    setBusy(true);
-    const r = await sendJson("POST", "/api/devices", { device_id: newId, nama: newNama, lokasi: newLokasi });
-    setMessage(r.ok ? { ok: true, text: "Perangkat ditambahkan." } : { ok: false, text: r.error ?? "Gagal." });
-    if (r.ok) {
-      setNewId("");
-      setNewNama("");
-      setNewLokasi("");
-    }
-    setBusy(false);
-    devices.reload();
-  };
+  if (!newId.trim() && !newNama.trim()) {
+  setMessage({ ok: false, text: "ID perangkat dan Nama perangkat wajib diisi." });
+  return;
+}
+
+if (!newId.trim()) {
+  setMessage({ ok: false, text: "ID perangkat wajib diisi." });
+  return;
+}
+
+if (!newNama.trim()) {
+  setMessage({ ok: false, text: "Nama perangkat wajib diisi." });
+  return;
+}
+
+  setBusy(true);
+
+  const r = await sendJson("POST", "/api/devices", {
+    device_id: newId.trim(),
+    nama: newNama.trim(),
+    lokasi: newLokasi.trim(),
+  });
+
+  setMessage(
+    r.ok
+      ? { ok: true, text: "Perangkat ditambahkan." }
+      : { ok: false, text: r.error ?? "Gagal menambahkan perangkat." }
+  );
+
+  if (r.ok) {
+    setNewId("");
+    setNewNama("");
+    setNewLokasi("");
+  }
+
+  setBusy(false);
+  devices.reload();
+};
 
   const list = devices.data?.devices ?? [];
 
