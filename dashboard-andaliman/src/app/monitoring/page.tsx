@@ -156,52 +156,84 @@ export default function MonitoringPage() {
         />
       </div>
 
-      <div className="c">
-        <h2>Statistik ({label} terakhir)</h2>
+      <div className="c monitoring-statistics">
+  <h2>Statistik ({label} terakhir)</h2>
 
-        <div className="tw">
-          <table>
-            <thead>
-              <tr>
-                <th>Parameter</th>
-                <th>Terendah</th>
-                <th>Rata-rata</th>
-                <th>Tertinggi</th>
-              </tr>
-            </thead>
+  {/* DESKTOP */}
+  <div className="tw monitoring-statistics-desktop">
+    <table>
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Terendah</th>
+          <th>Rata-rata</th>
+          <th>Tertinggi</th>
+        </tr>
+      </thead>
 
-            <tbody>
-              <tr>
-                <td>Suhu (°C)</td>
-                <td>{show(sT?.min)}</td>
-                <td>{show(sT?.avg)}</td>
-                <td>{show(sT?.max)}</td>
-              </tr>
+      <tbody>
+        <tr>
+          <td>Suhu (°C)</td>
+          <td>{show(sT?.min)}</td>
+          <td>{show(sT?.avg)}</td>
+          <td>{show(sT?.max)}</td>
+        </tr>
 
-              <tr>
-                <td>Kelembapan (%)</td>
-                <td>{show(sH?.min)}</td>
-                <td>{show(sH?.avg)}</td>
-                <td>{show(sH?.max)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <tr>
+          <td>Kelembapan (%)</td>
+          <td>{show(sH?.min)}</td>
+          <td>{show(sH?.avg)}</td>
+          <td>{show(sH?.max)}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-     
-        
+  {/* HP */}
+  <div className="monitoring-statistics-mobile">
+    <div className="monitoring-stat-item">
+      <strong>Suhu (°C)</strong>
 
-        <div
-          className="note tone-in"
-          style={{
-            backgroundColor: "lightblue",
-            color: "black",
-            border: "2px solid blue",
-          }}
-        >
-          Nilai dihitung dari rata-rata data per jendela waktu pada rentang yang dipilih
-        </div>
+      <div className="monitoring-stat-row">
+        <span>Terendah</span>
+        <span>{show(sT?.min)}</span>
       </div>
+
+      <div className="monitoring-stat-row">
+        <span>Rata-rata</span>
+        <span>{show(sT?.avg)}</span>
+      </div>
+
+      <div className="monitoring-stat-row">
+        <span>Tertinggi</span>
+        <span>{show(sT?.max)}</span>
+      </div>
+    </div>
+
+    <div className="monitoring-stat-item">
+      <strong>Kelembapan (%)</strong>
+
+      <div className="monitoring-stat-row">
+        <span>Terendah</span>
+        <span>{show(sH?.min)}</span>
+      </div>
+
+      <div className="monitoring-stat-row">
+        <span>Rata-rata</span>
+        <span>{show(sH?.avg)}</span>
+      </div>
+
+      <div className="monitoring-stat-row">
+        <span>Tertinggi</span>
+        <span>{show(sH?.max)}</span>
+      </div>
+    </div>
+  </div>
+
+  <div className="note tone-in monitoring-stat-note">
+    Nilai dihitung dari rata-rata data per jendela waktu pada rentang yang dipilih
+  </div>
+</div>
 
     </AppShell>
   );

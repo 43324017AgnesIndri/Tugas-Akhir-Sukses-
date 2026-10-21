@@ -15,19 +15,43 @@ export default function KontrolPage() {
   const { profile } = useProfile();
   const isAdmin = profile?.role === "admin";
   const d = dash.data;
-  const ctl = useControl(d?.mode ?? null, d?.actuators ?? ACTUATORS_OFF, d?.online ?? false);
+  const ctl = useControl(
+    d?.mode ?? null,
+    d?.actuators ?? ACTUATORS_OFF,
+    d?.online ?? false
+  );
 
   return (
     <AppShell
       title="Kontrol"
       subtitle="Mode kerja dan kontrol aktuator"
-      statusText={d ? (d.online ? "Perangkat online" : "Perangkat offline") : "Memuat data..."}
+      statusText={
+        d
+          ? d.online
+            ? "Perangkat online"
+            : "Perangkat offline"
+          : "Memuat data..."
+      }
       online={d?.online}
     >
-      {dash.error && <div className="note tone-bd page-note">{dash.error}</div>}
-      {ctl.notice && <div className={`note tone-${ctl.notice.ok ? "ok" : "bd"} page-note`}>{ctl.notice.text}</div>}
+      {dash.error && (
+        <div className="note tone-bd page-note">
+          {dash.error}
+        </div>
+      )}
+
+      {ctl.notice && (
+        <div
+          className={`note tone-${ctl.notice.ok ? "ok" : "bd"} page-note`}
+        >
+          {ctl.notice.text}
+        </div>
+      )}
+
       {profile && !isAdmin && (
-        <div className="note tone-in page-note">Akun viewer tidak dapat mengubah mode atau aktuator.</div>
+        <div className="note tone-in page-note">
+          Akun viewer tidak dapat mengubah mode atau aktuator.
+        </div>
       )}
 
       <div className="grid g3">
@@ -37,36 +61,57 @@ export default function KontrolPage() {
           onChange={ctl.setMode}
           readOnly={!isAdmin || ctl.busy}
         />
+
         <ManualControl
           actuators={ctl.actuators}
           enabled={isAdmin && !ctl.busy && ctl.mode === "MANUAL"}
           onChange={ctl.setActuator}
         />
-        <ActuatorStatus mode={ctl.mode} actuators={ctl.actuators} hasState={d?.hasActuatorState ?? false} title="Status aktuator" />
+
+        <ActuatorStatus
+          mode={ctl.mode}
+          actuators={ctl.actuators}
+          hasState={d?.hasActuatorState ?? false}
+          title="Status aktuator"
+        />
       </div>
 
-      <div className="c">
+      <div className="c mode-explanation">
         <h2>Penjelasan mode</h2>
+
         <div className="tw">
-          <table>
+          <table className="mode-explanation-table">
             <thead>
               <tr>
                 <th>Mode</th>
                 <th>Cara kerja</th>
               </tr>
             </thead>
+
             <tbody>
               <tr>
                 <td>AUTO</td>
-                <td>ESP32 mengendalikan kompresor, fan, dan mist maker sesuai threshold suhu dan kelembapan. Buzzer berbunyi jika suhu atau kelembapan bertahan di luar threshold.</td>
+                <td>
+                  ESP32 mengendalikan kompresor, fan, dan mist maker sesuai
+                  threshold suhu dan kelembapan. Buzzer berbunyi jika suhu atau
+                  kelembapan bertahan di luar threshold.
+                </td>
               </tr>
+
               <tr>
                 <td>MANUAL</td>
-                <td>Admin menyalakan atau mematikan setiap aktuator langsung dari dashboard.</td>
+                <td>
+                  Admin menyalakan atau mematikan setiap aktuator langsung dari
+                  dashboard.
+                </td>
               </tr>
+
               <tr>
                 <td>SAFE</td>
-                <td>Mode aman: semua aktuator dimatikan. Jika sensor gagal dibaca, ESP32 masuk mode ini sendiri dan buzzer berbunyi.</td>
+                <td>
+                  Mode aman: semua aktuator dimatikan. Jika sensor gagal dibaca,
+                  ESP32 masuk mode ini sendiri dan buzzer berbunyi.
+                </td>
               </tr>
             </tbody>
           </table>

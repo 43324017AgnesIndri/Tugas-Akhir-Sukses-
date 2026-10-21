@@ -30,9 +30,10 @@ export default function ThresholdPage() {
       <div className="grid g2e">
         <ThresholdForm key={thr.data ? "loaded" : "loading"} thresholds={th} onApply={onApply} readOnly={!isAdmin} />
 
-        <div className="c">
-          <h2>Nilai yang berlaku</h2>
-          <div className="tw">
+        <div className="c threshold-current">
+  <h2>Nilai yang berlaku</h2>
+  
+  <div className="tw threshold-current-table">
             <table>
               <thead>
                 <tr>
