@@ -3,7 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "./Sidebar";
-import WifiButton from "./WifiButton";
+import WifiButton from "./wifiButton";
 import { useProfile } from "@/hooks/useProfile";
 import { signOut } from "@/lib/auth";
 
