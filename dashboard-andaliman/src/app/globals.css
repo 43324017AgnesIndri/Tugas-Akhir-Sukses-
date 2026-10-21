@@ -884,3 +884,66 @@ td input {
     width: auto;
   }
 }
+.alarm-mobile {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .alarm-desktop {
+    display: none !important;
+  }
+
+  .alarm-mobile {
+    display: block !important;
+    width: 100%;
+  }
+
+  .alarm-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .alarm-item:first-child {
+    padding-top: 0;
+  }
+
+  .alarm-item:last-child {
+    border-bottom: 0;
+  }
+
+  .alarm-row {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    padding: 5px 0;
+  }
+
+  .alarm-row > span:first-child {
+    color: var(--mu);
+    font-size: 12px;
+  }
+
+  .alarm-row strong {
+    min-width: 0;
+    color: var(--tx);
+    font-size: 13px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .alarm-empty {
+    padding: 16px 0;
+    color: var(--mu);
+    text-align: center;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 360px) {
+  .alarm-row {
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 8px;
+  }
+}
