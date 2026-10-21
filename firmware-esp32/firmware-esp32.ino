@@ -174,8 +174,8 @@ void loop() {
             (control.out(ACT_FAN) ? 4 : 0) | (control.out(ACT_MIST) ? 8 : 0) | ((int)control.mode() << 4);
   bool terhubung = mqtt.connected();
   bool kirim = terhubung && (!terhubungSebelumnya || ttd != ttdTerakhir || (uint32_t)(now - terakhirState) >= STATE_INTERVAL_MS);
-  if (kirim && mqttPublishState(control.mode(), control.out(ACT_KOMPRESOR), control.out(ACT_BUZZER),
-                                control.out(ACT_FAN), control.out(ACT_MIST))) {
+ if (kirim && mqttPublishState(control.mode(), control.autoSafe(), control.out(ACT_KOMPRESOR),
+                              control.out(ACT_BUZZER), control.out(ACT_FAN), control.out(ACT_MIST))) {
     terakhirState = now;
     ttdTerakhir = ttd;
   }
