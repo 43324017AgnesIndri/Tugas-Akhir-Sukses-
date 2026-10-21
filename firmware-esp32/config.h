@@ -22,8 +22,8 @@
 // Nanti (broker online): isi dengan domain broker, lalu ubah MQTT_USE_TLS ke 1 dan MQTT_PORT ke 8883.
 #define MQTT_HOST       "192.168.1.23"
 #define MQTT_PORT       1883
-#define MQTT_USER       "esp32"     // pengguna Mosquitto untuk ESP32 (kosongkan jika broker tanpa login)
-#define MQTT_PASSWORD   "ISI_PASSWORD_MQTT_ESP32"
+#define MQTT_USER     "esp32"     // pengguna Mosquitto untuk ESP32 (kosongkan jika broker tanpa login)
+#define MQTT_PASSWORD "andaliman2026esp"
 #define MQTT_USE_TLS    0
 
 // Harus SAMA dengan DEVICE_ID di .env.local dashboard (default dashboard: andaliman01)
