@@ -444,16 +444,47 @@ h1 {
   gap: 8px;
 }
 
-.st i {
-  width: 9px;
-  height: 9px;
+.st-lights {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.st-light {
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: var(--ln);
   display: inline-block;
+  flex: 0 0 auto;
 }
 
-.st i.on {
-  background: var(--ok);
+.st-light-off.active {
+  background: #d64545;
+  box-shadow: 0 0 6px rgba(214, 69, 69, 0.55);
+}
+
+.st-light-on.active {
+  background: #28a66a;
+  box-shadow: 0 0 6px rgba(40, 166, 106, 0.55);
+}
+
+.actuator-source {
+  margin: -6px 0 8px;
+}
+
+.actuator-legend {
+  display: flex;
+  gap: 16px;
+  padding-top: 10px;
+  color: var(--mu);
+  font-size: 12px;
+}
+
+.actuator-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* ===== Tombol dan input ===== */

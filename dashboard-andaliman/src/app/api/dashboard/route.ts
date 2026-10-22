@@ -31,31 +31,35 @@ export async function GET() {
 
     const suhu = pick(env, "suhu");
     const lembap = pick(env, "kelembapan");
-    const times = env.map((r) => new Date(r._time).getTime());
-    const updatedMs = times.length > 0 ? Math.max(...times) : null;
+    const envTimes = env.map((r) => new Date(r._time).getTime());
+    const updatedMs = envTimes.length > 0 ? Math.max(...envTimes) : null;
+    const stateTimes = act.map((r) => new Date(r._time).getTime());
+    const stateUpdatedMs = stateTimes.length > 0 ? Math.max(...stateTimes) : null;
+    const now = Date.now();
+    const hasActuatorState =
+      stateUpdatedMs !== null && now >= stateUpdatedMs && now - stateUpdatedMs < ONLINE_WITHIN_MS;
 
-    const modeRaw = String(pick(act, "mode")?._value ?? "").toUpperCase();
+    const modeRaw = hasActuatorState ? String(pick(act, "mode")?._value ?? "").toUpperCase() : "";
     const mode = (["AUTO", "MANUAL", "SAFE"].includes(modeRaw) ? modeRaw : null) as Mode | null;
-    const safeReasonRaw = String(pick(act, "safe_reason")?._value ?? "");
-const safeReason =
-  safeReasonRaw === "sensor_gagal" || safeReasonRaw === "dipilih_pengguna"
-    ? safeReasonRaw
-    : null;
+    const safeReasonRaw = hasActuatorState ? String(pick(act, "safe_reason")?._value ?? "") : "";
+    const safeReason = safeReasonRaw === "sensor_gagal" || safeReasonRaw === "dipilih_pengguna" ? safeReasonRaw : null;
 
     const body: DashboardData = {
       deviceId: DEVICE_ID,
       reading: suhu && lembap ? { t: Number(suhu._value), h: Number(lembap._value) } : null,
       updatedAt: updatedMs ? new Date(updatedMs).toISOString() : null,
-      online: updatedMs !== null && Date.now() - updatedMs < ONLINE_WITHIN_MS,
+      online:
+        (updatedMs !== null && now >= updatedMs && now - updatedMs < ONLINE_WITHIN_MS) ||
+        hasActuatorState,
       mode,
       safeReason,
       actuators: {
-        kompresor: isOn(pick(act, "kompresor")?._value),
-        buzzer: isOn(pick(act, "buzzer")?._value),
-        fan: isOn(pick(act, "fan")?._value),
-        mist: isOn(pick(act, "mist")?._value),
+        kompresor: hasActuatorState && isOn(pick(act, "kompresor")?._value),
+        buzzer: hasActuatorState && isOn(pick(act, "buzzer")?._value),
+        fan: hasActuatorState && isOn(pick(act, "fan")?._value),
+        mist: hasActuatorState && isOn(pick(act, "mist")?._value),
       },
-      hasActuatorState: act.length > 0,
+      hasActuatorState,
     };
     return NextResponse.json(body);
   } catch (e) {

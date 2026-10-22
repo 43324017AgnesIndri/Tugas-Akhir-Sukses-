@@ -113,7 +113,7 @@ export default function DashboardPage() {
 
       <div className="grid g2">
         <EnvChart data={d.history} />
-        <ActuatorStatus mode={ctl.mode} actuators={ctl.actuators} hasState={d.hasActuatorState} />
+        <ActuatorStatus mode={d.mode} actuators={d.actuators} hasState={d.hasActuatorState} />
       </div>
 
       <div className="grid g3">
@@ -121,7 +121,7 @@ export default function DashboardPage() {
           mode={ctl.mode}
           safeReason={d.safeReason}
           onChange={ctl.setMode}
-          readOnly={!isAdmin || ctl.busy}
+          readOnly={!isAdmin || ctl.busy || !d.online || !d.hasActuatorState}
         />
         <ThresholdForm
           key={d.thresholdsLoaded ? "loaded" : "loading"}
@@ -131,7 +131,8 @@ export default function DashboardPage() {
         />
         <ManualControl
           actuators={ctl.actuators}
-          enabled={isAdmin && !ctl.busy && ctl.mode === "MANUAL"}
+          hasState={d.hasActuatorState}
+          enabled={isAdmin && !ctl.busy && d.online && d.hasActuatorState && d.mode === "MANUAL"}
           onChange={ctl.setActuator}
         />
       </div>

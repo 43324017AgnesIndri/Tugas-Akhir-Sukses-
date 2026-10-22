@@ -34,6 +34,7 @@ static float suhu = NAN, lembap = NAN;
 static bool sensorOk = false;
 static bool bacaSekarang = true;     // true = baca sensor dan jalankan kontrol di putaran berikutnya
 static uint8_t gagalBaca = 0;
+static bool statusDiminta = false;
 
 // ---------- Threshold: disimpan di memori ESP32 agar tetap ada setelah restart ----------
 static Thresholds muatThreshold() {
@@ -63,12 +64,19 @@ static void onMode(ControlMode m) {
   Serial.printf("[CMD] mode -> %s\n", modeName(m));
   control.setMode(m);
   bacaSekarang = true;
+  statusDiminta = true;
 }
 
 static void onActuator(ActuatorId id, bool on) {
-  Serial.printf("[CMD] aktuator %d -> %s (mode saat ini %s)\n", (int)id, on ? "ON" : "OFF", modeName(control.mode()));
-  control.setManual(id, on);  // hanya berpengaruh pada mode MANUAL
+  if (control.mode() != MODE_MANUAL) {
+    Serial.printf("[CMD] aktuator %d diabaikan: mode bukan MANUAL (%s)\n", (int)id, modeName(control.mode()));
+    statusDiminta = true;
+    return;
+  }
+  Serial.printf("[CMD] aktuator %d -> %s\n", (int)id, on ? "ON" : "OFF");
+  control.setManual(id, on);
   bacaSekarang = true;
+  statusDiminta = true;
 }
 
 static void onThreshold(const Thresholds &th) {
@@ -173,11 +181,14 @@ void loop() {
   int ttd = (control.out(ACT_KOMPRESOR) ? 1 : 0) | (control.out(ACT_BUZZER) ? 2 : 0) |
             (control.out(ACT_FAN) ? 4 : 0) | (control.out(ACT_MIST) ? 8 : 0) | ((int)control.mode() << 4);
   bool terhubung = mqtt.connected();
-  bool kirim = terhubung && (!terhubungSebelumnya || ttd != ttdTerakhir || (uint32_t)(now - terakhirState) >= STATE_INTERVAL_MS);
- if (kirim && mqttPublishState(control.mode(), control.autoSafe(), control.out(ACT_KOMPRESOR),
-                              control.out(ACT_BUZZER), control.out(ACT_FAN), control.out(ACT_MIST))) {
+  bool kirim = terhubung &&
+               (!terhubungSebelumnya || statusDiminta || ttd != ttdTerakhir ||
+                (uint32_t)(now - terakhirState) >= STATE_INTERVAL_MS);
+  if (kirim && mqttPublishState(control.mode(), control.autoSafe(), control.out(ACT_KOMPRESOR),
+                               control.out(ACT_BUZZER), control.out(ACT_FAN), control.out(ACT_MIST))) {
     terakhirState = now;
     ttdTerakhir = ttd;
+    statusDiminta = false;
   }
   terhubungSebelumnya = terhubung;
 

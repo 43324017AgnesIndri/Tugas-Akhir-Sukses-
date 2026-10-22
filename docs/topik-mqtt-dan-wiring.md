@@ -47,7 +47,7 @@ Nilai 60 detik, 120 detik, histeresis, dan jeda kompresor ada di `config.h`.
 | Topik | Arah | Isi | Retained |
 |---|---|---|---|
 | `andaliman/andaliman01/data` | ESP32 -> broker | `{"suhu":21.3,"kelembapan":73.4}` tiap 5 detik | tidak |
-| `andaliman/andaliman01/state` | ESP32 -> broker | `{"kompresor":1,"buzzer":0,"fan":0,"mist":0,"mode":"AUTO"}` saat berubah dan tiap 10 detik | tidak |
+| `andaliman/andaliman01/state` | ESP32 -> broker | `{"kompresor":1,"buzzer":0,"fan":0,"mist":0,"mode":"AUTO","safe_reason":""}` saat berubah (termasuk setelah perintah dashboard) dan tiap 10 detik | tidak |
 | `andaliman/andaliman01/status` | ESP32 / broker | `online` atau `offline` (Last Will) | ya |
 | `andaliman/andaliman01/cmd/mode` | dashboard -> ESP32 | `{"mode":"AUTO"}` / `MANUAL` / `SAFE` | tidak |
 | `andaliman/andaliman01/cmd/actuator` | dashboard -> ESP32 | `{"target":"kompresor","state":true}` (`buzzer`, `fan`, `mist`) | tidak |
@@ -56,7 +56,7 @@ Nilai 60 detik, 120 detik, histeresis, dan jeda kompresor ada di `config.h`.
 | `andaliman/andaliman01/wifi` | ESP32 -> broker | `{"connected":1,"ssid":"..","rssi":-55,"ip":"..","hasil":"ok","target":"..","id":".."}` saat terhubung ke broker, saat ada hasil, dan tiap 15 detik | tidak |
 | `andaliman/andaliman01/wifi/scan` | ESP32 -> broker | `{"id":"..","networks":[{"s":"nama","r":-55,"x":1}]}` (maks. 8 jaringan, sinyal terkuat dulu) | tidak |
 
-Perintah mode dan aktuator sengaja tidak retained: setelah ESP32 restart ia kembali ke AUTO, bukan terjebak di MANUAL dengan relay menyala.
+Perintah mode dan aktuator sengaja tidak retained: setelah ESP32 restart ia kembali ke AUTO, bukan terjebak di MANUAL dengan relay menyala. Tombol aktuator hanya diterapkan firmware saat mode MANUAL; ESP32 segera mengirim status relay setelah menerima perintah. Status di dashboard mengikuti laporan ESP32 dan dianggap tidak tersedia jika laporan terakhir lebih dari 30 detik. Lampu hijau berarti output relay diperintahkan ON, lampu merah berarti OFF. Ini bukan pengukuran arus/bukti bahwa beban listrik secara fisik menyala.
 Threshold retained: ESP32 yang baru menyala langsung menerima nilai terakhir, dan juga menyimpannya di memorinya sendiri.
 
 ## Skema InfluxDB (dibaca dashboard, ditulis Node-RED)
@@ -64,7 +64,7 @@ Threshold retained: ESP32 yang baru menyala langsung menerima nilai terakhir, da
 | Measurement | Tag | Field |
 |---|---|---|
 | `environment` | `device_id` | `suhu` (float), `kelembapan` (float) |
-| `actuator_state` | `device_id` | `kompresor`, `buzzer`, `fan`, `mist` (integer 0/1), `mode` (string) |
+| `actuator_state` | `device_id` | `kompresor`, `buzzer`, `fan`, `mist` (integer 0/1), `mode`, `safe_reason` (string) |
 | `wifi_state` | `device_id` | `connected`, `rssi` (integer), `ssid`, `ip`, `hasil`, `target`, `id` (string) |
 | `wifi_scan` | `device_id` | `networks` (string berisi JSON daftar jaringan), `id` (string) |
 

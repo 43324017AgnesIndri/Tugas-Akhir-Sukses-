@@ -59,18 +59,19 @@ export default function KontrolPage() {
           mode={ctl.mode}
           safeReason={d?.safeReason ?? null}
           onChange={ctl.setMode}
-          readOnly={!isAdmin || ctl.busy}
+          readOnly={!isAdmin || ctl.busy || d?.online !== true || !d.hasActuatorState}
         />
 
         <ManualControl
           actuators={ctl.actuators}
-          enabled={isAdmin && !ctl.busy && ctl.mode === "MANUAL"}
+          hasState={d?.hasActuatorState ?? false}
+          enabled={isAdmin && !ctl.busy && d?.online === true && d.hasActuatorState && d.mode === "MANUAL"}
           onChange={ctl.setActuator}
         />
 
         <ActuatorStatus
-          mode={ctl.mode}
-          actuators={ctl.actuators}
+          mode={d?.mode ?? null}
+          actuators={d?.actuators ?? ACTUATORS_OFF}
           hasState={d?.hasActuatorState ?? false}
           title="Status aktuator"
         />

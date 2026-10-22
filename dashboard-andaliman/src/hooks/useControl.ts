@@ -1,13 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { sendJson } from "@/lib/client";
 import type { ActuatorKey, Actuators, Mode } from "@/lib/types";
-import { ACTUATORS_OFF } from "@/lib/utils";
-
-// Status di dashboard berasal dari InfluxDB (diperbarui tiap 5 detik setelah ESP32 menjawab).
-// Agar tombol terasa langsung merespons, nilai yang baru dikirim ditampilkan dulu selama HOLD_MS.
-const HOLD_MS = 10000;
 
 export interface ControlNotice {
   ok: boolean;
@@ -15,28 +10,8 @@ export interface ControlNotice {
 }
 
 export function useControl(serverMode: Mode | null, serverActuators: Actuators, online: boolean) {
-  const [modeHold, setModeHold] = useState<Mode | null>(null);
-  const [actHold, setActHold] = useState<Partial<Actuators>>({});
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<ControlNotice | null>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(
-    () => () => {
-      if (timer.current) clearTimeout(timer.current);
-    },
-    []
-  );
-
-  const hold = useCallback((mode: Mode | null, acts: Partial<Actuators>) => {
-    setModeHold(mode);
-    setActHold(acts);
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => {
-      setModeHold(null);
-      setActHold({});
-    }, HOLD_MS);
-  }, []);
 
   const send = useCallback(
     async (body: object): Promise<boolean> => {
@@ -60,23 +35,17 @@ export function useControl(serverMode: Mode | null, serverActuators: Actuators, 
 
   const setMode = useCallback(
     async (m: Mode) => {
-      if (!(await send({ type: "mode", value: m }))) return;
-      // SAFE mematikan semua aktuator; AUTO dikendalikan perangkat sehingga tidak ditebak di sini
-      hold(m, m === "SAFE" ? ACTUATORS_OFF : {});
+      await send({ type: "mode", value: m });
     },
-    [send, hold]
+    [send]
   );
 
   const setActuator = useCallback(
     async (key: ActuatorKey, on: boolean) => {
-      if (!(await send({ type: "actuator", target: key, state: on }))) return;
-      hold(modeHold, { ...actHold, [key]: on });
+      await send({ type: "actuator", target: key, state: on });
     },
-    [send, hold, modeHold, actHold]
+    [send]
   );
 
-  const mode = modeHold ?? serverMode;
-  const actuators: Actuators = { ...serverActuators, ...actHold };
-
-  return { mode, actuators, busy, notice, setMode, setActuator };
+  return { mode: serverMode, actuators: serverActuators, busy, notice, setMode, setActuator };
 }
