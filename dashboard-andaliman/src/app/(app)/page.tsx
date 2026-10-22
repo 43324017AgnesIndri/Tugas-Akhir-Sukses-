@@ -5,11 +5,8 @@ import AppShell from "@/components/AppShell";
 import StatCard from "@/components/StatCard";
 import EnvChart from "@/components/EnvChart";
 import ActuatorStatus from "@/components/ActuatorStatus";
-import ControlMode from "@/components/ControlMode";
 import ThresholdForm from "@/components/ThresholdForm";
-import ManualControl from "@/components/ManualControl";
 import AlarmTable from "@/components/AlarmTable";
-import { useControl } from "@/hooks/useControl";
 import { useDevice } from "@/hooks/useDevice";
 import { useProfile } from "@/hooks/useProfile";
 import { useApi } from "@/hooks/useApi";
@@ -23,7 +20,6 @@ const CHART_RANGES: HistoryRange[] = ["1h", "6h", "24h"];
 export default function DashboardPage() {
   const [chartRange, setChartRange] = useState<HistoryRange>("6h");
   const d = useDevice(chartRange);
-  const ctl = useControl(d.mode, d.actuators, d.online);
   const { profile } = useProfile();
   const mqtt = useApi<{ connected: boolean; error: string | null }>("/api/mqtt/status", 5000);
   const [showMqttConnected, setShowMqttConnected] = useState(false);
@@ -54,7 +50,7 @@ export default function DashboardPage() {
         : "Perangkat offline";
 
   return (
-    <AppShell title="Dashboard" subtitle="Ringkasan kondisi perangkat, kontrol, threshold, dan alarm" statusText={statusText} online={d.online}>
+    <AppShell title="Dashboard" subtitle="Ringkasan kondisi perangkat, threshold, dan alarm" statusText={statusText} online={d.online}>
       {d.error && (
         <div className="note tone-bd page-note">
           Data perangkat sedang tidak dapat diakses. Silakan coba lagi beberapa saat.
@@ -64,9 +60,6 @@ export default function DashboardPage() {
         <div className="note tone-in page-note">
           Anda login sebagai viewer. Anda dapat melihat data, tetapi tidak dapat mengubah pengaturan.
         </div>
-      )}
-      {ctl.notice && (
-        <div className={`note tone-${ctl.notice.ok ? "ok" : "bd"} page-note`}>{ctl.notice.text}</div>
       )}
       {mqtt.error ? (
         <div className="note tone-bd page-note">
@@ -85,6 +78,8 @@ export default function DashboardPage() {
           {mqtt.data?.error ?? "Broker MQTT belum terhubung."}
         </div>
       )}
+
+      {/* Baris 1: tiga kartu ringkasan, lebar sama */}
       <div className="grid g3">
         <StatCard
           label="Suhu"
@@ -115,6 +110,7 @@ export default function DashboardPage() {
         />
       </div>
 
+      {/* Baris 2: grafik (lebar) + kondisi ruang (sempit) */}
       <div className="grid g2">
         <div>
           <div className="row between" style={{ marginBottom: 12 }}>
@@ -126,28 +122,16 @@ export default function DashboardPage() {
         <ActuatorStatus mode={d.mode} actuators={d.actuators} hasState={d.hasActuatorState} />
       </div>
 
-      <div className="grid g3">
-        <ControlMode
-          mode={ctl.mode}
-          safeReason={d.safeReason}
-          onChange={ctl.setMode}
-          readOnly={!isAdmin || ctl.busy || !d.online || !d.hasActuatorState}
-        />
+      {/* Baris 3: alarm (lebar) + threshold (sempit), kolomnya sejajar dengan baris 2 */}
+      <div className="grid g2">
+        <AlarmTable rows={d.alarms} />
         <ThresholdForm
           key={d.thresholdsLoaded ? "loaded" : "loading"}
           thresholds={d.thresholds}
           onApply={d.applyThresholds}
           readOnly={!isAdmin}
         />
-        <ManualControl
-          actuators={ctl.actuators}
-          hasState={d.hasActuatorState}
-          enabled={isAdmin && !ctl.busy && d.online && d.hasActuatorState && d.mode === "MANUAL"}
-          onChange={ctl.setActuator}
-        />
       </div>
-
-      <AlarmTable rows={d.alarms} />
     </AppShell>
   );
 }
