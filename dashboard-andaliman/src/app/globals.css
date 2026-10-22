@@ -467,47 +467,16 @@ h1 {
   gap: 8px;
 }
 
-.st-lights {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.st-light {
-  width: 10px;
-  height: 10px;
+.st i {
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: var(--ln);
   display: inline-block;
-  flex: 0 0 auto;
 }
 
-.st-light-off.active {
-  background: #d64545;
-  box-shadow: 0 0 6px rgba(214, 69, 69, 0.55);
-}
-
-.st-light-on.active {
-  background: #28a66a;
-  box-shadow: 0 0 6px rgba(40, 166, 106, 0.55);
-}
-
-.actuator-source {
-  margin: -6px 0 8px;
-}
-
-.actuator-legend {
-  display: flex;
-  gap: 16px;
-  padding-top: 10px;
-  color: var(--mu);
-  font-size: 12px;
-}
-
-.actuator-legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.st i.on {
+  background: var(--ok);
 }
 
 /* ===== Tombol dan input ===== */
@@ -798,28 +767,6 @@ td input {
   margin-top: 12px;
 }
 
-.wifi-picker-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 16px;
-  font-size: 13px;
-}
-
-.wifi-refresh {
-  padding: 4px 8px;
-  border: 0;
-  background: transparent;
-  color: var(--ac);
-  font-size: 12px;
-}
-
-.wifi-refresh:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
 .wifi-foot {
   margin: 12px 0 0;
   font-size: 12px;
@@ -840,11 +787,6 @@ td input {
 
 .wifi-empty {
   padding: 10px 12px;
-}
-
-.wifi-list + .wifi-foot,
-.wifi-empty + .wifi-foot {
-  margin-top: 8px;
 }
 
 .wifi-item {
@@ -2091,5 +2033,422 @@ td input {
 
   .lg-card h2 {
     font-size: 32px;
+  }
+}
+
+/* =========================================================
+   DASHBOARD PREMIUM
+   Lapisan tampilan di atas kelas yang sudah ada (.c, .mode,
+   .note, .b, .pill, dst.). Tidak perlu mengubah file TSX.
+   ========================================================= */
+
+/* --- latar halaman: cahaya emas dan hijau yang sangat halus --- */
+body {
+  background:
+    radial-gradient(900px 520px at 100% -8%, rgba(196, 167, 106, 0.16), transparent 62%),
+    radial-gradient(860px 560px at -8% 108%, rgba(31, 122, 82, 0.11), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+/* --- judul halaman --- */
+.top h1 {
+  font-size: 38px;
+  letter-spacing: -0.015em;
+}
+
+.top h1::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin-top: 12px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--gold), rgba(196, 167, 106, 0));
+}
+
+.top p {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* --- pil status di kanan atas --- */
+.pill {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sf) 88%, transparent);
+  box-shadow: 0 6px 18px -10px rgba(15, 43, 29, 0.4);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+button.pill:hover:not(:disabled) {
+  background: var(--acs);
+}
+
+.dot {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 22%, transparent);
+}
+
+.dot.off {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--bd) 22%, transparent);
+}
+
+/* --- kartu --- */
+.c {
+  position: relative;
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--sf), color-mix(in srgb, var(--sf) 92%, var(--bg)));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 14px 34px -18px rgba(15, 43, 29, 0.28);
+  transition: border-color var(--ease), box-shadow var(--ease);
+}
+
+.c:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 20px 44px -18px rgba(15, 43, 29, 0.36);
+}
+
+/* garis emas tipis di tepi atas kartu */
+.c::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity var(--ease);
+}
+
+.c:hover::before {
+  opacity: 1;
+}
+
+.c > h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 21px;
+}
+
+.c > h2::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 4px;
+  height: 20px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--gold), var(--em));
+}
+
+.lbl {
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.big {
+  font-size: 42px;
+  font-variant-numeric: tabular-nums;
+}
+
+.rng {
+  font-size: 12.5px;
+}
+
+/* --- lencana --- */
+.b {
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+}
+
+/* --- kotak catatan dan peringatan --- */
+.note {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  border-left-width: 3px;
+  line-height: 1.5;
+}
+
+.note.tone-ok {
+  border-color: color-mix(in srgb, var(--ok) 26%, transparent);
+  border-left-color: var(--ok);
+}
+
+.note.tone-wn {
+  border-color: color-mix(in srgb, var(--wn) 28%, transparent);
+  border-left-color: var(--wn);
+}
+
+.note.tone-bd {
+  border-color: color-mix(in srgb, var(--bd) 26%, transparent);
+  border-left-color: var(--bd);
+}
+
+.note.tone-in {
+  border-color: color-mix(in srgb, var(--in) 24%, transparent);
+  border-left-color: var(--in);
+}
+
+/* =========================================================
+   MODE KONTROL
+   Tiga kartu pilihan dengan ikon, penanda aktif, dan aksen
+   warna sendiri: AUTO (hijau), MANUAL (emas), SAFE (kuning tua).
+   ========================================================= */
+
+.modes {
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.mode {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  min-height: 132px;
+  padding: 18px 10px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--ln);
+  background: linear-gradient(180deg, var(--sf), color-mix(in srgb, var(--sf) 86%, var(--bg)));
+  color: var(--tx);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: center;
+  box-shadow: 0 10px 22px -16px rgba(15, 43, 29, 0.45);
+  transition:
+    transform var(--ease),
+    box-shadow var(--ease),
+    border-color var(--ease),
+    background var(--ease),
+    color var(--ease);
+}
+
+/* ikon dibuat dari mask, warnanya mengikuti currentColor */
+.mode::before {
+  content: "";
+  display: block;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 8px;
+  background: var(--mode-ic, var(--em));
+  -webkit-mask: var(--mode-icon) center / contain no-repeat;
+  mask: var(--mode-icon) center / contain no-repeat;
+}
+
+.mode small {
+  margin-top: 6px;
+  font-size: 11.5px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: var(--mu);
+  opacity: 1;
+}
+
+.mode:nth-child(1) {
+  --mode-ic: var(--em);
+  --mode-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 12a8 8 0 1 1-2.4-5.7'/%3E%3Cpath d='M20 4v5h-5'/%3E%3Cpath d='M12 8.5v3.5l2.2 1.4'/%3E%3C/svg%3E");
+}
+
+.mode:nth-child(2) {
+  --mode-ic: #b08a3e;
+  --mode-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h8M18 7h2M4 17h2M12 17h8'/%3E%3Ccircle cx='15' cy='7' r='2.4'/%3E%3Ccircle cx='9' cy='17' r='2.4'/%3E%3C/svg%3E");
+}
+
+.mode:nth-child(3) {
+  --mode-ic: var(--wn);
+  --mode-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l7 3v5.2c0 4.4-2.9 7.8-7 9.8-4.1-2-7-5.4-7-9.8V6z'/%3E%3Cpath d='M9 12l2.2 2.2L15.5 10'/%3E%3C/svg%3E");
+}
+
+.mode:hover:not(:disabled) {
+  transform: translateY(-3px);
+  border-color: var(--gold);
+  box-shadow: 0 18px 30px -16px rgba(15, 43, 29, 0.5);
+}
+
+/* mode yang sedang aktif */
+.mode.on {
+  --mode-ic: #ecd49a;
+  background: linear-gradient(160deg, #1f5d3c 0%, #0f3d26 100%);
+  border-color: var(--gold);
+  color: #f6f1e1;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 16px 30px -14px rgba(15, 61, 38, 0.75);
+}
+
+.mode.on small {
+  color: rgba(246, 241, 225, 0.8);
+}
+
+.mode.on::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 4px rgba(196, 167, 106, 0.28);
+}
+
+/* saat perangkat belum mengirim data: tetap terbaca, hanya lebih redup */
+.mode:disabled {
+  opacity: 1;
+  cursor: not-allowed;
+  filter: saturate(0.55);
+}
+
+.mode:disabled:not(.on) {
+  background: color-mix(in srgb, var(--sf) 70%, var(--bg));
+  box-shadow: none;
+}
+
+.mode:disabled:not(.on)::before {
+  opacity: 0.6;
+}
+
+.mode:disabled:not(.on) small {
+  opacity: 0.8;
+}
+
+/* --- formulir threshold --- */
+.f label {
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.f input,
+.f select {
+  height: 46px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--bg) 82%, var(--sf));
+}
+
+input:focus,
+select:focus {
+  border-color: var(--em);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--em) 18%, transparent);
+}
+
+/* --- tombol utama --- */
+.apply {
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #1b5538, #0f3d26);
+  border-color: #0f3d26;
+  color: #f6f4ea;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  box-shadow:
+    inset 0 1px 0 rgba(227, 204, 150, 0.35),
+    0 12px 22px -12px rgba(15, 61, 38, 0.7);
+  transition:
+    transform var(--ease),
+    box-shadow var(--ease),
+    background var(--ease);
+}
+
+.apply:hover:not(:disabled) {
+  background: linear-gradient(180deg, #23693f, #14472d);
+  border-color: #14472d;
+  transform: translateY(-1px);
+}
+
+/* --- ON / OFF aktuator --- */
+.sw button {
+  min-width: 54px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sw button.on {
+  background: linear-gradient(180deg, #1b5538, #0f3d26);
+  border-color: #0f3d26;
+  color: #f6f4ea;
+  box-shadow: inset 0 1px 0 rgba(227, 204, 150, 0.3);
+}
+
+/* --- baris aktuator dan kondisi ruang --- */
+.act {
+  padding: 13px 0;
+}
+
+.st i {
+  width: 10px;
+  height: 10px;
+}
+
+.st i.on {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 25%, transparent);
+}
+
+/* --- tabel --- */
+th {
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  padding: 10px 8px;
+}
+
+tbody tr:hover td {
+  background: color-mix(in srgb, var(--acs) 55%, transparent);
+}
+
+/* --- mode gelap: tombol dan mode aktif dibuat lebih terang --- */
+@media (prefers-color-scheme: dark) {
+  .c {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 14px 34px -18px rgba(0, 0, 0, 0.6);
+  }
+
+  .apply,
+  .sw button.on,
+  .mode.on {
+    background: linear-gradient(180deg, #2f8a5e, #1f7a52);
+    border-color: #2f8a5e;
+  }
+
+  .mode:nth-child(2) {
+    --mode-ic: #d6b566;
+  }
+}
+
+/* --- HP --- */
+@media screen and (max-width: 560px) {
+  .top h1 {
+    font-size: 30px;
+  }
+
+  .mode {
+    min-height: 116px;
+    padding: 14px 6px 12px;
+    font-size: 13.5px;
+  }
+
+  .mode::before {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 6px;
+  }
+
+  .mode small {
+    font-size: 10.5px;
   }
 }
