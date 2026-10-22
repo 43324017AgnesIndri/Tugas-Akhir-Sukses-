@@ -815,6 +815,28 @@ td input {
   margin-top: 12px;
 }
 
+.wifi-picker-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.wifi-refresh {
+  padding: 4px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--ac);
+  font-size: 12px;
+}
+
+.wifi-refresh:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .wifi-foot {
   margin: 12px 0 0;
   font-size: 12px;
@@ -835,6 +857,11 @@ td input {
 
 .wifi-empty {
   padding: 10px 12px;
+}
+
+.wifi-list + .wifi-foot,
+.wifi-empty + .wifi-foot {
+  margin-top: 8px;
 }
 
 .wifi-item {

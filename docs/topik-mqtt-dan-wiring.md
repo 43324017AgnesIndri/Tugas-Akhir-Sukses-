@@ -73,7 +73,7 @@ Data contoh itu tetap tercampur dengan data asli; hapus bucket atau buat bucket 
 
 ## Wi-Fi dari dashboard
 
-Tombol Wi-Fi di bagian atas semua halaman dashboard menampilkan ikon Wi-Fi dengan tulisan **Connect** (perangkat terhubung dan mengirim data) atau **Disconnect** (tidak ada kabar dari perangkat). Jika ditekan, panel terbuka: admin menekan **Cari jaringan Wi-Fi**, memilih jaringan, mengisi password, lalu **Hubungkan**. Akun viewer hanya melihat status.
+Tombol Wi-Fi di bagian atas semua halaman dashboard menampilkan ikon Wi-Fi dengan tulisan **Connect** (perangkat terhubung dan mengirim data) atau **Disconnect** (tidak ada kabar dari perangkat). Jika admin membuka panel saat ESP32 online, perangkat langsung memindai dan menampilkan daftar jaringan terdekat. Admin memilih jaringan, memasukkan password jika terkunci, lalu menekan **Hubungkan**. Daftar dapat diperbarui dengan **Pindai ulang**. Akun viewer hanya melihat status.
 
 ```
 Dashboard --cmd/wifi--> Mosquitto --> ESP32 (scan atau ganti Wi-Fi)

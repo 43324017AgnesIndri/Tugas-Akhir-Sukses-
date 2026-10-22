@@ -65,10 +65,12 @@ export default function WifiButton({ isAdmin }: { isAdmin: boolean }) {
   const lv = level(w.status?.rssi ?? null);
 
   const toggle = () => {
-    setOpen((o) => {
-      if (!o) w.refresh();
-      return !o;
-    });
+    const nextOpen = !open;
+    setOpen(nextOpen);
+    if (nextOpen) {
+      w.refresh();
+      if (isAdmin && connected && !w.networks && !w.scanning) void w.scan();
+    }
   };
 
   const batalPilih = () => {
@@ -132,9 +134,8 @@ export default function WifiButton({ isAdmin }: { isAdmin: boolean }) {
               <>
                 <strong>Tidak terhubung</strong>
                 <span className="muted">
-                  {w.status?.ssid ? `Terakhir terhubung ke "${w.status.ssid}". ` : ""}
-                  Dashboard tidak dapat mengirim pengaturan saat perangkat offline. Sambungkan laptop/HP ke access point setup ESP32
-                  (nama dan password tampil di Serial Monitor 115200 baud), lalu buka http://192.168.4.1.
+                  {w.status?.ssid ? `Wi-Fi terakhir: "${w.status.ssid}". ` : ""}
+                  ESP32 harus online untuk menampilkan dan memilih jaringan.
                 </span>
               </>
             )}
@@ -151,11 +152,20 @@ export default function WifiButton({ isAdmin }: { isAdmin: boolean }) {
             <p className="muted wifi-gap">Hanya admin yang dapat mengganti Wi-Fi perangkat.</p>
           ) : (
             <>
-              <button type="button" className="apply wifi-gap" onClick={() => void w.scan()} disabled={!connected || sibuk}>
-                {w.scanning ? "Mencari jaringan..." : w.networks ? "Cari ulang" : "Cari jaringan Wi-Fi"}
-              </button>
+              <div className="wifi-picker-heading">
+                <strong>Pilih jaringan</strong>
+                <button
+                  type="button"
+                  className="wifi-refresh"
+                  onClick={() => void w.scan()}
+                  disabled={!connected || sibuk}
+                >
+                  {w.scanning ? "Memindai..." : "Pindai ulang"}
+                </button>
+              </div>
 
-              {w.networks && (
+              {w.scanning && <div className="muted wifi-empty" role="status">Mencari jaringan Wi-Fi di sekitar perangkat...</div>}
+              {!w.scanning && w.networks && (
                 <ul className="wifi-list" aria-label="Jaringan Wi-Fi tersedia">
                   {w.networks.length === 0 && <li className="muted wifi-empty">Tidak ada jaringan ditemukan.</li>}
                   {w.networks.map((n) => {
@@ -222,8 +232,13 @@ export default function WifiButton({ isAdmin }: { isAdmin: boolean }) {
                   })}
                 </ul>
               )}
+              {!connected && (
+                <p className="muted wifi-foot">
+                  Sambungkan ESP32 ke broker terlebih dahulu. Jika ESP32 offline, gunakan jaringan setup perangkat yang tercantum di panduan.
+                </p>
+              )}
               <p className="muted wifi-foot">
-                ESP32 hanya mendeteksi Wi-Fi 2,4 GHz. Password dikirim ke perangkat lewat MQTT dan disimpan di memori ESP32.
+                Wi-Fi 2,4 GHz. Password hanya diperlukan untuk jaringan terkunci.
               </p>
             </>
           )}
