@@ -10,7 +10,6 @@ import {
   RANGES,
   downloadCsv,
   fmt,
-  formatDateTime,
   toChartPoints,
 } from "@/lib/utils";
 
@@ -21,11 +20,21 @@ const MAX_ROWS = 300;
 const csvNum = (n: number | null) =>
   n === null ? "" : String(n).replace(".", ",");
 
+const formatPointTime = (iso: string, includeSeconds: boolean) =>
+  new Date(iso).toLocaleString("id-ID", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    ...(includeSeconds ? { second: "2-digit" } : {}),
+  });
+
 export default function RiwayatPage() {
   const [range, setRange] = useState<HistoryRange>("24h");
 
   const hist = useApi<{ points: HistoryPoint[] }>(
-    `/api/history?range=${range}`
+    `/api/history?range=${range}${range === "24h" ? "&raw=1" : ""}`
   );
 
   const points = hist.data?.points ?? [];
@@ -41,7 +50,7 @@ export default function RiwayatPage() {
 
     points.forEach((p) =>
       rows.push([
-        new Date(p.time).toLocaleString("id-ID"),
+      formatPointTime(p.time, range === "24h"),
         csvNum(p.suhu),
         csvNum(p.kelembapan),
       ])
@@ -140,7 +149,7 @@ export default function RiwayatPage() {
                 .slice(0, MAX_ROWS)
                 .map((p) => (
                   <tr key={p.time}>
-                    <td>{formatDateTime(p.time)}</td>
+                    <td>{formatPointTime(p.time, range === "24h")}</td>
                     <td>
                       {p.suhu === null
                         ? "-"
@@ -182,7 +191,7 @@ export default function RiwayatPage() {
                   <div className="riwayat-data-row">
                     <span>Waktu</span>
                     <strong>
-                      {formatDateTime(p.time)}
+                      {formatPointTime(p.time, range === "24h")}
                     </strong>
                   </div>
 
@@ -215,8 +224,9 @@ export default function RiwayatPage() {
         )}
 
         <div className="note tone-in">
-          Data ditampilkan sebagai rata-rata per jendela waktu
-          (24 jam: 30 menit, 7 hari: 3 jam, 30 hari: 12 jam).
+          {range === "24h"
+            ? "Rentang 24 jam menampilkan setiap pembacaan yang tersimpan, tanpa dirata-ratakan. CSV memuat semua titik; tabel menampilkan maksimal 300 data terbaru."
+            : `Data ${label} ditampilkan sebagai rata-rata per jendela waktu (${range === "7d" ? "3 jam" : "12 jam"}) untuk meringkas riwayat.`}
         </div>
       </div>
     </AppShell>

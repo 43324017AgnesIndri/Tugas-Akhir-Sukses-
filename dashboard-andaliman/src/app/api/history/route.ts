@@ -9,7 +9,7 @@ interface Row {
   kelembapan?: number;
 }
 
-// Rentang yang diizinkan, beserta lebar jendela rata-ratanya
+// Rentang yang diizinkan, beserta lebar jendela rata-ratanya.
 const RANGES: Record<string, { start: string; every: string }> = {
   "1h": { start: "-1h", every: "1m" },
   "6h": { start: "-6h", every: "5m" },
@@ -27,6 +27,10 @@ export async function GET(request: Request) {
   const key = new URL(request.url).searchParams.get("range") ?? "24h";
   const cfg = RANGES[key];
   if (!cfg) return NextResponse.json({ error: "Rentang tidak dikenal." }, { status: 400 });
+  const raw = new URL(request.url).searchParams.get("raw") === "1";
+  if (raw && key !== "24h") {
+    return NextResponse.json({ error: "Data mentah hanya tersedia untuk rentang 24 jam." }, { status: 400 });
+  }
 
   try {
     const rows = await queryRows<Row>(
@@ -35,7 +39,7 @@ export async function GET(request: Request) {
           |> range(start: ${cfg.start})
           |> filter(fn: (r) => r._measurement == "environment" and r.device_id == ${q(DEVICE_ID)})
           |> filter(fn: (r) => r._field == "suhu" or r._field == "kelembapan")
-          |> aggregateWindow(every: ${cfg.every}, fn: mean, createEmpty: false)
+          ${raw ? "" : `|> aggregateWindow(every: ${cfg.every}, fn: mean, createEmpty: false)`}
           |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
       `
     );

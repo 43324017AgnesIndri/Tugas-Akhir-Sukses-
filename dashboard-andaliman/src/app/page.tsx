@@ -112,7 +112,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid g2">
-        <EnvChart data={d.history} />
+        <EnvChart data={d.history} title="Ringkasan data lingkungan (rata-rata per 30 menit)" />
         <ActuatorStatus mode={d.mode} actuators={d.actuators} hasState={d.hasActuatorState} />
       </div>
 

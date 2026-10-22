@@ -63,12 +63,12 @@ Threshold retained: ESP32 yang baru menyala langsung menerima nilai terakhir, da
 
 | Measurement | Tag | Field |
 |---|---|---|
-| `environment` | `device_id` | `suhu` (float), `kelembapan` (float) |
-| `actuator_state` | `device_id` | `kompresor`, `buzzer`, `fan`, `mist` (integer 0/1), `mode`, `safe_reason` (string) |
+| `environment` | `device_id` | `suhu` (float), `kelembapan` (float); Node-RED memberi timestamp milidetik agar pembacaan dalam detik yang sama tidak tertimpa |
+| `actuator_state` | `device_id` | `kompresor`, `buzzer`, `fan`, `mist` (integer 0/1), `mode`, `safe_reason` (string); Node-RED memberi timestamp milidetik |
 | `wifi_state` | `device_id` | `connected`, `rssi` (integer), `ssid`, `ip`, `hasil`, `target`, `id` (string) |
 | `wifi_scan` | `device_id` | `networks` (string berisi JSON daftar jaringan), `id` (string) |
 
-Jika bucket sebelumnya diisi `seed-influx.mjs`, tipe field-nya sudah sama dengan skema di atas, jadi tidak bentrok.
+Jika bucket sebelumnya diisi `seed-influx.mjs`, tipe field-nya sudah sama dengan skema di atas, jadi tidak bentrok. Riwayat 24 jam dapat ditampilkan mentah; rentang 7 dan 30 hari dirata-ratakan agar respons dan grafik tetap ringan.
 Data contoh itu tetap tercampur dengan data asli; hapus bucket atau buat bucket baru sebelum pengujian resmi.
 
 ## Wi-Fi dari dashboard
