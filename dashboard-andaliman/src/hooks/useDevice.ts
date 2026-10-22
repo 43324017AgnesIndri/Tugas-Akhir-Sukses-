@@ -9,18 +9,16 @@
     ChartPoint,
     DashboardData,
     HistoryPoint,
+    HistoryRange,
     Thresholds,
   } from "@/lib/types";
-  import { ACTUATORS_OFF, DEFAULT_THRESHOLDS, severityFromStatus } from "@/lib/utils";
-
-  const jam = (iso: string) =>
-    new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+  import { ACTUATORS_OFF, DEFAULT_THRESHOLDS, severityFromStatus, toChartPoints } from "@/lib/utils";
 
   const tanggal = (iso: string) =>
     new Date(iso).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
 
   // F3: semua data diambil dari /api/... (InfluxDB dan Supabase)
-  export function useDevice() {
+  export function useDevice(historyRange: HistoryRange = "6h") {
     const router = useRouter();
     const [dashboard, setDashboard] = useState<DashboardData | null>(null);
     const [history, setHistory] = useState<ChartPoint[]>([]);
@@ -72,24 +70,24 @@
       };
     }, [getJson]);
 
-    // Grafik dashboard: pembacaan mentah satu jam terakhir, diperbarui setiap 15 detik
+    // Riwayat grafik mengikuti rentang dan interval agregasi yang sama dengan halaman Monitoring.
     useEffect(() => {
       let alive = true;
       const load = async () => {
         try {
-          const { points } = await getJson<{ points: HistoryPoint[] }>("/api/history?range=1h&raw=1");
-          if (alive) setHistory(points.map((p) => ({ label: jam(p.time), suhu: p.suhu, kelembapan: p.kelembapan })));
+          const { points } = await getJson<{ points: HistoryPoint[] }>(`/api/history?range=${historyRange}`);
+          if (alive) setHistory(toChartPoints(points, historyRange));
         } catch {
           // Kesalahan ditampilkan oleh pengambilan data utama
         }
       };
       void load();
-      const id = setInterval(load, 15000);
+      const id = setInterval(load, 30000);
       return () => {
         alive = false;
         clearInterval(id);
       };
-    }, [getJson]);
+    }, [getJson, historyRange]);
 
     // Alarm: setiap 30 detik
     useEffect(() => {

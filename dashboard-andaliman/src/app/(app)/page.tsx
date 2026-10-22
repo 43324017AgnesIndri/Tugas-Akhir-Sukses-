@@ -13,13 +13,16 @@ import { useControl } from "@/hooks/useControl";
 import { useDevice } from "@/hooks/useDevice";
 import { useProfile } from "@/hooks/useProfile";
 import { useApi } from "@/hooks/useApi";
-import type { StatusInfo } from "@/lib/types";
-import { fmt, getStatus } from "@/lib/utils";
+import RangeTabs from "@/components/RangeTabs";
+import type { HistoryRange, StatusInfo } from "@/lib/types";
+import { fmt, getStatus, RANGES } from "@/lib/utils";
 
 const NO_DATA: StatusInfo = { label: "Belum ada data", severity: "in" };
+const CHART_RANGES: HistoryRange[] = ["1h", "6h", "24h"];
 
 export default function DashboardPage() {
-  const d = useDevice();
+  const [chartRange, setChartRange] = useState<HistoryRange>("6h");
+  const d = useDevice(chartRange);
   const ctl = useControl(d.mode, d.actuators, d.online);
   const { profile } = useProfile();
   const mqtt = useApi<{ connected: boolean; error: string | null }>("/api/mqtt/status", 5000);
@@ -41,6 +44,7 @@ export default function DashboardPage() {
   const r = d.reading;
   const st = r ? getStatus(r.t, th.tmin, th.tmax) : NO_DATA;
   const sh = r ? getStatus(r.h, th.hmin, th.hmax) : NO_DATA;
+  const chartRangeLabel = RANGES.find((range) => range.key === chartRange)?.label ?? "";
   const statusText = d.loading
     ? "Memuat data..."
     : d.error
@@ -112,7 +116,13 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid g2">
-        <EnvChart data={d.history} title="Suhu dan kelembapan (data aktual 1 jam terakhir)" />
+        <div>
+          <div className="row between" style={{ marginBottom: 12 }}>
+            <span className="muted">Rentang grafik:</span>
+            <RangeTabs value={chartRange} onChange={setChartRange} options={CHART_RANGES} />
+          </div>
+          <EnvChart data={d.history} title={`Suhu dan kelembapan (${chartRangeLabel} terakhir)`} />
+        </div>
         <ActuatorStatus mode={d.mode} actuators={d.actuators} hasState={d.hasActuatorState} />
       </div>
 
