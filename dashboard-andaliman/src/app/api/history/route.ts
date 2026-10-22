@@ -28,8 +28,8 @@ export async function GET(request: Request) {
   const cfg = RANGES[key];
   if (!cfg) return NextResponse.json({ error: "Rentang tidak dikenal." }, { status: 400 });
   const raw = new URL(request.url).searchParams.get("raw") === "1";
-  if (raw && key !== "24h") {
-    return NextResponse.json({ error: "Data mentah hanya tersedia untuk rentang 24 jam." }, { status: 400 });
+  if (raw && key !== "1h" && key !== "24h") {
+    return NextResponse.json({ error: "Data mentah hanya tersedia untuk rentang 1 jam dan 24 jam." }, { status: 400 });
   }
 
   try {
