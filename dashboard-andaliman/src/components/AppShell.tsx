@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "./Sidebar";
 import WifiButton from "./wifiButton";
 import { useProfile } from "@/hooks/useProfile";
 import { signOut } from "@/lib/auth";
@@ -50,42 +49,38 @@ export default function AppShell({
     : (clock ?? "");
 
   return (
-    <div className="app">
-      <Sidebar isAdmin={profile?.role === "admin"} />
-
-      <main>
-        <div className="top">
-          <div>
-            <h1>{title}</h1>
-            {subtitle && <p>{subtitle}</p>}
-          </div>
-
-          <div className="pills">
-            <WifiButton isAdmin={profile?.role === "admin"} />
-
-            <div className="pill">
-              {online !== undefined && (
-                <span className={`dot ${online ? "" : "off"}`} />
-              )}
-              <span>{text}</span>
-            </div>
-
-            <div className="pill">
-              {profile
-                ? `${profile.nama ?? profile.email} · ${
-                    profile.role === "admin" ? "Admin" : "Viewer"
-                  }`
-                : "..."}
-            </div>
-
-            <button type="button" className="pill" onClick={logout}>
-              Keluar
-            </button>
-          </div>
+    <main>
+      <div className="top">
+        <div>
+          <h1>{title}</h1>
+          {subtitle && <p>{subtitle}</p>}
         </div>
 
-        {children}
-      </main>
-    </div>
+        <div className="pills">
+          <WifiButton isAdmin={profile?.role === "admin"} />
+
+          <div className="pill">
+            {online !== undefined && (
+              <span className={`dot ${online ? "" : "off"}`} />
+            )}
+            <span>{text}</span>
+          </div>
+
+          <div className="pill">
+            {profile
+              ? `${profile.nama ?? profile.email} · ${
+                  profile.role === "admin" ? "Admin" : "Viewer"
+                }`
+              : "..."}
+          </div>
+
+          <button type="button" className="pill" onClick={logout}>
+            Keluar
+          </button>
+        </div>
+      </div>
+
+      {children}
+    </main>
   );
 }
