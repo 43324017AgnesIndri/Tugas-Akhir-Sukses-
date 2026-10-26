@@ -142,8 +142,9 @@ inline bool mqttEnsureConnected(uint32_t now) {
   pernahCoba = true;
   lastTry = now;
 
-  char clientId[48];
-  snprintf(clientId, sizeof(clientId), "esp32-%s-%04X", DEVICE_ID, (unsigned)(ESP.getEfuseMac() & 0xFFFF));
+  char clientId[64];
+  snprintf(clientId, sizeof(clientId), "esp32-%s-%012llX", DEVICE_ID,
+           (unsigned long long)ESP.getEfuseMac());
 
   const char *user = strlen(MQTT_USER) ? MQTT_USER : nullptr;
   const char *pass = strlen(MQTT_USER) ? MQTT_PASSWORD : nullptr;
@@ -154,12 +155,22 @@ inline bool mqttEnsureConnected(uint32_t now) {
     return false;
   }
 
-  Serial.println("[MQTT] terhubung");
-  mqtt.publish(tStatus, "online", true);
-  mqtt.subscribe(tCmdMode, 1);
-  mqtt.subscribe(tCmdAct, 1);
-  mqtt.subscribe(tCmdThr, 1);
-  mqtt.subscribe(tCmdWifi, 1);
+  const char *topics[] = {tCmdMode, tCmdAct, tCmdThr, tCmdWifi};
+  bool subscribed = true;
+  for (size_t i = 0; i < sizeof(topics) / sizeof(topics[0]); i++) {
+    if (!mqtt.subscribe(topics[i], 1)) {
+      Serial.printf("[MQTT] gagal subscribe ke %s\n", topics[i]);
+      subscribed = false;
+    }
+  }
+  if (!subscribed || !mqtt.publish(tStatus, "online", true)) {
+    if (subscribed) Serial.println("[MQTT] gagal memperbarui status online");
+    mqtt.publish(tStatus, "offline", true);
+    mqtt.disconnect();
+    return false;
+  }
+
+  Serial.println("[MQTT] terhubung dan semua topik perintah aktif");
   return true;
 }
 

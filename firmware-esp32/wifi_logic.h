@@ -71,7 +71,8 @@ class WifiSwitcher {
         return gagal(WFH_GAGAL_WIFI);
       }
     } else if (tahap_ == WF_VERIFIKASI) {
-      if (wifiOk && mqttOk) {
+      if (!wifiOk) return gagal(WFH_GAGAL_WIFI);
+      if (mqttOk) {
         tahap_ = WF_DIAM;
         hasil_ = WFH_OK;
         return WFA_SIMPAN_BARU;

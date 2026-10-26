@@ -102,9 +102,7 @@ void setup() {
 
   wifiMuat();   // Wi-Fi terakhir yang dipilih dari dashboard (atau yang di config.h)
   wifiMulai();
-  uint32_t mulai = millis();
-  while (WiFi.status() != WL_CONNECTED && millis() - mulai < 10000) delay(200);  // maksimal 10 detik
-  Serial.println(WiFi.status() == WL_CONNECTED ? "[WiFi] terhubung" : "[WiFi] belum terhubung, lanjut tanpa jaringan");
+  Serial.println("[WiFi] koneksi berjalan di latar belakang");
 
   MqttHandlers h = {onMode, onActuator, onThreshold, wifiPermintaan};
   mqttBegin(h);

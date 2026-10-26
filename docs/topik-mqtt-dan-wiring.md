@@ -85,12 +85,14 @@ Aturan keselamatan di ESP32 (`wifi_logic.h`, diuji di `test/`):
 - Jika password salah (20 detik) atau broker tidak terjangkau (30 detik), ESP32 kembali ke Wi-Fi sebelumnya, lalu melapor hasilnya ke dashboard (`gagal_wifi` atau `gagal_broker`).
 - Wi-Fi yang tersimpan dipakai lebih dulu saat ESP32 menyala. Jika tidak terjangkau, ESP32 bergantian mencoba Wi-Fi di `config.h`.
 - Selama pindah Wi-Fi, ESP32 terputus dari dashboard sekitar 5-60 detik. Kontrol AUTO tetap berjalan.
+- Saat boot, koneksi Wi-Fi dan MQTT dimulai di latar belakang agar pembacaan sensor dan kontrol tidak menunggu jaringan.
 
 Catatan:
 - Dashboard hanya dapat mengirim perintah selama ESP32 terhubung ke broker MQTT. Jika ESP32 offline, gunakan setup portal lokal di bawah ini.
 - ESP32 hanya mendeteksi Wi-Fi 2,4 GHz. Wi-Fi tersembunyi tidak muncul di daftar.
 - Password Wi-Fi lewat broker. Di jaringan lokal dengan port 1883 tanpa TLS, ini tidak terenkripsi. Saat broker dipindah online, wajib TLS (port 8883).
 - Wi-Fi dengan halaman login (hotel, kampus dengan captive portal) tidak bisa dipakai.
+- `MQTT_HOST` harus berupa IP LAN PC/server Mosquitto yang dapat dijangkau ESP32. `localhost` dan `0.0.0.0` bukan alamat broker untuk ESP32; jika IP PC berubah, perbarui `config.h` atau atur DHCP reservation.
 
 ## Setup Wi-Fi lokal saat ESP32 offline
 

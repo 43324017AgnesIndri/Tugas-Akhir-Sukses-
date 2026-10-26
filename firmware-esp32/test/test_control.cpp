@@ -277,6 +277,13 @@ int main() {
   }
   {
     WifiSwitcher w(WifiSwitchSettings{20000, 30000});
+    w.mulai(0);
+    w.update(4000, true, false);
+    CEK(w.update(5000, false, false) == WFA_KEMBALI_LAMA, "wifi: putus saat verifikasi -> kembali ke jaringan lama");
+    CEK(w.hasil() == WFH_GAGAL_WIFI, "wifi: putus saat verifikasi dilaporkan sebagai gagal_wifi");
+  }
+  {
+    WifiSwitcher w(WifiSwitchSettings{20000, 30000});
     uint32_t t0 = 0xFFFFFF00u;  // millis() hampir meluap
     w.mulai(t0);
     CEK(w.update(t0 + 19000u, false, false) == WFA_TIDAK_ADA, "wifi: luapan millis, belum habis");
