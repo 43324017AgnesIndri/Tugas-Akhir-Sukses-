@@ -11,7 +11,7 @@
     "type": "mqtt-broker",
     "name": "Broker Mosquitto",
     "broker": "mosquitto",
-    "port": "1883",
+    "port": "8086",
     "clientid": "nodered-andaliman",
     "autoConnect": true,
     "usetls": false,
