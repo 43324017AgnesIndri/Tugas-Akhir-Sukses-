@@ -4,15 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { CSSProperties } from "react";
 
-type IconName = "home" | "chart" | "sliders" | "gauge" | "bars" | "bell" | "chip" | "users";
+type IconName = "home" | "sliders" | "bars" | "chip" | "users";
 
 const MENU: { href: string; label: string; icon: IconName; adminOnly?: boolean }[] = [
   { href: "/", label: "Dashboard", icon: "home" },
-  { href: "/monitoring", label: "Monitoring", icon: "chart" },
   { href: "/kontrol", label: "Kontrol", icon: "sliders" },
-  { href: "/threshold", label: "Pengaturan threshold", icon: "gauge" },
-  { href: "/riwayat", label: "Riwayat data", icon: "bars" },
-  { href: "/alarm", label: "Alarm dan log", icon: "bell" },
+  { href: "/riwayat", label: "Riwayat", icon: "bars" },
   { href: "/perangkat", label: "Perangkat", icon: "chip" },
   { href: "/pengguna", label: "Pengguna", icon: "users", adminOnly: true },
 ];
@@ -39,12 +36,6 @@ function Icon({ name }: { name: IconName }) {
           <path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10" />
         </svg>
       );
-    case "chart":
-      return (
-        <svg {...p}>
-          <path d="M3 3v18h18M7 15l4-4 3 3 5-6" />
-        </svg>
-      );
     case "sliders":
       return (
         <svg {...p}>
@@ -54,22 +45,10 @@ function Icon({ name }: { name: IconName }) {
           <circle cx="8" cy="18" r="2" fill="var(--fo)" />
         </svg>
       );
-    case "gauge":
-      return (
-        <svg {...p}>
-          <path d="M4 17a8 8 0 1 1 16 0M12 17l4-5" />
-        </svg>
-      );
     case "bars":
       return (
         <svg {...p}>
           <path d="M5 20V10M12 20V4M19 20v-7" />
-        </svg>
-      );
-    case "bell":
-      return (
-        <svg {...p}>
-          <path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0" />
         </svg>
       );
     case "chip":
@@ -161,7 +140,7 @@ export default function Sidebar({
             >
               <Icon name={m.icon} />
               <span className="nav-label">{m.label}</span>
-              {m.href === "/alarm" && alarmCount > 0 && (
+              {m.href === "/riwayat" && alarmCount > 0 && (
                 <span className="nav-badge">{alarmCount}</span>
               )}
             </Link>
