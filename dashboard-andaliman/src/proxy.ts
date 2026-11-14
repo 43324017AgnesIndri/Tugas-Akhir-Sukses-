@@ -3,6 +3,11 @@ import { NextResponse, type NextRequest } from "next/server";
 
 // Wajib login sebelum membuka halaman.
 // (Di Next.js 16 file ini bernama proxy.ts, pengganti middleware.ts)
+
+// Halaman dan API yang boleh dibuka TANPA login (pemulihan password)
+const PUBLIC_PAGES = ["/login", "/lupa-password"];
+const PUBLIC_API = ["/api/recovery/questions", "/api/recovery/reset"];
+
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -29,9 +34,10 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const isLoginPage = pathname === "/login";
+  const isPublic = PUBLIC_PAGES.includes(pathname) || PUBLIC_API.includes(pathname);
 
   // Belum login: API dijawab 401, halaman lain diarahkan ke /login
-  if (!user && !isLoginPage) {
+  if (!user && !isPublic) {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "Belum login" }, { status: 401 });
     }

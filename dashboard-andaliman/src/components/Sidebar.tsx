@@ -1,19 +1,42 @@
+
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { CSSProperties } from "react";
 
-type IconName = "home" | "sliders" | "bars" | "chip" | "users";
+type IconName =
+  | "home"
+  | "sliders"
+  | "bars"
+  | "thermometer"
+  | "bell"
+  | "chip"
+  | "users";
 
-const MENU: { href: string; label: string; icon: IconName; adminOnly?: boolean }[] = [
+const MENU: {
+  href: string;
+  label: string;
+  icon: IconName;
+  adminOnly?: boolean;
+}[] = [
   { href: "/", label: "Dashboard", icon: "home" },
   { href: "/kontrol", label: "Kontrol", icon: "sliders" },
+  {
+    href: "/threshold",
+    label: "Pengaturan Threshold",
+    icon: "thermometer",
+  },
   { href: "/riwayat", label: "Riwayat", icon: "bars" },
+  { href: "/alarm", label: "Alarm dan Log", icon: "bell" },
   { href: "/perangkat", label: "Perangkat", icon: "chip" },
-  { href: "/pengguna", label: "Pengguna", icon: "users", adminOnly: true },
+  {
+    href: "/pengguna",
+    label: "Pengguna",
+    icon: "users",
+    adminOnly: true,
+  },
 ];
-
 
 const PHOTO = "/images/andaliman-bg.png";
 
@@ -27,8 +50,9 @@ function Icon({ name }: { name: IconName }) {
     strokeWidth: 1.7,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
-    "aria-hidden": true,
+    "aria-hidden": true as const,
   };
+
   switch (name) {
     case "home":
       return (
@@ -36,6 +60,7 @@ function Icon({ name }: { name: IconName }) {
           <path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10" />
         </svg>
       );
+
     case "sliders":
       return (
         <svg {...p}>
@@ -45,12 +70,30 @@ function Icon({ name }: { name: IconName }) {
           <circle cx="8" cy="18" r="2" fill="var(--fo)" />
         </svg>
       );
+
     case "bars":
       return (
         <svg {...p}>
           <path d="M5 20V10M12 20V4M19 20v-7" />
         </svg>
       );
+
+    case "thermometer":
+      return (
+        <svg {...p}>
+          <path d="M14 14.5V5a3 3 0 0 0-6 0v9.5a5 5 0 1 0 6 0Z" />
+          <path d="M11 11v7" />
+        </svg>
+      );
+
+    case "bell":
+      return (
+        <svg {...p}>
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+          <path d="M10 21h4" />
+        </svg>
+      );
+
     case "chip":
       return (
         <svg {...p}>
@@ -58,6 +101,7 @@ function Icon({ name }: { name: IconName }) {
           <path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" />
         </svg>
       );
+
     case "users":
       return (
         <svg {...p}>
@@ -80,11 +124,21 @@ function Sprig() {
       aria-hidden="true"
     >
       <g stroke="var(--fo-mu)" strokeWidth="1.2" strokeLinejoin="round">
-        <path d="M120 78C92 70 56 62 24 38C64 34 98 50 120 78Z" fill="rgba(168,184,160,.18)" />
-        <path d="M120 78C148 70 184 62 216 38C176 34 142 50 120 78Z" fill="rgba(168,184,160,.18)" />
-        <path d="M120 70C108 48 112 24 128 6C138 28 134 50 120 70Z" fill="rgba(168,184,160,.28)" />
+        <path
+          d="M120 78C92 70 56 62 24 38C64 34 98 50 120 78Z"
+          fill="rgba(168,184,160,.18)"
+        />
+        <path
+          d="M120 78C148 70 184 62 216 38C176 34 142 50 120 78Z"
+          fill="rgba(168,184,160,.18)"
+        />
+        <path
+          d="M120 70C108 48 112 24 128 6C138 28 134 50 120 70Z"
+          fill="rgba(168,184,160,.28)"
+        />
         <path d="M120 96V70M24 38C60 48 96 62 120 78M216 38C180 48 144 62 120 78" />
       </g>
+
       <g fill="#c4a76a" opacity=".9">
         {[
           [110, 74],
@@ -123,13 +177,23 @@ export default function Sidebar({
       </div>
 
       <nav>
-        {MENU.filter((m) => !m.adminOnly || loading || isAdmin).map((m) => {
+        {MENU.filter(
+          (m) => !m.adminOnly || loading || isAdmin
+        ).map((m) => {
           const active =
-            m.href === "/" ? pathname === "/" : pathname.startsWith(m.href);
+            m.href === "/"
+              ? pathname === "/"
+              : pathname.startsWith(m.href);
+
           const ghost = Boolean(m.adminOnly) && loading;
-          const cls = [active ? "on" : "", ghost ? "nav-ghost" : ""]
+
+          const cls = [
+            active ? "on" : "",
+            ghost ? "nav-ghost" : "",
+          ]
             .filter(Boolean)
             .join(" ");
+
           return (
             <Link
               key={m.href}
@@ -139,23 +203,28 @@ export default function Sidebar({
               aria-hidden={ghost ? true : undefined}
             >
               <Icon name={m.icon} />
+
               <span className="nav-label">{m.label}</span>
-              {m.href === "/riwayat" && alarmCount > 0 && (
-                <span className="nav-badge">{alarmCount}</span>
+
+              {m.href === "/alarm" && alarmCount > 0 && (
+                <span className="nav-badge">
+                  {alarmCount > 99 ? "99+" : alarmCount}
+                </span>
               )}
             </Link>
           );
         })}
       </nav>
 
-      {/* Foto dipasang lewat CSS (.side-photo::before) agar tidak berubah ukuran */}
       <div
         className="side-photo"
         style={{ "--photo": `url(${PHOTO})` } as CSSProperties}
       >
         <div className="cap">
           <strong>Postharvest Andaliman Storage</strong>
-          <span>Pemantauan real-time untuk kualitas terbaik</span>
+          <span>
+            Pemantauan real-time untuk kualitas terbaik
+          </span>
         </div>
       </div>
     </aside>
