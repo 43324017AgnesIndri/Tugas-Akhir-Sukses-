@@ -60,10 +60,12 @@ Setelah itu `npm run dev` dijalankan ulang.
 ## Cara mencoba
 
 1. Pastikan Mosquitto, InfluxDB, dan Node-RED menyala, lalu ESP32 online (muncul "Perangkat online").
-2. Login sebagai **admin**, klik ikon Wi-Fi di kanan atas. Harus tertulis **Connect**.
+2. Login sebagai **admin**, klik ikon Wi-Fi di kanan atas. Jika ESP32 mengirim status melalui MQTT, tombol menunjukkan **ESP32 online**.
 3. Klik **Cari jaringan Wi-Fi**. Dalam 3-8 detik daftar muncul.
 4. Pilih jaringan lain (misalnya hotspot HP), isi password, **Hubungkan**. ESP32 terputus sekitar 5-30 detik, lalu panel menampilkan hasilnya.
 5. Uji juga password yang sengaja salah: ESP32 harus kembali ke Wi-Fi lama dan panel menampilkan pesan gagal.
+
+Status di tombol Wi-Fi adalah status **ESP32**, bukan status laptop/browser. Laptop yang terhubung ke Wi-Fi tidak otomatis menyambungkan ESP32. Daftar jaringan dipindai oleh ESP32, jadi tombol pemindaian aktif setelah ESP32 mengirim status melalui broker MQTT.
 
 Penting: ganti Wi-Fi hanya ke jaringan yang bisa menjangkau broker MQTT. Jika broker ada di laptop
 (`192.168.x.x`), jaringan lain (hotspot HP) tidak bisa menjangkaunya, dan ESP32 akan kembali ke Wi-Fi lama.

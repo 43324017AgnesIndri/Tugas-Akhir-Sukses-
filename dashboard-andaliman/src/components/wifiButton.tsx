@@ -60,7 +60,15 @@ export default function WifiButton({ isAdmin }: { isAdmin: boolean }) {
   const connecting = w.connectingTo !== null;
   const connected = w.status?.connected ?? false;
   const known = w.status !== null;
-  const label = connecting ? "Menghubungkan" : w.loading ? "..." : !known ? "Tidak ada data" : connected ? "Connect" : "Disconnect";
+  const label = connecting
+    ? "Menghubungkan"
+    : w.loading
+      ? "Memuat..."
+      : !known
+        ? "Status tidak diketahui"
+        : connected
+          ? "ESP32 online"
+          : "ESP32 offline";
   const tone = connecting ? "wn" : !known ? "mu" : connected ? "ok" : "bd";
   const lv = level(w.status?.rssi ?? null);
 
@@ -101,16 +109,16 @@ export default function WifiButton({ isAdmin }: { isAdmin: boolean }) {
         onClick={toggle}
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label={`Wi-Fi perangkat: ${label}`}
+        aria-label={`Wi-Fi ESP32: ${label}`}
       >
         <WifiIcon lv={lv} off={!connected && !connecting} />
         <span className="wifi-st">{label}</span>
       </button>
 
       {open && (
-        <div className="wifi-pop" role="dialog" aria-label="Wi-Fi perangkat">
+        <div className="wifi-pop" role="dialog" aria-label="Wi-Fi ESP32">
           <div className="row between">
-            <h2>Wi-Fi perangkat</h2>
+            <h2>Wi-Fi ESP32</h2>
             <span className={`b tone-${tone === "mu" ? "in" : tone}`}>{label}</span>
           </div>
 
@@ -127,15 +135,15 @@ export default function WifiButton({ isAdmin }: { isAdmin: boolean }) {
                 <strong>{w.status?.ssid ?? "Terhubung"}</strong>
                 <span className="muted">
                   {[w.status?.rssi != null ? `${w.status.rssi} dBm` : null, w.status?.ip].filter(Boolean).join(" · ") ||
-                    "Perangkat mengirim data."}
+                    "ESP32 terhubung ke dashboard melalui MQTT."}
                 </span>
               </>
             ) : (
               <>
-                <strong>Tidak terhubung</strong>
+                <strong>ESP32 belum terpantau online</strong>
                 <span className="muted">
                   {w.status?.ssid ? `Wi-Fi terakhir: "${w.status.ssid}". ` : ""}
-                  ESP32 harus online untuk menampilkan dan memilih jaringan.
+                  Dashboard belum menerima status ESP32 melalui MQTT. Laptop yang terhubung ke Wi-Fi tidak otomatis membuat ESP32 ikut terhubung.
                 </span>
               </>
             )}
@@ -234,11 +242,11 @@ export default function WifiButton({ isAdmin }: { isAdmin: boolean }) {
               )}
               {!connected && (
                 <p className="muted wifi-foot">
-                  Sambungkan ESP32 ke broker terlebih dahulu. Jika ESP32 offline, gunakan jaringan setup perangkat yang tercantum di panduan.
+                  Untuk memindai jaringan di sekitar ESP32, perangkat harus menyala dan terhubung ke Wi-Fi serta broker MQTT. Jika ESP32 offline, gunakan jaringan setup perangkat yang tercantum di panduan.
                 </p>
               )}
               <p className="muted wifi-foot">
-                Wi-Fi 2,4 GHz. Password hanya diperlukan untuk jaringan terkunci.
+                Status dan pemindaian ini khusus ESP32, bukan laptop. Pemindaian memerlukan ESP32 menyala, terhubung ke Wi-Fi 2,4 GHz, dan online melalui broker MQTT. Password hanya diperlukan untuk jaringan terkunci.
               </p>
             </>
           )}
