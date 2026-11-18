@@ -1,0 +1,40 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto/runtime:/mosquitto/data
+
+  nodered:
+    image: nodered/node-red:5.0.10-debian
+    restart: unless-stopped
+    entrypoint:
+      - /bin/sh
+      - -c
+    command:
+      - >-
+        if [ ! -f /data/.andaliman-flow-seeded ]; then
+          cp /opt/flows/flows.json /data/flows.json &&
+          touch /data/.andaliman-flow-seeded;
+        fi;
+        exec /usr/local/bin/node node_modules/node-red/red.js --userDir /data
+    depends_on:
+      - mosquitto
+    ports:
+      - "127.0.0.1:1880:1880"
+    env_file:
+      - ./nodered/.env
+    environment:
+      INFLUX_URL: http://host.docker.internal:8086
+      TZ: Asia/Jakarta
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - nodered_data:/data
+      - ./nodered/flows.json:/opt/flows/flows.json:ro
+
+volumes:
+  nodered_data:

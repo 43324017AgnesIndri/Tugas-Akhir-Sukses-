@@ -1,13 +1,11 @@
-@'
-# Dependencies
+# Dependencies and build output
 **/node_modules/
-
-# Build outputs
 **/.next/
 **/dist/
 **/build/
 **/out/
 **/.turbo/
+**/coverage/
 
 # Environment variables and secrets
 .env
@@ -15,20 +13,23 @@
 !.env.example
 **/.env
 **/.env.*
+!**/.env.example
 
-# Node-RED credentials
+# Node-RED credentials and runtime data
 **/flows_cred.json
+nodered/.config*
+nodered/.sessions.json
+nodered/.flows*
+nodered/.nodes.json
+nodered/.package.json
 
-# Mosquitto credentials
+# Mosquitto credentials and runtime data
 mosquitto/config/passwd
+mosquitto/data/
+mosquitto/runtime/
 
-# Private keys
+# Private keys and operating system files
 **/*.pem
 **/*.key
-
-# Operating system files
 Thumbs.db
 .DS_Store
-'@ | Set-Content -Path .gitignore -Encoding utf8
-# Mosquitto runtime data
-mosquitto/data/
