@@ -65,7 +65,19 @@ Setelah itu `npm run dev` dijalankan ulang.
 4. Pilih jaringan lain (misalnya hotspot HP), isi password, **Hubungkan**. ESP32 terputus sekitar 5-30 detik, lalu panel menampilkan hasilnya.
 5. Uji juga password yang sengaja salah: ESP32 harus kembali ke Wi-Fi lama dan panel menampilkan pesan gagal.
 
-Status di tombol Wi-Fi adalah status **ESP32**, bukan status laptop/browser. Laptop yang terhubung ke Wi-Fi tidak otomatis menyambungkan ESP32. Daftar jaringan dipindai oleh ESP32, jadi tombol pemindaian aktif setelah ESP32 mengirim status melalui broker MQTT.
+Status di tombol Wi-Fi adalah status **ESP32**, bukan status laptop/browser. Laptop yang terhubung ke Wi-Fi tidak otomatis menyambungkan ESP32. Daftar jaringan dipindai oleh ESP32. Dashboard hanya dapat meminta scan ketika ESP32 online melalui broker MQTT; saat offline, gunakan portal setup lokal berikut.
+
+## Jika ESP32 offline: pilih Wi-Fi lewat portal setup lokal
+
+ESP32 menyalakan jaringan setup sementara setelah gagal tersambung (10 detik sejak boot, atau 60 detik setelah kehilangan koneksi). Portal ini memungkinkan laptop/HP memindai dan memilih jaringan tanpa dashboard.
+
+1. Buka Serial Monitor Arduino IDE pada **115200 baud**.
+2. Cari pesan `[WiFi] portal setup aktif`; catat SSID `ANDALIMAN-SETUP-XXXX` dan password yang dicetak.
+3. Hubungkan laptop/HP ke SSID tersebut. Internet di laptop/HP akan terputus sementara.
+4. Buka <http://192.168.4.1>, tekan **Cari jaringan**, pilih Wi-Fi **2,4 GHz**, lalu masukkan password Wi-Fi.
+5. Biarkan perangkat menguji koneksi Wi-Fi dan broker MQTT. Wi-Fi baru hanya disimpan jika broker dapat dijangkau. Jika gagal, perangkat kembali memakai Wi-Fi sebelumnya dan portal tetap tersedia untuk mencoba lagi.
+
+Setelah ESP32 tersambung ke broker, kembali hubungkan laptop/HP ke jaringan biasa. Dashboard akan menerima status ESP32 dan fitur scan/pilih Wi-Fi dari panel akan aktif.
 
 Penting: ganti Wi-Fi hanya ke jaringan yang bisa menjangkau broker MQTT. Jika broker ada di laptop
 (`192.168.x.x`), jaringan lain (hotspot HP) tidak bisa menjangkaunya, dan ESP32 akan kembali ke Wi-Fi lama.
