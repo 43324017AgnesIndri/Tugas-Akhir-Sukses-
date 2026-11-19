@@ -28,7 +28,7 @@ const NO_DATA: StatusInfo = {
   severity: "in",
 };
 
-const OPTIONS: HistoryRange[] = ["1h", "6h", "24h"];
+const OPTIONS: HistoryRange[] = ["1h", "6h", "24h", "7d", "30d"];
 
 export default function MonitoringPage() {
   const [range, setRange] = useState<HistoryRange>("6h");

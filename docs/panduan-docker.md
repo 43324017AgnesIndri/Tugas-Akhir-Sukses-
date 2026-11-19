@@ -40,6 +40,11 @@ docker compose ps
 docker compose logs --tail 50 mosquitto nodered
 ```
 
+Mosquitto adalah broker MQTT, bukan halaman web. Port `1883` hanya menerima
+koneksi dari klien MQTT; membuka `http://localhost:1883` di browser akan
+menghasilkan galat protokol dan tidak menunjukkan bahwa broker rusak. Untuk
+membuka antarmuka web Node-RED, gunakan <http://localhost:1880>.
+
 ESP32 dan dashboard di host menggunakan broker `localhost`/IP LAN pada port
 `1883`. Untuk ESP32, `MQTT_HOST` harus berupa IP LAN komputer yang menjalankan
 Docker, dan firewall komputer harus mengizinkan koneksi masuk pada port `1883`.

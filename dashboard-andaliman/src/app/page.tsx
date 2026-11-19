@@ -15,7 +15,7 @@
   import { fmt, getStatus, RANGES } from "@/lib/utils";
 
   const NO_DATA: StatusInfo = { label: "Belum ada data", severity: "in" };
-  const CHART_RANGES: HistoryRange[] = ["1h", "6h", "24h"];
+  const CHART_RANGES: HistoryRange[] = ["1h", "6h", "24h", "7d", "30d"];
 
   export default function DashboardPage() {
     const [chartRange, setChartRange] = useState<HistoryRange>("6h");
