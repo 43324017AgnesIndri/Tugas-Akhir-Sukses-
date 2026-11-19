@@ -5,8 +5,8 @@
 #pragma once
 
 // ===== Wi-Fi =====
-#define WIFI_SSID       "ISI_NAMA_WIFI"
-#define WIFI_PASSWORD   "ISI_PASSWORD_WIFI"
+#define WIFI_SSID       "HW-Mahasiswa"
+#define WIFI_PASSWORD   ""
 // Dua nilai di atas adalah Wi-Fi AWAL / CADANGAN. Wi-Fi yang dipilih dari dashboard disimpan di memori
 // ESP32 dan dipakai lebih dulu. Jika Wi-Fi tersimpan tidak terjangkau lagi, ESP32 mencoba Wi-Fi ini.
 
