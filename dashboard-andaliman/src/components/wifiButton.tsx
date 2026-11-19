@@ -241,9 +241,15 @@ export default function WifiButton({ isAdmin }: { isAdmin: boolean }) {
                 </ul>
               )}
               {!connected && (
-                <p className="muted wifi-foot">
-                  Untuk memindai jaringan di sekitar ESP32, perangkat harus menyala dan terhubung ke Wi-Fi serta broker MQTT. Jika ESP32 offline, gunakan jaringan setup perangkat yang tercantum di panduan.
-                </p>
+                <div className="muted wifi-foot" role="note">
+                  <strong>ESP32 offline — pilih Wi-Fi lewat setup lokal</strong>
+                  <ol>
+                    <li>Buka Serial Monitor Arduino IDE (115200 baud), lalu cari nama dan password jaringan <code>ANDALIMAN-SETUP-...</code>.</li>
+                    <li>Hubungkan laptop/HP ke jaringan setup tersebut, lalu buka <a href="http://192.168.4.1" target="_blank" rel="noreferrer">halaman setup ESP32</a>.</li>
+                    <li>Pindai dan pilih Wi-Fi 2,4 GHz. Jaringan itu harus dapat menjangkau broker MQTT agar ESP32 bisa online.</li>
+                  </ol>
+                  Dashboard baru dapat memindai dan mengganti Wi-Fi dari sini setelah ESP32 online melalui MQTT.
+                </div>
               )}
               <p className="muted wifi-foot">
                 Status dan pemindaian ini khusus ESP32, bukan laptop. Pemindaian memerlukan ESP32 menyala, terhubung ke Wi-Fi 2,4 GHz, dan online melalui broker MQTT. Password hanya diperlukan untuk jaringan terkunci.
