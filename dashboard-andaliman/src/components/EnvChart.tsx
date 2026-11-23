@@ -33,8 +33,8 @@ export default function EnvChart({ data, title = "Data lingkungan (24 jam terakh
                 }}
               />
               <Legend verticalAlign="top" height={28} iconType="plainline" wrapperStyle={{ fontSize: 12, color: "var(--mu)" }} />
-              <Line yAxisId="t" type="monotone" dataKey="suhu" name="Suhu (°C)" stroke="var(--ct)" strokeWidth={2} dot={false} />
-              <Line yAxisId="h" type="monotone" dataKey="kelembapan" name="Kelembapan (%)" stroke="var(--ch)" strokeWidth={2} dot={false} />
+              <Line yAxisId="t" type="monotone" dataKey="suhu" name="Suhu (°C)" stroke="var(--ct)" strokeWidth={2} dot={{ r: 2 }} />
+              <Line yAxisId="h" type="monotone" dataKey="kelembapan" name="Kelembapan (%)" stroke="var(--ch)" strokeWidth={2} dot={{ r: 2 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
