@@ -26,7 +26,7 @@ export function GET(request: Request) {
 
   return new Response(body, {
     headers: {
-      "Cache-Control": "no-store",
+      "Cache-Control": "no-store, no-cache, must-revalidate",
       "Content-Type": "application/xml; charset=utf-8",
     },
   });

@@ -1658,7 +1658,7 @@ td input {
   align-items: center;
   justify-content: flex-end;
   padding: 36px clamp(24px, 6vw, 96px);
-  background: #f3efe2 var(--lg-photo) center / cover no-repeat;
+  background: #f3efe2 url("/images/andaliman-bg.png") center / cover no-repeat;
   color: #1c201d;
   overflow: hidden;
 }
@@ -1960,6 +1960,7 @@ td input {
   color: #1f7a52;
   font-size: 16px;
   font-weight: 500;
+  text-decoration: none;
 }
 
 .lg-link:hover {

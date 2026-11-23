@@ -26,15 +26,21 @@ Cloudflare.
 
 ## Status perbaikan
 
-- Header CSP, HSTS, `X-Content-Type-Options`, anti-clickjacking, dan kebijakan
+- Header HSTS, `X-Content-Type-Options`, anti-clickjacking, dan kebijakan
   referrer dikonfigurasi di [next.config.ts](./dashboard-andaliman/next.config.ts).
-- Halaman autentikasi dan API memakai `Cache-Control: private, no-store`.
+- CSP nonce per-request diterapkan di [proxy.ts](./dashboard-andaliman/src/proxy.ts).
+- Halaman autentikasi dan sitemap mengirim
+  `Cache-Control: no-store, no-cache, must-revalidate`; API privat tetap memakai
+  `private, no-store`.
 - Route sitemap publik menyediakan XML dengan `Content-Type` yang eksplisit.
-- Kebijakan CSP saat ini mengizinkan skrip inline untuk kompatibilitas dengan
-  rendering Next.js yang ada. Ini baseline mitigasi, bukan kebijakan nonce ketat.
-- Build dan pemeriksaan header lokal perlu diikuti pemindaian ZAP ulang pada URL
-  publik untuk memeriksa efek Cloudflare. Tangkapan layar awal tidak menyertakan
-  rincian request/response, payload, atau bukti komentar bundle.
+- CSP memakai nonce per-request pada halaman utama, login, pemulihan, dan
+  sitemap; halaman autentikasi tidak lagi mengizinkan `unsafe-inline`.
+- Build produksi berhasil dan respons publik halaman login/pemulihan telah
+  diverifikasi: nonce cocok dengan semua tag script/style dan tidak ada atribut
+  style inline.
+- Bundle produksi saat ini tidak memuat marker komentar `FIXME`, `TODO`, atau
+  `XXX`. ZAP dapat tetap menampilkan temuan lama sampai sesi/riwayat hasilnya
+  dibersihkan dan situs dipindai ulang.
 - Cloudflare Quick Tunnel menyediakan hostname sementara. Redirect HTTP dan
   header yang diubah pada edge tidak selalu dapat dikendalikan dari aplikasi.
 - Jangan menaruh token, password, cookie, atau nilai `.env` di laporan.

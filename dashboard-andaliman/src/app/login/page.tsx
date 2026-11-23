@@ -1,13 +1,10 @@
 "use client";
 
-import { useState, type CSSProperties, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { toEmail } from "@/lib/recovery-shared";
-
-// Foto latar: public/images/andaliman-bg.png
-const BG = "/images/andaliman-bg.png";
 
 /* ---------- ikon kecil ---------- */
 const sv = {
@@ -145,10 +142,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      className="lg-wrap"
-      style={{ "--lg-photo": `url(${BG})` } as CSSProperties}
-    >
+    <div className="lg-wrap">
       <div className="lg-panel">
         <div className="lg-hero">
           <Logo />
@@ -205,7 +199,7 @@ export default function LoginPage() {
 
           <div className="lg-row">
             <span />
-            <Link href="/lupa-password" className="lg-link" style={{ textDecoration: "none" }}>
+            <Link href="/lupa-password" className="lg-link">
               Lupa password?
             </Link>
           </div>

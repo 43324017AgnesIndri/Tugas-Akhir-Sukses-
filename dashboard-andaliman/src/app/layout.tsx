@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import "./globals.css";
+import "./recovery.css";
 
 export default function RootLayout({
   children,
