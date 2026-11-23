@@ -24,14 +24,19 @@ Cloudflare.
 | 7 | ⚪ LOW | Aset JavaScript hasil build | Pemindai menemukan komentar mencurigakan di bundle JavaScript. | Penilaian awal: kemungkinan informasi komentar biasa, bukan kerentanan. Tinjau detail alert dan ulangi pemindaian pada build produksi. |
 | 8 | ⚪ LOW | Cache halaman autentikasi | ZAP meminta pemeriksaan ulang kebijakan cache untuk login dan lupa password. | Tinjau respons halaman autentikasi dan pastikan tidak disimpan oleh shared cache; gunakan kebijakan privat/no-store bila sesuai. |
 
-## Batasan dan verifikasi
+## Status perbaikan
 
-- Tangkapan layar tidak menyertakan rincian request/response, payload, atau bukti
-  untuk mengonfirmasi temuan `Content-Type` dan komentar bundle.
-- Cloudflare Quick Tunnel menyediakan hostname sementara. Header atau redirect
-  pada edge dapat berbeda dari respons origin Next.js.
-- Laporan ini mendokumentasikan temuan dan rekomendasi; tidak menyatakan bahwa
-  perbaikan telah diterapkan atau dipindai ulang.
+- Header CSP, HSTS, `X-Content-Type-Options`, anti-clickjacking, dan kebijakan
+  referrer dikonfigurasi di [next.config.ts](./dashboard-andaliman/next.config.ts).
+- Halaman autentikasi dan API memakai `Cache-Control: private, no-store`.
+- Route sitemap publik menyediakan XML dengan `Content-Type` yang eksplisit.
+- Kebijakan CSP saat ini mengizinkan skrip inline untuk kompatibilitas dengan
+  rendering Next.js yang ada. Ini baseline mitigasi, bukan kebijakan nonce ketat.
+- Build dan pemeriksaan header lokal perlu diikuti pemindaian ZAP ulang pada URL
+  publik untuk memeriksa efek Cloudflare. Tangkapan layar awal tidak menyertakan
+  rincian request/response, payload, atau bukti komentar bundle.
+- Cloudflare Quick Tunnel menyediakan hostname sementara. Redirect HTTP dan
+  header yang diubah pada edge tidak selalu dapat dikendalikan dari aplikasi.
 - Jangan menaruh token, password, cookie, atau nilai `.env` di laporan.
 
 ## Referensi konfigurasi proyek
