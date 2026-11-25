@@ -12,10 +12,6 @@ const NONCE_CSP_PATHS = ["/", ...PRIVATE_PAGES, "/sitemap.xml"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (process.env.NODE_ENV === "development" && pathname === "/_next/hmr") {
-    return NextResponse.next({ request });
-  }
-
   const isNoncePath = NONCE_CSP_PATHS.includes(pathname);
   const nonce = isNoncePath
     ? Buffer.from(crypto.randomUUID()).toString("base64")
@@ -125,5 +121,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)"],
+  matcher: ["/((?!_next/static|_next/image|_next/hmr|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)"],
 };

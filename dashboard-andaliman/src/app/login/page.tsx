@@ -2,7 +2,6 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { toEmail } from "@/lib/recovery-shared";
 
@@ -98,7 +97,6 @@ function Ornament() {
 }
 
 export default function LoginPage() {
-  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -136,20 +134,33 @@ export default function LoginPage() {
       return;
     }
 
-    // Bila pertanyaan pemulihan belum diatur, arahkan ke halaman pengisiannya
     let target = "/";
     try {
-      const r = await fetch("/api/recovery/status");
-      if (r.ok) {
-        const j = (await r.json()) as { configured?: boolean };
-        if (!j.configured) target = "/lengkapi-pemulihan";
+      const r = await fetch("/api/recovery/status", { cache: "no-store" });
+      if (r.status === 401) {
+        setMessage("Login berhasil, tetapi sesi belum terbaca oleh aplikasi. Coba masuk kembali.");
+        setBusy(false);
+        return;
       }
-    } catch {
-      /* abaikan, lanjut ke dashboard */
+      if (!r.ok) {
+        setMessage(`Login berhasil, tetapi status akun gagal diperiksa (HTTP ${r.status}).`);
+        setBusy(false);
+        return;
+      }
+
+      const j = (await r.json()) as { configured?: boolean };
+      if (!j.configured) target = "/lengkapi-pemulihan";
+    } catch (cause) {
+      setMessage(
+        cause instanceof Error
+          ? `Login berhasil, tetapi sesi gagal diperiksa: ${cause.message}`
+          : "Login berhasil, tetapi sesi gagal diperiksa. Coba lagi."
+      );
+      setBusy(false);
+      return;
     }
 
-    router.replace(target);
-    router.refresh();
+    window.location.replace(target);
   };
 
   return (
