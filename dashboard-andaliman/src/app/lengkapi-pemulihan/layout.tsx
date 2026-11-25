@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { RequestTimeRender } from "@/components/RequestTimeRender";
+
+export const dynamic = "force-dynamic";
 
 export default function LengkapiPemulihanLayout({ children }: { children: ReactNode }) {
-  return <RequestTimeRender>{children}</RequestTimeRender>;
+  return children;
 }
