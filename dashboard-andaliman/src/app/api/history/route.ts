@@ -37,8 +37,9 @@ export async function GET(request: Request) {
       (bucket) => `
         from(bucket: ${q(bucket)})
           |> range(start: ${cfg.start})
-          |> filter(fn: (r) => r._measurement == "environment" and r.device_id == ${q(DEVICE_ID)})
+          |> filter(fn: (r) => (r._measurement == "environment" or r._measurement == "environment_manual") and r.device_id == ${q(DEVICE_ID)})
           |> filter(fn: (r) => r._field == "suhu" or r._field == "kelembapan")
+          |> group(columns: ["device_id", "_field"])
           ${raw ? "" : `|> aggregateWindow(every: ${cfg.every}, fn: mean, createEmpty: false)`}
           |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
       `

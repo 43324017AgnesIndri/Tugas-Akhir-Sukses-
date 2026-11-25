@@ -18,6 +18,7 @@ const contentSecurityPolicy = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["*.trycloudflare.com"],
   poweredByHeader: false,
   experimental: {
     agentFeedback: true,

@@ -20,7 +20,7 @@
 // ===== MQTT =====
 // Sementara (broker di PC ini): gunakan IP LAN PC yang menjalankan Mosquitto; jangan gunakan localhost/0.0.0.0.
 // Nanti (broker online): isi dengan domain broker, lalu ubah MQTT_USE_TLS ke 1 dan MQTT_PORT ke 8883.
-#define MQTT_HOST       "172.27.67.226"
+#define MQTT_HOST       "172.27.67.105"
 #define MQTT_PORT       1883
 #define MQTT_USER     "esp32"     // pengguna Mosquitto untuk ESP32 (kosongkan jika broker tanpa login)
 #define MQTT_PASSWORD "andaliman2026esp"
