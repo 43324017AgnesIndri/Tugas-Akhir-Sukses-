@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useState, type CSSProperties, type FormEvent } from "react";
 import { PASSWORD_MIN, QUESTIONS } from "@/lib/recovery-shared";
 
 type Step = "username" | "answer" | "done";

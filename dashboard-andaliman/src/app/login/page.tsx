@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type CSSProperties, type FormEvent } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { toEmail } from "@/lib/recovery-shared";
+
+// Foto latar: public/images/andaliman-bg.png
+const BG = "/images/andaliman-bg.png";
 
 /* ---------- ikon kecil ---------- */
 const sv = {
