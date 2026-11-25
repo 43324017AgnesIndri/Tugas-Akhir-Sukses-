@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
-
-export const dynamic = "force-dynamic";
+import { RequestTimeRender } from "@/components/RequestTimeRender";
 
 export default function LoginLayout({ children }: { children: ReactNode }) {
-  return children;
+  return <RequestTimeRender>{children}</RequestTimeRender>;
 }

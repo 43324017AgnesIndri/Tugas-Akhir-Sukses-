@@ -91,9 +91,12 @@ export function useWifi() {
   }, [wantScan, router]);
 
   useEffect(() => {
-    void load();
+    const initialLoad = setTimeout(() => void load(), 0);
     const id = setInterval(load, busy ? POLL_BUSY_MS : POLL_IDLE_MS);
-    return () => clearInterval(id);
+    return () => {
+      clearTimeout(initialLoad);
+      clearInterval(id);
+    };
   }, [load, busy]);
 
   // Batas waktu menunggu jawaban perangkat
