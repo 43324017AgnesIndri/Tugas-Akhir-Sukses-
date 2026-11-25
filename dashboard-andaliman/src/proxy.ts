@@ -12,6 +12,10 @@ const NONCE_CSP_PATHS = ["/", ...PRIVATE_PAGES, "/sitemap.xml"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  if (process.env.NODE_ENV === "development" && pathname === "/_next/hmr") {
+    return NextResponse.next({ request });
+  }
+
   const isNoncePath = NONCE_CSP_PATHS.includes(pathname);
   const nonce = isNoncePath
     ? Buffer.from(crypto.randomUUID()).toString("base64")

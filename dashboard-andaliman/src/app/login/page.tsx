@@ -110,10 +110,21 @@ export default function LoginPage() {
     setMessage(null);
     setBusy(true);
 
-    const { error } = await createClient().auth.signInWithPassword({
-      email: toEmail(username),
-      password,
-    });
+    let error: { message: string } | null;
+    try {
+      ({ error } = await createClient().auth.signInWithPassword({
+        email: toEmail(username),
+        password,
+      }));
+    } catch (cause) {
+      setMessage(
+        cause instanceof Error
+          ? `Tidak dapat menghubungi layanan login: ${cause.message}`
+          : "Tidak dapat menghubungi layanan login. Periksa koneksi lalu coba lagi."
+      );
+      setBusy(false);
+      return;
+    }
 
     if (error) {
       setMessage(
