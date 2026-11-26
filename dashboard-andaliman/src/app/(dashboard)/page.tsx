@@ -6,7 +6,6 @@
   import StatCard from "@/components/StatCard";
   import EnvChart from "@/components/EnvChart";
   import ActuatorStatus from "@/components/ActuatorStatus";
-  import ThresholdForm from "@/components/ThresholdForm";
   import AlarmTable from "@/components/AlarmTable";
   import { useDevice } from "@/hooks/useDevice";
   import { useProfile } from "@/hooks/useProfile";
@@ -112,7 +111,7 @@
     return (
       <AppShell
         title="Dashboard"
-        subtitle="Overview of device conditions, thresholds, and alarms"
+        subtitle="Overview of device conditions and alarms"
         statusText={statusText}
         online={d.online}
         dashboard
@@ -225,14 +224,6 @@
           </section>
           <section className="dashboard-room">
             <ActuatorStatus mode={d.mode} actuators={d.actuators} hasState={d.hasActuatorState} />
-          </section>
-          <section className="dashboard-threshold">
-            <ThresholdForm
-              key={d.thresholdsLoaded ? "loaded" : "loading"}
-              thresholds={d.thresholds}
-              onApply={d.applyThresholds}
-              readOnly={!isAdmin}
-            />
           </section>
           <section className="dashboard-alarms">
             <AlarmTable rows={d.alarms} />

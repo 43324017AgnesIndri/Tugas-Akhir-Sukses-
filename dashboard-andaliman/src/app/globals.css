@@ -4230,7 +4230,7 @@ tbody tr:hover td {
   grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.95fr);
   grid-template-areas:
     "chart room"
-    "alarms threshold";
+    "alarms alarms";
   align-items: start;
   gap: 20px;
 }
@@ -4252,12 +4252,6 @@ tbody tr:hover td {
   grid-area: alarms;
   align-self: start;
   animation-delay: 140ms;
-}
-
-.dashboard-threshold {
-  grid-area: threshold;
-  align-self: start;
-  animation-delay: 210ms;
 }
 
 .dashboard-room {
@@ -4705,169 +4699,6 @@ tbody tr:hover td {
   display: none;
 }
 
-.app-dashboard .threshold-form {
-  padding: 24px;
-}
-
-.app-dashboard .threshold-form-header {
-  align-items: center;
-  justify-content: flex-start;
-  gap: 14px;
-  margin-bottom: 20px;
-}
-
-.threshold-header-icon {
-  flex-basis: 44px;
-  width: 44px;
-  height: 44px;
-  border: 1px solid #E6ECE4;
-  background: #F8FAF4;
-}
-
-.app-dashboard .threshold-form .threshold-form-header h2 {
-  margin: 3px 0 5px;
-  color: var(--dash-forest);
-  font-size: 22px;
-  line-height: 1.25;
-}
-
-.app-dashboard .threshold-eyebrow {
-  color: #80621D;
-  font-size: 12.5px;
-  font-weight: 750;
-  letter-spacing: 0.16em;
-}
-
-.app-dashboard .threshold-form-header p {
-  color: var(--dash-muted);
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.app-dashboard .threshold-ranges {
-  gap: 14px;
-}
-
-.app-dashboard .threshold-range {
-  padding: 16px;
-  border: 1px solid #E7ECE3;
-  border-radius: 16px;
-  background: #F8FAF4;
-}
-
-.app-dashboard .threshold-range-title {
-  gap: 10px;
-  margin-bottom: 14px;
-  color: var(--dash-forest);
-  font-size: 17px;
-  font-weight: 600;
-}
-
-.app-dashboard .threshold-range-icon {
-  flex-basis: 36px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #E9F0E8;
-  color: var(--dash-forest);
-}
-
-.app-dashboard .threshold-range-fields {
-  gap: 12px;
-}
-
-.app-dashboard .threshold-field label {
-  margin-bottom: 7px;
-  color: #40564A;
-  font-size: 13.5px;
-  font-weight: 550;
-}
-
-.app-dashboard .threshold-input-wrap input {
-  height: 48px;
-  padding: 10px 42px 10px 13px;
-  border: 1px solid #D9E2D8;
-  border-radius: 12px;
-  background: #FFFDF8;
-  color: var(--dash-deep);
-  font-size: 15px;
-}
-
-.app-dashboard .threshold-input-wrap input:focus {
-  border-color: #39805A;
-  box-shadow: 0 0 0 3px rgba(61, 140, 96, 0.2);
-}
-
-.app-dashboard .threshold-input-wrap.has-error input,
-.app-dashboard .threshold-input-wrap.has-error input:focus {
-  border-color: var(--dash-red);
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.14);
-}
-
-.app-dashboard .threshold-unit {
-  color: #53695C;
-  font-size: 13.5px;
-}
-
-.app-dashboard .threshold-validation {
-  color: #8A211B;
-  font-size: 13px;
-}
-
-.app-dashboard .threshold-validation > span {
-  flex-basis: 17px;
-  width: 17px;
-  height: 17px;
-  font-size: 12px;
-}
-
-.app-dashboard .threshold-apply {
-  position: relative;
-  min-height: 52px;
-  margin-top: 18px;
-  border: 1px solid var(--dash-deep);
-  border-radius: 14px;
-  background: linear-gradient(135deg, var(--dash-forest), var(--dash-deep));
-  color: #FFFFFF;
-  font-size: 16px;
-  font-weight: 650;
-  transition: transform 250ms ease, box-shadow 250ms ease, opacity 200ms ease;
-}
-
-.app-dashboard .threshold-apply::after {
-  position: absolute;
-  right: 16px;
-  bottom: 0;
-  left: 16px;
-  height: 2px;
-  border-radius: 999px;
-  background: var(--dash-gold);
-  content: "";
-  opacity: 0;
-  transition: opacity 180ms ease;
-}
-
-.app-dashboard .threshold-apply:hover:not(:disabled) {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, var(--dash-forest), var(--dash-deep));
-  box-shadow: 0 12px 22px rgba(13, 43, 30, 0.2);
-}
-
-.app-dashboard .threshold-apply:hover:not(:disabled)::after {
-  opacity: 1;
-}
-
-.app-dashboard .threshold-apply:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-
-.app-dashboard .threshold-readonly {
-  margin-top: 12px;
-  color: var(--dash-muted);
-  font-size: 13px;
-}
-
 .app-dashboard .wifi-pop {
   color: var(--dash-deep);
   font-family: var(--font-inter), Inter, Arial, sans-serif;
@@ -4927,7 +4758,6 @@ tbody tr:hover td {
     grid-template-areas:
       "chart"
       "room"
-      "threshold"
       "alarms";
   }
 
@@ -5029,7 +4859,6 @@ tbody tr:hover td {
     grid-template-areas:
       "chart"
       "room"
-      "threshold"
       "alarms";
     gap: 14px;
   }
