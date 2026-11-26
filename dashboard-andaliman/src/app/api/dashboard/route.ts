@@ -14,7 +14,7 @@ const pick = (rows: Row[], field: string) => rows.find((r) => r._field === field
 
 export async function GET() {
   const auth = await getServerAuth();
-  if (!auth) return NextResponse.json({ error: "Belum login" }, { status: 401 });
+  if (!auth) return NextResponse.json({ error: "Not logged in." }, { status: 401 });
 
   try {
     const latest = (measurement: string) => (bucket: string) => `
@@ -64,6 +64,6 @@ export async function GET() {
     return NextResponse.json(body);
   } catch (e) {
     console.error("[api/dashboard]", e);
-    return NextResponse.json({ error: "Tidak dapat membaca InfluxDB. Pastikan Docker dan InfluxDB menyala." }, { status: 502 });
+    return NextResponse.json({ error: "Unable to read from InfluxDB. Make sure Docker and InfluxDB are running." }, { status: 502 });
   }
 }

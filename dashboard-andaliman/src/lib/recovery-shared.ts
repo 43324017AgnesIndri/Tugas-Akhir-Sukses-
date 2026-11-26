@@ -20,8 +20,8 @@ export function toUsername(email: string): string {
 
 // Pertanyaan pemulihan: tetap dan sama untuk semua pengguna.
 export const QUESTIONS: string[] = [
-  "Di mana sekolah dasar Anda?",
-  "Apa warna favorit Anda?",
+  "Where did you attend elementary school?",
+  "What is your favorite color?",
 ];
 
 export const QUESTION_COUNT = QUESTIONS.length;

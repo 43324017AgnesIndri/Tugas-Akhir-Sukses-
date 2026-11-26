@@ -24,7 +24,7 @@ import {
 } from "@/lib/utils";
 
 const NO_DATA: StatusInfo = {
-  label: "Belum ada data",
+  label: "No data yet",
   severity: "in",
 };
 
@@ -66,13 +66,13 @@ export default function MonitoringPage() {
   return (
     <AppShell
       title="Monitoring"
-      subtitle="Pemantauan data sensor dan tren kondisi ruang berdasarkan waktu"
+      subtitle="Sensor data and room condition trends over time"
       statusText={
         d
           ? d.online
-            ? "Perangkat online"
-            : "Perangkat offline"
-          : "Memuat data..."
+            ? "Device online"
+            : "Device offline"
+          : "Loading data..."
       }
       online={d?.online}
     >
@@ -84,37 +84,37 @@ export default function MonitoringPage() {
 
       <div className="grid g4">
         <StatCard
-          label="Suhu sekarang"
+          label="Current Temperature"
           value={r ? `${fmt(r.t)} °C` : "--"}
           badge={st.label}
           severity={st.severity}
-          hint={`Batas: ${th.tmin} - ${th.tmax} °C`}
+          hint={`Limit: ${th.tmin} - ${th.tmax} °C`}
         />
 
         <StatCard
-          label="Kelembapan sekarang"
+          label="Current Humidity"
           value={r ? `${fmt(r.h)} %` : "--"}
           badge={sh.label}
           severity={sh.severity}
-          hint={`Batas: ${th.hmin} - ${th.hmax} %`}
+          hint={`Limit: ${th.hmin} - ${th.hmax} %`}
         />
 
         <div className="c">
-          <div className="lbl">Pembaruan terakhir</div>
+          <div className="lbl">Last updated</div>
 
           <div className="big" style={{ fontSize: 22 }}>
             {d?.updatedAt
-              ? new Date(d.updatedAt).toLocaleTimeString("id-ID")
+              ? new Date(d.updatedAt).toLocaleTimeString("en-US")
               : "--"}
           </div>
 
           <div className="rng">
-            Data diperbarui otomatis tiap 5 detik
+            Data updates automatically every 5 seconds
           </div>
         </div>
 
         <div className="c">
-          <div className="lbl">Perangkat</div>
+          <div className="lbl">Device</div>
 
           <div className="big" style={{ fontSize: 22 }}>
             {d?.deviceId ?? "--"}
@@ -133,7 +133,7 @@ export default function MonitoringPage() {
         style={{ marginBottom: 12 }}
       >
         <span className="muted">
-          Rentang grafik dan statistik:
+          Chart and statistics range:
         </span>
 
         <RangeTabs
@@ -146,7 +146,7 @@ export default function MonitoringPage() {
       <div className="grid g2">
         <EnvChart
           data={toChartPoints(points, range)}
-          title={`Suhu dan kelembapan (${label} terakhir)`}
+          title={`Temperature and humidity (last ${label})`}
         />
 
         <ActuatorStatus
@@ -157,30 +157,30 @@ export default function MonitoringPage() {
       </div>
 
       <div className="c monitoring-statistics">
-  <h2>Statistik ({label} terakhir)</h2>
+  <h2>Statistics (last {label})</h2>
 
-  {/* DESKTOP */}
+  {/* Desktop */}
   <div className="tw monitoring-statistics-desktop">
     <table>
       <thead>
         <tr>
           <th>Parameter</th>
-          <th>Terendah</th>
-          <th>Rata-rata</th>
-          <th>Tertinggi</th>
+          <th>Lowest</th>
+          <th>Average</th>
+          <th>Highest</th>
         </tr>
       </thead>
 
       <tbody>
         <tr>
-          <td>Suhu (°C)</td>
+          <td>Temperature (°C)</td>
           <td>{show(sT?.min)}</td>
           <td>{show(sT?.avg)}</td>
           <td>{show(sT?.max)}</td>
         </tr>
 
         <tr>
-          <td>Kelembapan (%)</td>
+          <td>Humidity (%)</td>
           <td>{show(sH?.min)}</td>
           <td>{show(sH?.avg)}</td>
           <td>{show(sH?.max)}</td>
@@ -189,49 +189,49 @@ export default function MonitoringPage() {
     </table>
   </div>
 
-  {/* HP */}
+  {/* Mobile */}
   <div className="monitoring-statistics-mobile">
     <div className="monitoring-stat-item">
-      <strong>Suhu (°C)</strong>
+      <strong>Temperature (°C)</strong>
 
       <div className="monitoring-stat-row">
-        <span>Terendah</span>
+        <span>Lowest</span>
         <span>{show(sT?.min)}</span>
       </div>
 
       <div className="monitoring-stat-row">
-        <span>Rata-rata</span>
+        <span>Average</span>
         <span>{show(sT?.avg)}</span>
       </div>
 
       <div className="monitoring-stat-row">
-        <span>Tertinggi</span>
+        <span>Highest</span>
         <span>{show(sT?.max)}</span>
       </div>
     </div>
 
     <div className="monitoring-stat-item">
-      <strong>Kelembapan (%)</strong>
+      <strong>Humidity (%)</strong>
 
       <div className="monitoring-stat-row">
-        <span>Terendah</span>
+        <span>Lowest</span>
         <span>{show(sH?.min)}</span>
       </div>
 
       <div className="monitoring-stat-row">
-        <span>Rata-rata</span>
+        <span>Average</span>
         <span>{show(sH?.avg)}</span>
       </div>
 
       <div className="monitoring-stat-row">
-        <span>Tertinggi</span>
+        <span>Highest</span>
         <span>{show(sH?.max)}</span>
       </div>
     </div>
   </div>
 
   <div className="note tone-in monitoring-stat-note">
-    Nilai dihitung dari rata-rata data per jendela waktu pada rentang yang dipilih
+    Values are calculated from the average readings in each time window for the selected range.
   </div>
 </div>
 

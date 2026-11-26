@@ -4,7 +4,7 @@ import { getMqttStatus } from "@/lib/mqtt";
 
 export async function GET() {
   const auth = await getServerAuth();
-  if (!auth) return NextResponse.json({ error: "Belum login" }, { status: 401 });
+  if (!auth) return NextResponse.json({ error: "Not logged in." }, { status: 401 });
 
   return NextResponse.json(getMqttStatus(), {
     headers: { "Cache-Control": "no-store" },

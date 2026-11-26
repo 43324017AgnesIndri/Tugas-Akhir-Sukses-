@@ -33,17 +33,17 @@ export default function PenggunaPage() {
 
   const addUser = async () => {
     if (!email.trim()) {
-      report(false, "Email wajib diisi.");
+      report(false, "Email is required.");
       return;
     }
 
     if (!password || password.length < 8) {
-      report(false, "Password minimal 8 karakter.");
+      report(false, "Password must be at least 8 characters.");
       return;
     }
 
     if (!nama.trim()) {
-      report(false, "Nama wajib diisi.");
+      report(false, "Name is required.");
       return;
     }
 
@@ -58,7 +58,7 @@ export default function PenggunaPage() {
 
     report(
       r.ok,
-      r.ok ? "Pengguna berhasil dibuat." : (r.error ?? "Gagal.")
+      r.ok ? "User created successfully." : (r.error ?? "Failed.")
     );
 
     if (r.ok) {
@@ -80,7 +80,7 @@ export default function PenggunaPage() {
 
     report(
       r.ok,
-      r.ok ? "Role diperbarui." : (r.error ?? "Gagal.")
+      r.ok ? "Role updated." : (r.error ?? "Failed.")
     );
 
     users.reload();
@@ -89,7 +89,7 @@ export default function PenggunaPage() {
   const removeUser = async (u: UserInfo) => {
     if (
       !window.confirm(
-        `Hapus pengguna ${u.email}? Tindakan ini tidak dapat dibatalkan.`
+        `Delete user ${u.email}? This action cannot be undone.`
       )
     ) {
       return;
@@ -101,7 +101,7 @@ export default function PenggunaPage() {
 
     report(
       r.ok,
-      r.ok ? "Pengguna dihapus." : (r.error ?? "Gagal.")
+      r.ok ? "User deleted." : (r.error ?? "Failed.")
     );
 
     users.reload();
@@ -110,11 +110,11 @@ export default function PenggunaPage() {
   if (!profileLoading && !isAdmin) {
     return (
       <AppShell
-        title="Pengguna"
-        subtitle="Manajemen akun dashboard"
+        title="Users"
+        subtitle="Dashboard account management"
       >
         <div className="note tone-bd">
-          Halaman ini hanya dapat dibuka oleh admin.
+          Only admins can access this page.
         </div>
       </AppShell>
     );
@@ -128,8 +128,8 @@ export default function PenggunaPage() {
 
   return (
     <AppShell
-      title="Pengguna"
-      subtitle="Manajemen akun dan role dashboard"
+      title="Users"
+      subtitle="Dashboard account and role management"
     >
       {users.error && (
         <div className="note tone-bd page-note">
@@ -148,7 +148,7 @@ export default function PenggunaPage() {
       )}
 
       <div className="c" style={{ marginBottom: 12 }}>
-        <h2>Daftar pengguna ({list.length})</h2>
+        <h2>Users ({list.length})</h2>
 
         <div className="tw user-table-wrap">
           {/* ================= DESKTOP ================= */}
@@ -156,11 +156,11 @@ export default function PenggunaPage() {
             <thead>
               <tr>
                 <th>Email</th>
-                <th>Nama</th>
+                <th>Name</th>
                 <th>Role</th>
-                <th>Dibuat</th>
-                <th>Login terakhir</th>
-                <th>Aksi</th>
+                <th>Created</th>
+                <th>Last login</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
@@ -176,8 +176,8 @@ export default function PenggunaPage() {
                     }}
                   >
                     {users.loading
-                      ? "Memuat data..."
-                      : "Belum ada pengguna."}
+                      ? "Loading data..."
+                      : "No users yet."}
                   </td>
                 </tr>
               )}
@@ -192,7 +192,7 @@ export default function PenggunaPage() {
                       {self && (
                         <span className="muted">
                           {" "}
-                          (Anda)
+                          (You)
                         </span>
                       )}
                     </td>
@@ -228,7 +228,7 @@ export default function PenggunaPage() {
                         ? formatDateTime(
                             u.last_sign_in_at
                           )
-                        : "Belum pernah"}
+                        : "Never"}
                     </td>
 
                     <td>
@@ -240,7 +240,7 @@ export default function PenggunaPage() {
                           removeUser(u)
                         }
                       >
-                        Hapus
+                        Delete
                       </button>
                     </td>
                   </tr>
@@ -254,8 +254,8 @@ export default function PenggunaPage() {
             {list.length === 0 && (
               <div className="muted user-mobile-empty">
                 {users.loading
-                  ? "Memuat data..."
-                  : "Belum ada pengguna."}
+                  ? "Loading data..."
+                  : "No users yet."}
               </div>
             )}
 
@@ -278,7 +278,7 @@ export default function PenggunaPage() {
                   </div>
 
                   <div className="user-mobile-field">
-                    <span>Nama</span>
+                    <span>Name</span>
                     <strong>
                       {u.nama ?? "-"}
                     </strong>
@@ -307,7 +307,7 @@ export default function PenggunaPage() {
                   </div>
 
                   <div className="user-mobile-field">
-                    <span>Dibuat</span>
+                    <span>Created</span>
                     <strong>
                       {formatDateTime(
                         u.created_at
@@ -316,13 +316,13 @@ export default function PenggunaPage() {
                   </div>
 
                   <div className="user-mobile-field">
-                    <span>Login terakhir</span>
+                    <span>Last login</span>
                     <strong>
                       {u.last_sign_in_at
                         ? formatDateTime(
                             u.last_sign_in_at
                           )
-                        : "Belum pernah"}
+                        : "Never"}
                     </strong>
                   </div>
 
@@ -334,7 +334,7 @@ export default function PenggunaPage() {
                       removeUser(u)
                     }
                   >
-                    Hapus
+                    Delete
                   </button>
                 </div>
               );
@@ -343,16 +343,16 @@ export default function PenggunaPage() {
         </div>
 
         <div className="note tone-in">
-          Admin dapat mengubah mode, threshold, dan
-          aktuator. Viewer hanya dapat melihat data.
-          Akun sendiri tidak dapat diubah atau dihapus
-          dari sini.
+          Admins can change the mode, thresholds, and
+          actuators. Viewers can only view data.
+          You cannot edit or delete your own account
+          here.
         </div>
       </div>
 
-      {/* ================= TAMBAH PENGGUNA ================= */}
+      {/* ================= ADD USER ================= */}
       <div className="c">
-        <h2>Tambah pengguna</h2>
+        <h2>Add User</h2>
 
         <div
           className="f"
@@ -375,7 +375,7 @@ export default function PenggunaPage() {
 
           <div>
             <label htmlFor="uPass">
-              Password (min. 8 karakter)
+              Password (at least 8 characters)
             </label>
             <input
               id="uPass"
@@ -389,7 +389,7 @@ export default function PenggunaPage() {
           </div>
 
           <div>
-            <label htmlFor="uNama">Nama</label>
+            <label htmlFor="uNama">Name</label>
             <input
               id="uNama"
               value={nama}
@@ -428,7 +428,7 @@ export default function PenggunaPage() {
           disabled={busy}
           onClick={addUser}
         >
-          {busy ? "Memproses..." : "Buat pengguna"}
+          {busy ? "Processing..." : "Create User"}
         </button>
       </div>
     </AppShell>

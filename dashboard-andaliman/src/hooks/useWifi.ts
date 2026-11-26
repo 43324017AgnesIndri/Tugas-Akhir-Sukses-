@@ -21,14 +21,14 @@ interface Pending {
 }
 
 function pesanHasil(hasil: WifiHasil, target: string, sekarang: string | null): { ok: boolean; text: string } {
-  const lama = sekarang ? ` Perangkat kembali ke "${sekarang}".` : "";
-  if (hasil === "ok") return { ok: true, text: `Perangkat terhubung ke "${target}" dan akan memakainya seterusnya.` };
+  const lama = sekarang ? ` The device has switched back to "${sekarang}".` : "";
+  if (hasil === "ok") return { ok: true, text: `Connected to "${target}". The device will keep using this network.` };
   if (hasil === "gagal_wifi") {
-    return { ok: false, text: `Tidak dapat terhubung ke "${target}". Periksa password dan kekuatan sinyalnya.${lama}` };
+    return { ok: false, text: `Could not connect to "${target}". Check the password and signal strength.${lama}` };
   }
   return {
     ok: false,
-    text: `Perangkat berhasil masuk ke "${target}", tetapi server MQTT tidak terjangkau dari jaringan itu (jaringan tamu atau firewall).${lama}`,
+    text: `The device connected to "${target}", but the MQTT server is unreachable from that network (for example, due to a guest network or firewall).${lama}`,
   };
 }
 
@@ -66,7 +66,7 @@ export function useWifi() {
         return;
       }
       const json = (await res.json().catch(() => ({}))) as WifiStatus & { error?: string };
-      if (!res.ok) throw new Error(json.error ?? "Gagal mengambil status Wi-Fi.");
+      if (!res.ok) throw new Error(json.error ?? "Failed to retrieve Wi-Fi status.");
       setStatus(json);
       setError(null);
 
@@ -84,7 +84,7 @@ export function useWifi() {
         setPending(null);
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Gagal mengambil status Wi-Fi.");
+      setError(e instanceof Error ? e.message : "Failed to retrieve Wi-Fi status.");
     } finally {
       setLoading(false);
     }
@@ -99,14 +99,14 @@ export function useWifi() {
     };
   }, [load, busy]);
 
-  // Batas waktu menunggu jawaban perangkat
+  // Timeout while waiting for the device response
   useEffect(() => {
     if (!scanId) return;
     const t = setTimeout(() => {
       if (scanRef.current !== scanId) return;
       scanRef.current = null;
       setScanId(null);
-      setNotice({ ok: false, text: "Perangkat tidak mengirim daftar jaringan. Pastikan perangkat online, lalu coba lagi." });
+      setNotice({ ok: false, text: "The device did not send a network list. Make sure it is online and try again." });
     }, SCAN_TIMEOUT_MS);
     return () => clearTimeout(t);
   }, [scanId]);
@@ -119,7 +119,7 @@ export function useWifi() {
       setPending(null);
       setNotice({
         ok: false,
-        text: "Belum ada jawaban dari perangkat. Tunggu sebentar; jika tetap offline, periksa ESP32 dan Wi-Fi-nya.",
+        text: "No response from the device yet. Wait a moment; if it remains offline, check the ESP32 and its Wi-Fi connection.",
       });
     }, CONNECT_TIMEOUT_MS);
     return () => clearTimeout(t);
@@ -129,7 +129,7 @@ export function useWifi() {
     setNotice(null);
     const r = await sendJson<{ id: string }>("POST", "/api/wifi", { action: "scan" });
     if (!r.ok || !r.data) {
-      setNotice({ ok: false, text: r.error ?? "Perintah scan gagal dikirim." });
+      setNotice({ ok: false, text: r.error ?? "Failed to send the scan request." });
       return;
     }
     beginScan(r.data.id);
@@ -139,7 +139,7 @@ export function useWifi() {
     setNotice(null);
     const r = await sendJson<{ id: string }>("POST", "/api/wifi", { action: "connect", ssid, password });
     if (!r.ok || !r.data) {
-      setNotice({ ok: false, text: r.error ?? "Perintah ganti Wi-Fi gagal dikirim." });
+      setNotice({ ok: false, text: r.error ?? "Failed to send the Wi-Fi change request." });
       return false;
     }
     beginPending({ id: r.data.id, ssid });

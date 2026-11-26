@@ -3,6 +3,7 @@ import { getServerAuth } from "@/lib/auth-server";
 import { DEVICE_ID } from "@/lib/influx";
 import { cmdTopic, publishCommand } from "@/lib/mqtt";
 import type { Thresholds } from "@/lib/types";
+import { THRESHOLD_RANGE_ERRORS } from "@/lib/threshold-validation";
 
 interface DbRow {
   updated_at?: string | null;
@@ -22,7 +23,7 @@ const toThresholds = (r: DbRow): Thresholds => ({
 // Membaca threshold (semua pengguna yang login)
 export async function GET() {
   const auth = await getServerAuth();
-  if (!auth) return NextResponse.json({ error: "Belum login" }, { status: 401 });
+  if (!auth) return NextResponse.json({ error: "Not logged in." }, { status: 401 });
 
   const { data, error } = await auth.supabase
     .from("thresholds")
@@ -31,7 +32,7 @@ export async function GET() {
     .single();
 
   if (error || !data) {
-    return NextResponse.json({ error: "Threshold belum ada di database." }, { status: 404 });
+    return NextResponse.json({ error: "Threshold data is not available yet." }, { status: 404 });
   }
   return NextResponse.json({ thresholds: toThresholds(data), updatedAt: (data as DbRow).updated_at ?? null });
 }
@@ -39,9 +40,9 @@ export async function GET() {
 // Menyimpan threshold (hanya admin)
 export async function PUT(request: Request) {
   const auth = await getServerAuth();
-  if (!auth) return NextResponse.json({ error: "Belum login" }, { status: 401 });
+  if (!auth) return NextResponse.json({ error: "Not logged in." }, { status: 401 });
   if (auth.role !== "admin") {
-    return NextResponse.json({ error: "Hanya admin yang boleh mengubah threshold." }, { status: 403 });
+    return NextResponse.json({ error: "Only admins can change thresholds." }, { status: 403 });
   }
 
   const body = (await request.json().catch(() => null)) as Partial<Thresholds> | null;
@@ -52,11 +53,16 @@ export async function PUT(request: Request) {
     hmax: Number(body?.hmax),
   };
   if ([v.tmin, v.tmax, v.hmin, v.hmax].some((n) => !Number.isFinite(n))) {
-    return NextResponse.json({ error: "Semua nilai harus berupa angka." }, { status: 400 });
+    return NextResponse.json({ error: "All values must be numbers." }, { status: 400 });
   }
-  if (v.tmin >= v.tmax || v.hmin >= v.hmax) {
-    return NextResponse.json({ error: "Batas bawah harus lebih kecil dari batas atas." }, { status: 400 });
+  const rangeErrors = [];
+  if (v.tmin >= v.tmax) {
+    rangeErrors.push(THRESHOLD_RANGE_ERRORS.temperature);
   }
+  if (v.hmin >= v.hmax) {
+    rangeErrors.push(THRESHOLD_RANGE_ERRORS.humidity);
+  }
+  if (rangeErrors.length) return NextResponse.json({ error: rangeErrors.join(" ") }, { status: 400 });
 
   const { data, error } = await auth.supabase
     .from("thresholds")
@@ -74,7 +80,7 @@ export async function PUT(request: Request) {
 
   if (error || !data) {
     console.error("[api/threshold]", error?.message);
-    return NextResponse.json({ error: "Gagal menyimpan threshold ke database." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save thresholds to the database." }, { status: 500 });
   }
   const saved = toThresholds(data);
 

@@ -41,8 +41,8 @@ export default function PerangkatPage() {
 
     setMessage(
       r.ok
-        ? { ok: true, text: "Perubahan tersimpan." }
-        : { ok: false, text: r.error ?? "Gagal." }
+        ? { ok: true, text: "Changes saved." }
+        : { ok: false, text: r.error ?? "Failed." }
     );
 
     if (r.ok) setEditId(null);
@@ -55,7 +55,7 @@ export default function PerangkatPage() {
     if (!newId.trim() && !newNama.trim()) {
       setMessage({
         ok: false,
-        text: "ID perangkat dan Nama perangkat wajib diisi.",
+        text: "Device ID and device name are required.",
       });
       return;
     }
@@ -63,7 +63,7 @@ export default function PerangkatPage() {
     if (!newId.trim()) {
       setMessage({
         ok: false,
-        text: "ID perangkat wajib diisi.",
+        text: "Device ID is required.",
       });
       return;
     }
@@ -71,7 +71,7 @@ export default function PerangkatPage() {
     if (!newNama.trim()) {
       setMessage({
         ok: false,
-        text: "Nama perangkat wajib diisi.",
+        text: "Device name is required.",
       });
       return;
     }
@@ -86,10 +86,10 @@ export default function PerangkatPage() {
 
     setMessage(
       r.ok
-        ? { ok: true, text: "Perangkat ditambahkan." }
+        ? { ok: true, text: "Device added." }
         : {
             ok: false,
-            text: r.error ?? "Gagal menambahkan perangkat.",
+            text: r.error ?? "Failed to add device.",
           }
     );
 
@@ -107,8 +107,8 @@ export default function PerangkatPage() {
 
   return (
     <AppShell
-      title="Perangkat"
-      subtitle="Daftar perangkat ESP32 dan statusnya"
+      title="Devices"
+      subtitle="ESP32 devices and their status"
     >
       {devices.error && (
         <div className="note tone-bd page-note">
@@ -125,19 +125,19 @@ export default function PerangkatPage() {
       )}
 
       <div className="c perangkat-card" style={{ marginBottom: 12 }}>
-        <h2>Daftar perangkat</h2>
+        <h2>Device List</h2>
 
-        {/* DESKTOP: tetap tabel */}
+        {/* Desktop: table layout */}
         <div className="tw perangkat-table-desktop">
           <table>
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Nama</th>
-                <th>Lokasi</th>
+                <th>Name</th>
+                <th>Location</th>
                 <th>Status</th>
-                <th>Data terakhir</th>
-                {isAdmin && <th>Aksi</th>}
+                <th>Last seen</th>
+                {isAdmin && <th>Actions</th>}
               </tr>
             </thead>
 
@@ -153,8 +153,8 @@ export default function PerangkatPage() {
                     }}
                   >
                     {devices.loading
-                      ? "Memuat data..."
-                      : "Belum ada perangkat."}
+                      ? "Loading data..."
+                      : "No devices yet."}
                   </td>
                 </tr>
               )}
@@ -201,7 +201,7 @@ export default function PerangkatPage() {
                   <td>
                     {d.lastSeen
                       ? formatDateTime(d.lastSeen)
-                      : "Belum pernah"}
+                      : "Never"}
                   </td>
 
                   {isAdmin && (
@@ -214,7 +214,7 @@ export default function PerangkatPage() {
                             disabled={busy}
                             onClick={saveEdit}
                           >
-                            Simpan
+                            Save
                           </button>
 
                           <button
@@ -222,7 +222,7 @@ export default function PerangkatPage() {
                             className="btn"
                             onClick={() => setEditId(null)}
                           >
-                            Batal
+                            Cancel
                           </button>
                         </div>
                       ) : (
@@ -231,7 +231,7 @@ export default function PerangkatPage() {
                           className="btn"
                           onClick={() => startEdit(d)}
                         >
-                          Ubah
+                          Edit
                         </button>
                       )}
                     </td>
@@ -242,13 +242,13 @@ export default function PerangkatPage() {
           </table>
         </div>
 
-        {/* HP: kartu vertikal */}
+        {/* Mobile: vertical cards */}
         <div className="perangkat-table-mobile">
           {list.length === 0 && (
             <div className="perangkat-empty">
               {devices.loading
-                ? "Memuat data..."
-                : "Belum ada perangkat."}
+                ? "Loading data..."
+                : "No devices yet."}
             </div>
           )}
 
@@ -260,7 +260,7 @@ export default function PerangkatPage() {
               </div>
 
               <div className="perangkat-row">
-                <span>Nama</span>
+                <span>Name</span>
 
                 {editId === d.id ? (
                   <input
@@ -275,7 +275,7 @@ export default function PerangkatPage() {
               </div>
 
               <div className="perangkat-row">
-                <span>Lokasi</span>
+                <span>Location</span>
 
                 {editId === d.id ? (
                   <input
@@ -301,11 +301,11 @@ export default function PerangkatPage() {
               </div>
 
               <div className="perangkat-row">
-                <span>Data terakhir</span>
+                <span>Last seen</span>
                 <strong>
                   {d.lastSeen
                     ? formatDateTime(d.lastSeen)
-                    : "Belum pernah"}
+                    : "Never"}
                 </strong>
               </div>
 
@@ -319,7 +319,7 @@ export default function PerangkatPage() {
                         disabled={busy}
                         onClick={saveEdit}
                       >
-                        Simpan
+                        Save
                       </button>
 
                       <button
@@ -327,7 +327,7 @@ export default function PerangkatPage() {
                         className="btn"
                         onClick={() => setEditId(null)}
                       >
-                        Batal
+                        Cancel
                       </button>
                     </>
                   ) : (
@@ -336,7 +336,7 @@ export default function PerangkatPage() {
                       className="btn"
                       onClick={() => startEdit(d)}
                     >
-                      Ubah
+                      Edit
                     </button>
                   )}
                 </div>
@@ -346,15 +346,15 @@ export default function PerangkatPage() {
         </div>
 
         <div className="note tone-wn">
-          Perangkat dianggap online jika ada data baru dalam 3 menit
-          terakhir. Dashboard saat ini menampilkan data untuk satu
-          perangkat utama.
+          A device is considered online if it has sent new data within the last
+          3 minutes. The dashboard currently displays data for one primary
+          device.
         </div>
       </div>
 
       {isAdmin && (
         <div className="c">
-          <h2>Tambah perangkat</h2>
+          <h2>Add Device</h2>
 
           <div
             className="f"
@@ -364,7 +364,7 @@ export default function PerangkatPage() {
             }}
           >
             <div>
-              <label htmlFor="newId">ID perangkat</label>
+              <label htmlFor="newId">Device ID</label>
               <input
                 id="newId"
                 placeholder="andaliman02"
@@ -374,7 +374,7 @@ export default function PerangkatPage() {
             </div>
 
             <div>
-              <label htmlFor="newNama">Nama</label>
+              <label htmlFor="newNama">Name</label>
               <input
                 id="newNama"
                 value={newNama}
@@ -383,7 +383,7 @@ export default function PerangkatPage() {
             </div>
 
             <div>
-              <label htmlFor="newLokasi">Lokasi</label>
+              <label htmlFor="newLokasi">Location</label>
               <input
                 id="newLokasi"
                 value={newLokasi}
@@ -402,12 +402,12 @@ export default function PerangkatPage() {
             disabled={busy}
             onClick={addDevice}
           >
-            Tambah perangkat
+            Add Device
           </button>
 
           <div className="note tone-in">
-            ID perangkat harus sama dengan tag device_id yang
-            dikirim ESP32 ke InfluxDB.
+            The device ID must match the device_id tag sent by the ESP32 to
+            InfluxDB.
           </div>
         </div>
       )}

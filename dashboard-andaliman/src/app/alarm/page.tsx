@@ -9,9 +9,9 @@ import { formatDateTime, severityFromStatus } from "@/lib/utils";
 import { useState } from "react";
 
 const AKSI: Record<string, string> = {
-  set_mode: "Ubah mode",
-  set_aktuator: "Ubah aktuator",
-  set_threshold: "Ubah threshold",
+  set_mode: "Change mode",
+  set_aktuator: "Change actuator",
+  set_threshold: "Change threshold",
 };
 
 export default function AlarmPage() {
@@ -48,8 +48,8 @@ export default function AlarmPage() {
 
   return (
     <AppShell
-      title="Alarm dan log"
-      subtitle="Riwayat alarm dan catatan perintah kontrol"
+      title="Alarms and Logs"
+      subtitle="Alarm history and control command log"
     >
       {alarms.error && (
         <div className="note tone-bd page-note">
@@ -69,7 +69,7 @@ export default function AlarmPage() {
       <div className="c alarm-page-card">
         <div className="alarm-page-header">
           <h2>
-            Alarm ({all.length}) · belum dibaca: {unread}
+            Alarms ({all.length}) · unread: {unread}
           </h2>
 
           <div className="alarm-page-actions">
@@ -79,8 +79,8 @@ export default function AlarmPage() {
               onClick={() => setOnlyUnread((v) => !v)}
             >
               {onlyUnread
-                ? "Tampilkan semua"
-                : "Hanya yang belum dibaca"}
+                ? "Show all"
+                : "Unread only"}
             </button>
 
             {isAdmin && (
@@ -90,7 +90,7 @@ export default function AlarmPage() {
                 disabled={unread === 0}
                 onClick={() => acknowledge()}
               >
-                Tandai semua dibaca
+                Mark all as read
               </button>
             )}
           </div>
@@ -101,12 +101,12 @@ export default function AlarmPage() {
           <table>
             <thead>
               <tr>
-                <th>Waktu</th>
+                <th>Time</th>
                 <th>Parameter</th>
-                <th>Nilai</th>
+                <th>Value</th>
                 <th>Status</th>
-                <th>Keterangan</th>
-                <th>Dibaca</th>
+                <th>Notes</th>
+                <th>Read</th>
               </tr>
             </thead>
 
@@ -122,8 +122,8 @@ export default function AlarmPage() {
                     }}
                   >
                     {alarms.loading
-                      ? "Memuat data..."
-                      : "Tidak ada alarm."}
+                      ? "Loading data..."
+                      : "No alarms yet."}
                   </td>
                 </tr>
               )}
@@ -151,17 +151,17 @@ export default function AlarmPage() {
 
                   <td>
                     {a.acknowledged ? (
-                      "Sudah"
+                      "Read"
                     ) : isAdmin ? (
                       <button
                         type="button"
                         className="btn"
                         onClick={() => acknowledge(a.id)}
                       >
-                        Tandai
+                        Mark as read
                       </button>
                     ) : (
-                      "Belum"
+                      "Unread"
                     )}
                   </td>
                 </tr>
@@ -175,14 +175,14 @@ export default function AlarmPage() {
           {rows.length === 0 ? (
             <div className="alarm-page-empty">
               {alarms.loading
-                ? "Memuat data..."
-                : "Tidak ada alarm."}
+                ? "Loading data..."
+                : "No alarms yet."}
             </div>
           ) : (
             rows.map((a) => (
               <div className="alarm-page-item" key={a.id}>
                 <div className="alarm-page-row">
-                  <span>Waktu</span>
+                  <span>Time</span>
                   <strong>
                     {formatDateTime(a.created_at)}
                   </strong>
@@ -194,7 +194,7 @@ export default function AlarmPage() {
                 </div>
 
                 <div className="alarm-page-row">
-                  <span>Nilai</span>
+                  <span>Value</span>
                   <strong>{a.nilai ?? "-"}</strong>
                 </div>
 
@@ -212,27 +212,27 @@ export default function AlarmPage() {
                 </div>
 
                 <div className="alarm-page-row alarm-page-description">
-                  <span>Keterangan</span>
+                  <span>Notes</span>
                   <strong>
                     {a.keterangan ?? "-"}
                   </strong>
                 </div>
 
                 <div className="alarm-page-row">
-                  <span>Dibaca</span>
+                  <span>Read</span>
 
                   {a.acknowledged ? (
-                    <strong>Sudah</strong>
+                    <strong>Read</strong>
                   ) : isAdmin ? (
                     <button
                       type="button"
                       className="btn"
                       onClick={() => acknowledge(a.id)}
                     >
-                      Tandai
+                      Mark as read
                     </button>
                   ) : (
-                    <strong>Belum</strong>
+                    <strong>Unread</strong>
                   )}
                 </div>
               </div>
@@ -245,7 +245,7 @@ export default function AlarmPage() {
           LOG PERINTAH KONTROL
          ===================================================== */}
       <div className="c control-log-page-card">
-        <h2>Log perintah kontrol</h2>
+        <h2>Control Command Log</h2>
 
         {logs.error && (
           <div className="note tone-bd">
@@ -258,9 +258,9 @@ export default function AlarmPage() {
           <table>
             <thead>
               <tr>
-                <th>Waktu</th>
-                <th>Pengguna</th>
-                <th>Aksi</th>
+                <th>Time</th>
+                <th>User</th>
+                <th>Action</th>
                 <th>Detail</th>
               </tr>
             </thead>
@@ -277,8 +277,8 @@ export default function AlarmPage() {
                     }}
                   >
                     {logs.loading
-                      ? "Memuat data..."
-                      : "Belum ada perintah kontrol yang tercatat."}
+                      ? "Loading data..."
+                      : "No control commands recorded yet."}
                   </td>
                 </tr>
               )}
@@ -311,8 +311,8 @@ export default function AlarmPage() {
           {controlLogs.length === 0 ? (
             <div className="control-log-page-empty">
               {logs.loading
-                ? "Memuat data..."
-                : "Belum ada perintah kontrol yang tercatat."}
+                ? "Loading data..."
+                : "No control commands recorded yet."}
             </div>
           ) : (
             controlLogs.map((l) => (
@@ -321,28 +321,28 @@ export default function AlarmPage() {
                 key={l.id}
               >
                 <div className="control-log-page-row">
-                  <span>Waktu</span>
+                  <span>Time</span>
                   <strong>
                     {formatDateTime(l.created_at)}
                   </strong>
                 </div>
 
                 <div className="control-log-page-row">
-                  <span>Pengguna</span>
+                  <span>User</span>
                   <strong>
                     {l.user_nama ?? "-"}
                   </strong>
                 </div>
 
                 <div className="control-log-page-row">
-                  <span>Aksi</span>
+                  <span>Action</span>
                   <strong>
                     {AKSI[l.aksi] ?? l.aksi}
                   </strong>
                 </div>
 
                 <div className="control-log-page-row control-log-page-description">
-                  <span>Detail</span>
+                  <span>Details</span>
                   <strong>
                     {l.detail
                       ? JSON.stringify(l.detail)

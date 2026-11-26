@@ -2,10 +2,10 @@ import type { ActuatorKey, Actuators, ChartPoint, HistoryPoint, HistoryRange, Mo
 
 // Daftar aktuator pada alat, sesuai urutan channel relay: 1 kompresor, 2 buzzer, 3 fan, 4 mist maker
 export const ACTUATORS: { key: ActuatorKey; nama: string; ket: string }[] = [
-  { key: "kompresor", nama: "Kompresor", ket: "Pendingin ruang" },
-  { key: "buzzer", nama: "Buzzer", ket: "Alarm suara" },
-  { key: "fan", nama: "Fan", ket: "Sirkulasi udara" },
-  { key: "mist", nama: "Mist maker", ket: "Menambah kelembapan" },
+  { key: "kompresor", nama: "Compressor", ket: "Room cooling" },
+  { key: "buzzer", nama: "Buzzer", ket: "Audible alarm" },
+  { key: "fan", nama: "Fan", ket: "Air circulation" },
+  { key: "mist", nama: "Mist maker", ket: "Adds humidity" },
 ];
 
 // Semua aktuator mati (nilai awal sebelum perangkat mengirim status)
@@ -13,21 +13,21 @@ export const ACTUATORS_OFF = Object.fromEntries(ACTUATORS.map((a) => [a.key, fal
 
 // Daftar mode kontrol
 export const MODES: { key: Mode; ket: string }[] = [
-  { key: "AUTO", ket: "Otomatis sesuai threshold" },
-  { key: "MANUAL", ket: "Kontrol lewat dashboard" },
-  { key: "SAFE", ket: "Aktif saat kondisi abnormal" },
+  { key: "AUTO", ket: "Automatic control based on thresholds" },
+  { key: "MANUAL", ket: "Control from the dashboard" },
+  { key: "SAFE", ket: "Active when conditions are abnormal" },
 ];
 
-// Angka dengan 1 desimal dan koma: 22.4 -> "22,4"
-export const fmt = (n: number): string => n.toFixed(1).replace(".", ",");
+export const fmt = (n: number): string =>
+  n.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 export const clamp = (v: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, v));
 
 // Menentukan status nilai terhadap batas bawah dan atas
 export function getStatus(v: number, min: number, max: number): StatusInfo {
-  if (v < min) return { label: "Rendah", severity: "wn" };
-  if (v > max) return { label: "Tinggi", severity: "bd" };
+  if (v < min) return { label: "Low", severity: "wn" };
+  if (v > max) return { label: "High", severity: "bd" };
   return { label: "Normal", severity: "ok" };
 }
 
@@ -45,15 +45,15 @@ export function severityFromStatus(status: string): Severity {
 
 // Pilihan rentang waktu untuk grafik dan riwayat
 export const RANGES: { key: HistoryRange; label: string }[] = [
-  { key: "1h", label: "1 jam" },
-  { key: "6h", label: "6 jam" },
-  { key: "24h", label: "24 jam" },
-  { key: "7d", label: "7 hari" },
-  { key: "30d", label: "30 hari" },
+  { key: "1h", label: "1 hour" },
+  { key: "6h", label: "6 hours" },
+  { key: "24h", label: "24 hours" },
+  { key: "7d", label: "7 days" },
+  { key: "30d", label: "30 days" },
 ];
 
 export function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString("id-ID", {
+  return new Date(iso).toLocaleString("en-US", {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -68,8 +68,8 @@ export function toChartPoints(points: HistoryPoint[], range: HistoryRange): Char
   return points.map((p) => {
     const d = new Date(p.time);
     const label = long
-      ? d.toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", hour12: false })
-      : d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
+      ? d.toLocaleString("en-US", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })
+      : d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
     return { label, suhu: p.suhu, kelembapan: p.kelembapan };
   });
 }
@@ -85,7 +85,7 @@ export function stats(values: (number | null)[]): { min: number; max: number; av
   };
 }
 
-// Unduh file CSV. Pemisah titik koma dan desimal koma agar terbaca benar di Excel berbahasa Indonesia.
+// Export CSV with semicolon separators and decimal points.
 export function downloadCsv(filename: string, rows: (string | number | null)[][]): void {
   const esc = (v: string | number | null) => {
     const s = v === null ? "" : String(v);

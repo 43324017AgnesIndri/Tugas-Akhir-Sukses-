@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, type CSSProperties, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { toEmail } from "@/lib/recovery-shared";
-
-// Foto latar: public/images/andaliman-bg.png
-const BG = "/images/andaliman-bg.png";
 
 /* ---------- ikon kecil ---------- */
 const sv = {
@@ -49,24 +47,18 @@ const ArrowIcon = () => (
   </svg>
 );
 
-/* ---------- logo kecil (daun + buah andaliman) ---------- */
+/* ---------- logo buah andaliman ---------- */
 function Logo() {
   return (
-    <svg width="54" height="54" viewBox="0 0 46 46" aria-hidden="true">
-      <path d="M22 20C20 9 28 3 40 3c1 11-7 18-18 17z" fill="#3f7d3a" />
-      <path d="M8 22c-5 6-3 14 3 17 2-8 1-13-3-17z" fill="#2f6a35" />
-      {[
-        [24, 26],
-        [31, 27],
-        [20, 32],
-        [27, 33],
-        [34, 33],
-        [23, 39],
-        [30, 40],
-      ].map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r="4.6" fill="#8a1c2b" />
-      ))}
-    </svg>
+    <Image
+      className="lg-logo"
+      src="/images/andaliman-logo.png"
+      width={54}
+      height={54}
+      alt=""
+      aria-hidden="true"
+      priority
+    />
   );
 }
 
@@ -120,8 +112,8 @@ export default function LoginPage() {
     } catch (cause) {
       setMessage(
         cause instanceof Error
-          ? `Tidak dapat menghubungi layanan login: ${cause.message}`
-          : "Tidak dapat menghubungi layanan login. Periksa koneksi lalu coba lagi."
+          ? `Unable to reach the login service: ${cause.message}`
+          : "Unable to reach the login service. Check your connection and try again."
       );
       setBusy(false);
       return;
@@ -130,8 +122,8 @@ export default function LoginPage() {
     if (error) {
       setMessage(
         error.message === "Invalid login credentials"
-          ? "Username atau password salah."
-          : `Gagal masuk: ${error.message}`
+          ? "Incorrect username or password."
+          : `Log in failed: ${error.message}`
       );
       setBusy(false);
       return;
@@ -141,12 +133,12 @@ export default function LoginPage() {
     try {
       const r = await fetch("/api/recovery/status", { cache: "no-store" });
       if (r.status === 401) {
-        setMessage("Login berhasil, tetapi sesi belum terbaca oleh aplikasi. Coba masuk kembali.");
+        setMessage("You logged in, but the app could not read your session. Please try again.");
         setBusy(false);
         return;
       }
       if (!r.ok) {
-        setMessage(`Login berhasil, tetapi status akun gagal diperiksa (HTTP ${r.status}).`);
+        setMessage(`You logged in, but your account status could not be checked (HTTP ${r.status}).`);
         setBusy(false);
         return;
       }
@@ -156,8 +148,8 @@ export default function LoginPage() {
     } catch (cause) {
       setMessage(
         cause instanceof Error
-          ? `Login berhasil, tetapi sesi gagal diperiksa: ${cause.message}`
-          : "Login berhasil, tetapi sesi gagal diperiksa. Coba lagi."
+          ? `You logged in, but your session could not be checked: ${cause.message}`
+          : "You logged in, but your session could not be checked. Please try again."
       );
       setBusy(false);
       return;
@@ -179,8 +171,8 @@ export default function LoginPage() {
         </div>
 
         <form className="lg-card" onSubmit={submit}>
-          <h2>Selamat Datang</h2>
-          <p className="lg-sub">Masuk untuk membuka dashboard Andaliman Storage.</p>
+          <h2>Welcome</h2>
+          <p className="lg-sub">Log in to open the Andaliman Storage dashboard.</p>
 
           <div className="lg-field">
             <label htmlFor="username">Username</label>
@@ -215,7 +207,7 @@ export default function LoginPage() {
                 type="button"
                 className="lg-eye"
                 onClick={() => setShow((v) => !v)}
-                aria-label={show ? "Sembunyikan password" : "Tampilkan password"}
+                aria-label={show ? "Hide password" : "Show password"}
               >
                 <EyeIcon off={!show} />
               </button>
@@ -225,14 +217,14 @@ export default function LoginPage() {
           <div className="lg-row">
             <span />
             <Link href="/lupa-password" className="lg-link">
-              Lupa password?
+              Forgot password?
             </Link>
           </div>
 
           {message && <div className="lg-error">{message}</div>}
 
           <button type="submit" className="lg-btn" disabled={busy}>
-            {busy ? "Memproses..." : "Masuk"} <ArrowIcon />
+            {busy ? "Processing..." : "Log in"} <ArrowIcon />
           </button>
         </form>
       </div>

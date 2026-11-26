@@ -10,7 +10,7 @@ const MAX_LOCK_MINUTES = 240;
 
 const fail = () =>
   NextResponse.json(
-    { error: "Verifikasi gagal. Periksa username dan jawaban Anda." },
+    { error: "Verification failed. Check your username and answers." },
     { status: 400 }
   );
 
@@ -32,11 +32,11 @@ export async function POST(req: Request) {
   const newPassword = typeof body.newPassword === "string" ? body.newPassword : "";
 
   if (!username || !answers || answers.some((a) => !a.trim())) {
-    return NextResponse.json({ error: "Semua isian wajib diisi." }, { status: 400 });
+    return NextResponse.json({ error: "All fields are required." }, { status: 400 });
   }
   if (newPassword.length < PASSWORD_MIN || newPassword.length > 72) {
     return NextResponse.json(
-      { error: `Password baru minimal ${PASSWORD_MIN} karakter.` },
+      { error: `The new password must be at least ${PASSWORD_MIN} characters.` },
       { status: 400 }
     );
   }
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
 
   if (att?.locked_until && new Date(att.locked_until).getTime() > Date.now()) {
     return NextResponse.json(
-      { error: "Terlalu banyak percobaan. Coba lagi nanti." },
+      { error: "Too many attempts. Please try again later." },
       { status: 429 }
     );
   }
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
 
   const { error } = await admin.auth.admin.updateUserById(userId, { password: newPassword });
   if (error) {
-    return NextResponse.json({ error: "Gagal mengganti password. Coba lagi." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to change the password. Please try again." }, { status: 500 });
   }
 
   await admin.from("recovery_attempts").delete().eq("user_id", userId);

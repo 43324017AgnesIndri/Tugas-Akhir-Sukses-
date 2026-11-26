@@ -23,12 +23,12 @@ function statusError(err: Error): string {
     reason.code === 5 ||
     /not authori[sz]ed|bad user ?name or password/i.test(err.message)
   ) {
-    return "Autentikasi Mosquitto ditolak. Periksa MQTT_USERNAME dan MQTT_PASSWORD.";
+    return "Mosquitto authentication was rejected. Check MQTT_USERNAME and MQTT_PASSWORD.";
   }
   if (/ECONNREFUSED|ENOTFOUND|EHOSTUNREACH|ETIMEDOUT|EAI_AGAIN/i.test(err.message)) {
-    return "Broker MQTT tidak dapat dijangkau. Periksa MQTT_URL dan pastikan Mosquitto berjalan.";
+    return "MQTT broker is unreachable. Check MQTT_URL and make sure Mosquitto is running.";
   }
-  return "Koneksi ke broker MQTT gagal. Periksa konfigurasi Mosquitto.";
+  return "Could not connect to the MQTT broker. Check the Mosquitto configuration.";
 }
 
 function getClient(): MqttClient {
@@ -60,7 +60,7 @@ export function getMqttStatus(): { connected: boolean; error: string | null } {
     connected: client.connected,
     error: client.connected
       ? null
-      : g.__andalimanMqttError ?? "Sedang menghubungkan ke broker MQTT.",
+      : g.__andalimanMqttError ?? "Connecting to the MQTT broker...",
   };
 }
 
@@ -73,12 +73,12 @@ export const cmdTopic = (kind: "mode" | "actuator" | "threshold" | "wifi") =>
 function jelaskan(e: Error): string {
   const m = e.message || "";
   if (/not authori[sz]ed|bad user ?name or password/i.test(m)) {
-    return "Login broker MQTT ditolak. Cek MQTT_USERNAME dan MQTT_PASSWORD di .env.local, lalu restart npm run dev.";
+    return "MQTT broker login was rejected. Check MQTT_USERNAME and MQTT_PASSWORD in .env.local, then restart npm run dev.";
   }
   if (/ECONNREFUSED|ENOTFOUND|EHOSTUNREACH/i.test(m)) {
-    return "Broker MQTT tidak dapat dijangkau. Cek MQTT_URL dan pastikan container mosquitto berjalan.";
+    return "MQTT broker is unreachable. Check MQTT_URL and make sure Mosquitto is running.";
   }
-  return "Gagal terhubung ke broker MQTT: " + m;
+  return "Could not connect to the MQTT broker: " + m;
 }
 
 // retain = true dipakai untuk threshold: broker menyimpan nilai terakhir dan mengirimnya
@@ -112,8 +112,8 @@ export function publishCommand(
         akhiri(
           new Error(
             c.connected
-              ? "Broker MQTT tidak merespons."
-              : "Tidak dapat terhubung ke broker MQTT. Cek MQTT_URL dan container mosquitto."
+              ? "The MQTT broker is not responding."
+              : "MQTT broker is unreachable. Check MQTT_URL and make sure Mosquitto is running."
           )
         ),
       5000

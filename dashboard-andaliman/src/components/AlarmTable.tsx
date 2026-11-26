@@ -1,100 +1,76 @@
+import { BellOff } from "lucide-react";
 import type { AlarmRow } from "@/lib/types";
 
 export default function AlarmTable({ rows }: { rows: AlarmRow[] }) {
   return (
     <div className="c alarm-card">
-      <h2>Alarm dan kejadian terbaru</h2>
-
-      {/* Desktop: tetap tabel */}
-      <div className="tw alarm-desktop">
-        <table>
-          <thead>
-            <tr>
-              <th>Waktu</th>
-              <th>Parameter</th>
-              <th>Nilai</th>
-              <th>Status</th>
-              <th>Keterangan</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {rows.length === 0 && (
-              <tr>
-                <td
-                  colSpan={5}
-                  style={{
-                    color: "var(--mu)",
-                    textAlign: "center",
-                    padding: 20,
-                  }}
-                >
-                  Belum ada alarm.
-                </td>
-              </tr>
-            )}
-
-            {rows.map((r) => (
-              <tr key={r.id}>
-                <td>{r.waktu}</td>
-                <td>{r.parameter}</td>
-                <td>{r.nilai}</td>
-                <td>
-                  <span
-                    className={`b tone-${r.severity}`}
-                    style={{ margin: 0 }}
-                  >
-                    {r.status}
-                  </span>
-                </td>
-                <td>{r.keterangan}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* HP: tampil sebagai kartu vertikal */}
-      <div className="alarm-mobile">
-        {rows.length === 0 ? (
-          <div className="alarm-empty">
-            Belum ada alarm.
+      <h2>Recent Alarms and Events</h2>
+      {rows.length === 0 ? (
+        <div className="alarm-empty-state">
+          <span className="alarm-empty-icon" aria-hidden="true">
+            <BellOff size={36} strokeWidth={1.6} />
+          </span>
+          <p>No alarms yet.</p>
+        </div>
+      ) : (
+        <>
+          <div className="tw alarm-desktop">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Parameter</th>
+                  <th>Value</th>
+                  <th>Status</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row) => (
+                  <tr key={row.id}>
+                    <td>{row.waktu}</td>
+                    <td>{row.parameter}</td>
+                    <td>{row.nilai}</td>
+                    <td>
+                      <span className={`b tone-${row.severity} alarm-status`}>
+                        {row.status}
+                      </span>
+                    </td>
+                    <td>{row.keterangan}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ) : (
-          rows.map((r) => (
-            <div className="alarm-item" key={r.id}>
-              <div className="alarm-row">
-                <span>Waktu</span>
-                <strong>{r.waktu}</strong>
-              </div>
 
-              <div className="alarm-row">
-                <span>Parameter</span>
-                <strong>{r.parameter}</strong>
+          <div className="alarm-mobile">
+            {rows.map((row) => (
+              <div className="alarm-item" key={row.id}>
+                <div className="alarm-row">
+                  <span>Time</span>
+                  <strong>{row.waktu}</strong>
+                </div>
+                <div className="alarm-row">
+                  <span>Parameter</span>
+                  <strong>{row.parameter}</strong>
+                </div>
+                <div className="alarm-row">
+                  <span>Value</span>
+                  <strong>{row.nilai}</strong>
+                </div>
+                <div className="alarm-row">
+                  <span>Status</span>
+                  <span><span className={`b tone-${row.severity} alarm-status`}>{row.status}</span></span>
+                </div>
+                <div className="alarm-row alarm-description">
+                  <span>Notes</span>
+                  <strong>{row.keterangan}</strong>
+                </div>
               </div>
-
-              <div className="alarm-row">
-                <span>Nilai</span>
-                <strong>{r.nilai}</strong>
-              </div>
-
-              <div className="alarm-row">
-                <span>Status</span>
-                <span>
-                  <span className={`b tone-${r.severity}`}>
-                    {r.status}
-                  </span>
-                </span>
-              </div>
-
-              <div className="alarm-row alarm-description">
-                <span>Keterangan</span>
-                <strong>{r.keterangan}</strong>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

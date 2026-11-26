@@ -1,6 +1,7 @@
   "use client";
 
   import { useEffect, useState } from "react";
+  import { Activity, CircleCheck, Info, Thermometer, Droplets, Cpu, Triangle, X } from "lucide-react";
   import AppShell from "@/components/AppShell";
   import StatCard from "@/components/StatCard";
   import EnvChart from "@/components/EnvChart";
@@ -14,11 +15,18 @@
   import type { HistoryRange, StatusInfo } from "@/lib/types";
   import { fmt, getStatus, RANGES } from "@/lib/utils";
 
-  const NO_DATA: StatusInfo = { label: "Belum ada data", severity: "in" };
+  const NO_DATA: StatusInfo = { label: "No data yet", severity: "in" };
   const CHART_RANGES: HistoryRange[] = ["1h", "6h", "24h", "7d", "30d"];
+
+  type SystemAlert = {
+    key: string;
+    message: string;
+    kind: "error" | "info" | "success";
+  };
 
   export default function DashboardPage() {
     const [chartRange, setChartRange] = useState<HistoryRange>("6h");
+    const [dismissedAlerts, setDismissedAlerts] = useState<string[]>([]);
     const d = useDevice(chartRange);
     const { profile } = useProfile();
     const mqtt = useApi<{ connected: boolean; error: string | null }>("/api/mqtt/status", 5000);
@@ -42,95 +50,193 @@
     const sh = r ? getStatus(r.h, th.hmin, th.hmax) : NO_DATA;
     const chartRangeLabel = RANGES.find((range) => range.key === chartRange)?.label ?? "";
     const statusText = d.loading
-      ? "Memuat data..."
+      ? "Loading data..."
       : d.error
-        ? "Data perangkat tidak tersedia"
+        ? "Device data unavailable"
         : d.online
-          ? "Perangkat online"
-          : "Perangkat offline";
+          ? "Device online"
+          : "Device offline";
+    const systemAlerts: SystemAlert[] = [];
+
+    if (d.error) {
+      systemAlerts.push({
+        key: "device-data",
+        message: "Device data is temporarily unavailable. Please try again shortly.",
+        kind: "error",
+      });
+    }
+    if (profile && !isAdmin) {
+      systemAlerts.push({
+        key: "viewer-access",
+        message: "You are signed in as a viewer. You can view data but cannot change settings.",
+        kind: "info",
+      });
+    }
+    if (mqtt.error) {
+      systemAlerts.push({
+        key: `mqtt-api:${mqtt.error}`,
+        message: `Unable to check the MQTT connection: ${mqtt.error}`,
+        kind: "error",
+      });
+    } else if (mqtt.loading && !mqtt.data) {
+      systemAlerts.push({
+        key: "mqtt-checking",
+        message: "Checking the MQTT broker connection...",
+        kind: "info",
+      });
+    } else if (mqtt.data?.connected) {
+      if (showMqttConnected) {
+        systemAlerts.push({
+          key: "mqtt-connected",
+          message: "Connected to the MQTT broker.",
+          kind: "success",
+        });
+      }
+    } else if (mqtt.data?.error === "Connecting to the MQTT broker...") {
+      systemAlerts.push({
+        key: "mqtt-connecting",
+        message: mqtt.data.error,
+        kind: "info",
+      });
+    } else {
+      const message = mqtt.data?.error ?? "The MQTT broker is not connected yet.";
+      systemAlerts.push({
+        key: `mqtt-status:${message}`,
+        message,
+        kind: "error",
+      });
+    }
+    const visibleAlerts = systemAlerts.filter((alert) => !dismissedAlerts.includes(alert.key));
+    const hasSystemError = visibleAlerts.some((alert) => alert.kind === "error");
 
     return (
-      <AppShell title="Dashboard" subtitle="Ringkasan kondisi perangkat, threshold, dan alarm" statusText={statusText} online={d.online}>
-        {d.error && (
-          <div className="note tone-bd page-note">
-            Data perangkat sedang tidak dapat diakses. Silakan coba lagi beberapa saat.
-          </div>
-        )}
-        {profile && !isAdmin && (
-          <div className="note tone-in page-note">
-            Anda login sebagai viewer. Anda dapat melihat data, tetapi tidak dapat mengubah pengaturan.
-          </div>
-        )}
-        {mqtt.error ? (
-          <div className="note tone-bd page-note">
-            Status koneksi MQTT tidak dapat diperiksa: {mqtt.error}
-          </div>
-        ) : mqtt.loading && !mqtt.data ? (
-          <div className="note tone-wn page-note">Memeriksa koneksi ke broker MQTT...</div>
-        ) : mqtt.data?.connected ? (
-          showMqttConnected && (
-            <div className="note tone-ok page-note">Broker MQTT terhubung.</div>
-          )
-        ) : mqtt.data?.error === "Sedang menghubungkan ke broker MQTT." ? (
-          <div className="note tone-wn page-note">{mqtt.data.error}</div>
-        ) : (
-          <div className="note tone-bd page-note">
-            {mqtt.data?.error ?? "Broker MQTT belum terhubung."}
-          </div>
+      <AppShell
+        title="Dashboard"
+        subtitle="Overview of device conditions, thresholds, and alarms"
+        statusText={statusText}
+        online={d.online}
+        dashboard
+      >
+        {visibleAlerts.length > 0 && (
+          <section className={`system-alerts${hasSystemError ? " has-errors" : ""}`} aria-labelledby="system-alerts-title">
+            <header className="system-alerts-header">
+              <span className="system-alerts-heading-icon" aria-hidden="true">
+                <Triangle size={19} />
+                <span>!</span>
+              </span>
+              <h2 id="system-alerts-title">System alerts</h2>
+              <span className="system-alerts-count" aria-label={`${visibleAlerts.length} alerts`}>
+                {visibleAlerts.length}
+              </span>
+            </header>
+            <ul className="system-alerts-list">
+              {visibleAlerts.map((alert) => (
+                <li className={`system-alert-item is-${alert.kind}`} key={alert.key}>
+                  <span className="system-alert-item-icon" aria-hidden="true">
+                    {alert.kind === "error" ? (
+                      <span className="system-alert-warning">
+                        <Triangle size={18} />
+                        <i>!</i>
+                      </span>
+                    ) : alert.kind === "success" ? (
+                      <CircleCheck size={18} />
+                    ) : (
+                      <Info size={18} />
+                    )}
+                  </span>
+                  <p>{alert.message}</p>
+                  <button
+                    type="button"
+                    className="system-alert-dismiss"
+                    aria-label={`Dismiss alert: ${alert.message}`}
+                    onClick={() => setDismissedAlerts((current) => [...current, alert.key])}
+                  >
+                    <X size={17} aria-hidden="true" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
 
-        {/* Baris 1: tiga kartu ringkasan, lebar sama */}
-        <div className="grid g3">
+        <div className="dashboard-kpis">
           <StatCard
-            label="Suhu"
+            label="Temperature"
             value={r ? `${fmt(r.t)} °C` : "--"}
             badge={st.label}
             severity={st.severity}
-            hint={`Batas: ${th.tmin} - ${th.tmax} °C`}
+            icon={<Thermometer size={24} strokeWidth={1.8} />}
+            accent="temperature"
+            loading={d.loading}
+            countUp
+            range={{
+              current: r?.t ?? null,
+              min: th.tmin,
+              max: th.tmax,
+              scaleMin: 0,
+              scaleMax: 40,
+              unit: "°C",
+            }}
           />
           <StatCard
-            label="Kelembapan"
+            label="Humidity"
             value={r ? `${fmt(r.h)} %` : "--"}
             badge={sh.label}
             severity={sh.severity}
-            hint={`Batas: ${th.hmin} - ${th.hmax} %`}
+            icon={<Droplets size={24} strokeWidth={1.8} />}
+            accent="humidity"
+            loading={d.loading}
+            countUp
+            range={{
+              current: r?.h ?? null,
+              min: th.hmin,
+              max: th.hmax,
+              scaleMin: 0,
+              scaleMax: 100,
+              unit: "%",
+            }}
           />
           <StatCard
-            label="Status perangkat"
-            value={d.error ? "Tidak tersedia" : d.online ? "Online" : "Offline"}
-            badge={d.error ? "Gagal membaca data" : d.online ? "Terhubung" : "Tidak ada data baru"}
+            label="Device Status"
+            value={d.error ? "Unavailable" : d.online ? "Online" : "Offline"}
+            badge={d.error ? "Failed to read data" : d.online ? "Connected" : "No new data"}
             severity={d.error ? "bd" : d.online ? "ok" : "bd"}
+            icon={d.error ? <Activity size={24} strokeWidth={1.8} /> : <Cpu size={24} strokeWidth={1.8} />}
+            accent="device"
+            unavailable={!d.online}
+            loading={d.loading}
             hint={
               d.error
-                ? "Status perangkat tidak dapat ditentukan"
+                ? "Device status cannot be determined"
                 : d.updatedAt
-                  ? `Data terakhir: ${new Date(d.updatedAt).toLocaleTimeString("id-ID")}`
+                  ? `Last updated: ${new Date(d.updatedAt).toLocaleTimeString("en-US")}`
                   : `ESP32 ${d.deviceId}`
             }
           />
         </div>
 
-        {/* Baris 2: grafik (lebar) + kondisi ruang (sempit) */}
-        <div className="grid g2">
-          <div>
-            <div className="row between" style={{ marginBottom: 12 }}>
-              <span className="muted">Rentang grafik:</span>
+        <div className="dashboard-grid">
+          <section className="dashboard-chart">
+            <div className="chart-toolbar">
+              <span className="muted">Chart range:</span>
               <RangeTabs value={chartRange} onChange={setChartRange} options={CHART_RANGES} />
             </div>
-            <EnvChart data={d.history} title={`Suhu dan kelembapan (${chartRangeLabel} terakhir)`} />
-          </div>
-          <ActuatorStatus mode={d.mode} actuators={d.actuators} hasState={d.hasActuatorState} />
-        </div>
-
-        {/* Baris 3: alarm (lebar) + threshold (sempit), kolomnya sejajar dengan baris 2 */}
-        <div className="grid g2">
-          <AlarmTable rows={d.alarms} />
-          <ThresholdForm
-            key={d.thresholdsLoaded ? "loaded" : "loading"}
-            thresholds={d.thresholds}
-            onApply={d.applyThresholds}
-            readOnly={!isAdmin}
-          />
+            <EnvChart data={d.history} title={`Temperature and humidity (last ${chartRangeLabel})`} />
+          </section>
+          <section className="dashboard-room">
+            <ActuatorStatus mode={d.mode} actuators={d.actuators} hasState={d.hasActuatorState} />
+          </section>
+          <section className="dashboard-threshold">
+            <ThresholdForm
+              key={d.thresholdsLoaded ? "loaded" : "loading"}
+              thresholds={d.thresholds}
+              onApply={d.applyThresholds}
+              readOnly={!isAdmin}
+            />
+          </section>
+          <section className="dashboard-alarms">
+            <AlarmTable rows={d.alarms} />
+          </section>
         </div>
       </AppShell>
     );

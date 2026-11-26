@@ -24,13 +24,13 @@ export function useApi<T>(url: string | null, intervalMs = 0) {
           return;
         }
         const json = (await res.json().catch(() => ({}))) as T & { error?: string };
-        if (!res.ok) throw new Error(json.error ?? "Gagal mengambil data dari server.");
+        if (!res.ok) throw new Error(json.error ?? "Failed to retrieve data from the server.");
         if (alive) {
           setData(json);
           setError(null);
         }
       } catch (e) {
-        if (alive) setError(e instanceof Error ? e.message : "Gagal mengambil data.");
+        if (alive) setError(e instanceof Error ? e.message : "Failed to retrieve data.");
       } finally {
         if (alive) setLoading(false);
       }

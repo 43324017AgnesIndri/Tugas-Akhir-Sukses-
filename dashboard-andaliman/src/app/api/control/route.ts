@@ -15,9 +15,9 @@ const isMode = (value: unknown): value is Mode => typeof value === "string" && M
 
 export async function POST(req: Request) {
   const auth = await getServerAuth();
-  if (!auth) return NextResponse.json({ error: "Belum login" }, { status: 401 });
+  if (!auth) return NextResponse.json({ error: "Not logged in." }, { status: 401 });
   if (auth.role !== "admin") {
-    return NextResponse.json({ error: "Hanya admin yang boleh mengontrol" }, { status: 403 });
+    return NextResponse.json({ error: "Only admins can control the device." }, { status: 403 });
   }
 
   const body = (await req.json().catch(() => null)) as {
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     target?: unknown;
     state?: unknown;
   } | null;
-  if (!body) return NextResponse.json({ error: "Body bukan JSON" }, { status: 400 });
+  if (!body) return NextResponse.json({ error: "Request body must be valid JSON." }, { status: 400 });
 
   let topic: string;
   let payload: Record<string, unknown>;
@@ -36,21 +36,21 @@ export async function POST(req: Request) {
   if (body.type === "mode" && isMode(body.value)) {
     topic = cmdTopic("mode");
     payload = { mode: body.value, ts: Date.now() };
-    aksi = "Mode kontrol";
+    aksi = "Control mode";
     detail = body.value;
   } else if (body.type === "actuator" && isActuator(body.target) && typeof body.state === "boolean") {
     topic = cmdTopic("actuator");
     payload = { target: body.target, state: body.state, ts: Date.now() };
-    aksi = `Aktuator ${NAMA_AKTUATOR[body.target]}`;
+    aksi = `${NAMA_AKTUATOR[body.target]} actuator`;
     detail = body.state ? "ON" : "OFF";
   } else {
-    return NextResponse.json({ error: "Perintah tidak valid" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid command." }, { status: 400 });
   }
 
   try {
     await publishCommand(topic, payload);
   } catch (error) {
-    const reason = error instanceof Error ? error.message : "Perintah gagal dikirim ke broker MQTT.";
+    const reason = error instanceof Error ? error.message : "Failed to send the command to the MQTT broker.";
     console.error("[api/control] MQTT:", reason);
     return NextResponse.json({ error: reason }, { status: 502 });
   }

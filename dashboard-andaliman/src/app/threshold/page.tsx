@@ -21,35 +21,35 @@ export default function ThresholdPage() {
   };
 
   return (
-    <AppShell title="Pengaturan threshold" subtitle="Batas suhu dan kelembapan ruang penyimpanan">
+    <AppShell title="Threshold Settings" subtitle="Temperature and humidity limits for the storage room">
       {thr.error && <div className="note tone-bd page-note">{thr.error}</div>}
       {profile && !isAdmin && (
-        <div className="note tone-in page-note">Akun viewer hanya dapat melihat threshold. Perubahan hanya untuk admin.</div>
+        <div className="note tone-in page-note">Viewer accounts can only view thresholds. Only admins can make changes.</div>
       )}
 
       <div className="grid g2e">
         <ThresholdForm key={thr.data ? "loaded" : "loading"} thresholds={th} onApply={onApply} readOnly={!isAdmin} />
 
         <div className="c threshold-current">
-  <h2>Nilai yang berlaku</h2>
+  <h2>Current Values</h2>
   
   <div className="tw threshold-current-table">
             <table>
               <thead>
                 <tr>
                   <th>Parameter</th>
-                  <th>Batas bawah</th>
-                  <th>Batas atas</th>
+                  <th>Lower limit</th>
+                  <th>Upper limit</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>Suhu (°C)</td>
+                  <td>Temperature (°C)</td>
                   <td>{th.tmin}</td>
                   <td>{th.tmax}</td>
                 </tr>
                 <tr>
-                  <td>Kelembapan (%)</td>
+                  <td>Humidity (%)</td>
                   <td>{th.hmin}</td>
                   <td>{th.hmax}</td>
                 </tr>
@@ -57,10 +57,10 @@ export default function ThresholdPage() {
             </table>
           </div>
           <div className="note tone-in">
-            Terakhir diubah: {thr.data?.updatedAt ? formatDateTime(thr.data.updatedAt) : "-"}
+            Last updated: {thr.data?.updatedAt ? formatDateTime(thr.data.updatedAt) : "-"}
           </div>
           <div className="note tone-in">
-            Threshold disimpan di database dan langsung dikirim ke ESP32 lewat MQTT, jadi tidak perlu upload ulang program. ESP32 yang sedang mati menerima nilai terbaru saat menyala kembali.
+            Thresholds are saved to the database and sent directly to the ESP32 via MQTT, so there is no need to re-upload the program. An ESP32 that is offline receives the latest values when it reconnects.
           </div>
         </div>
       </div>

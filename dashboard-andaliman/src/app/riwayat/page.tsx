@@ -16,12 +16,11 @@ import {
 const OPTIONS: HistoryRange[] = ["24h", "7d", "30d"];
 const MAX_ROWS = 300;
 
-// Angka dengan koma desimal untuk CSV (Excel Indonesia)
 const csvNum = (n: number | null) =>
-  n === null ? "" : String(n).replace(".", ",");
+  n === null ? "" : String(n);
 
 const formatPointTime = (iso: string, includeSeconds: boolean) =>
-  new Date(iso).toLocaleString("id-ID", {
+  new Date(iso).toLocaleString("en-US", {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -45,7 +44,7 @@ export default function RiwayatPage() {
 
   const exportCsv = () => {
     const rows: (string | number | null)[][] = [
-      ["Waktu", "Suhu (°C)", "Kelembapan (%)"],
+      ["Time", "Temperature (°C)", "Humidity (%)"],
     ];
 
     points.forEach((p) =>
@@ -64,8 +63,8 @@ export default function RiwayatPage() {
 
   return (
     <AppShell
-      title="Riwayat data"
-      subtitle="Data suhu dan kelembapan yang tersimpan di InfluxDB"
+      title="Data History"
+      subtitle="Temperature and humidity data stored in InfluxDB"
     >
       {hist.error && (
         <div className="note tone-bd page-note">
@@ -89,28 +88,28 @@ export default function RiwayatPage() {
           disabled={points.length === 0}
           onClick={exportCsv}
         >
-          Unduh CSV
+          Download CSV
         </button>
       </div>
 
       <div style={{ marginBottom: 12 }}>
         <EnvChart
           data={toChartPoints(points, range)}
-          title={`Suhu dan kelembapan (${label} terakhir)`}
+          title={`Temperature and humidity (last ${label})`}
         />
       </div>
 
       <div className="c riwayat-table-card">
-        <h2>Tabel data ({points.length} titik)</h2>
+        <h2>Data Table ({points.length} points)</h2>
 
-        {/* Desktop: tetap tabel */}
+        {/* Desktop: table layout */}
         <div className="tw riwayat-table-desktop">
           <table>
             <thead>
               <tr>
-                <th>Waktu</th>
-                <th>Suhu (°C)</th>
-                <th>Kelembapan (%)</th>
+                <th>Time</th>
+                <th>Temperature (°C)</th>
+                <th>Humidity (%)</th>
               </tr>
             </thead>
 
@@ -125,7 +124,7 @@ export default function RiwayatPage() {
                       padding: 20,
                     }}
                   >
-                    Memuat data...
+                    Loading data...
                   </td>
                 </tr>
               )}
@@ -140,7 +139,7 @@ export default function RiwayatPage() {
                       padding: 20,
                     }}
                   >
-                    Belum ada data pada rentang waktu ini.
+                    No data yet for this time range.
                   </td>
                 </tr>
               )}
@@ -166,17 +165,17 @@ export default function RiwayatPage() {
           </table>
         </div>
 
-        {/* HP: tampil vertikal */}
+        {/* Mobile: vertical layout */}
         <div className="riwayat-table-mobile">
           {hist.loading && (
             <div className="riwayat-empty">
-              Memuat data...
+              Loading data...
             </div>
           )}
 
           {!hist.loading && points.length === 0 && (
             <div className="riwayat-empty">
-              Belum ada data pada rentang waktu ini.
+              No data yet for this time range.
             </div>
           )}
 
@@ -189,14 +188,14 @@ export default function RiwayatPage() {
                   key={p.time}
                 >
                   <div className="riwayat-data-row">
-                    <span>Waktu</span>
+                    <span>Time</span>
                     <strong>
                       {formatPointTime(p.time, range === "24h")}
                     </strong>
                   </div>
 
                   <div className="riwayat-data-row">
-                    <span>Suhu (°C)</span>
+                    <span>Temperature (°C)</span>
                     <strong>
                       {p.suhu === null
                         ? "-"
@@ -205,7 +204,7 @@ export default function RiwayatPage() {
                   </div>
 
                   <div className="riwayat-data-row">
-                    <span>Kelembapan (%)</span>
+                    <span>Humidity (%)</span>
                     <strong>
                       {p.kelembapan === null
                         ? "-"
@@ -218,15 +217,15 @@ export default function RiwayatPage() {
 
         {points.length > MAX_ROWS && (
           <div className="note tone-in">
-            Tabel menampilkan {MAX_ROWS} data terbaru.
-            File CSV memuat seluruh {points.length} titik.
+            The table shows the latest {MAX_ROWS} readings.
+            The CSV file contains all {points.length} points.
           </div>
         )}
 
         <div className="note tone-in">
           {range === "24h"
-            ? "Rentang 24 jam menampilkan setiap pembacaan yang tersimpan, tanpa dirata-ratakan. CSV memuat semua titik; tabel menampilkan maksimal 300 data terbaru."
-            : `Data ${label} ditampilkan sebagai rata-rata per jendela waktu (${range === "7d" ? "3 jam" : "12 jam"}) untuk meringkas riwayat.`}
+            ? "The 24-hour range shows every stored reading without averaging. The CSV includes all points; the table shows up to the latest 300 readings."
+            : `${label} of data is shown as averages per time window (${range === "7d" ? "3 hours" : "12 hours"}) to summarize the history.`}
         </div>
       </div>
     </AppShell>

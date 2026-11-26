@@ -23,10 +23,10 @@ export function useControl(serverMode: Mode | null, serverActuators: Actuators, 
           ? {
               ok: true,
               text: online
-                ? "Perintah terkirim. Status berubah setelah perangkat menjawab."
-                : "Perintah terkirim ke broker, tetapi perangkat sedang offline sehingga mungkin tidak diterima.",
+                ? "Command sent. The status will update when the device responds."
+                : "Command sent to the broker, but the device is offline and may not receive it.",
             }
-          : { ok: false, text: r.error ?? "Perintah gagal dikirim." }
+          : { ok: false, text: r.error ?? "Failed to send command." }
       );
       return r.ok;
     },

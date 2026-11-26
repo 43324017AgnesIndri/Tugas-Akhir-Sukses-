@@ -5,7 +5,7 @@ import type { ControlLogRecord } from "@/lib/types";
 
 export async function GET() {
   const auth = await getServerAuth();
-  if (!auth) return NextResponse.json({ error: "Belum login" }, { status: 401 });
+  if (!auth) return NextResponse.json({ error: "Not logged in." }, { status: 401 });
 
   const { data, error } = await auth.supabase
     .from("control_logs")
@@ -16,7 +16,7 @@ export async function GET() {
 
   if (error) {
     console.error("[api/control-logs]", error.message);
-    return NextResponse.json({ error: "Tidak dapat membaca log kontrol." }, { status: 502 });
+    return NextResponse.json({ error: "Unable to retrieve the control log." }, { status: 502 });
   }
 
   const names = new Map<string, string>();

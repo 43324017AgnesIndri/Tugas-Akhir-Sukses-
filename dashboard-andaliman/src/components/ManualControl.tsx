@@ -13,7 +13,7 @@ interface Props {
 export default function ManualControl({ actuators, hasState, enabled, onChange }: Props) {
   return (
     <div className="c">
-      <h2>Kontrol manual (aktuator)</h2>
+      <h2>Manual Control (Actuators)</h2>
       <div>
         {ACTUATORS.map((a) => (
           <div className="act" key={a.key}>
@@ -33,7 +33,7 @@ export default function ManualControl({ actuators, hasState, enabled, onChange }
         ))}
       </div>
       <div className="note tone-wn">
-        Kontrol manual hanya aktif saat ESP32 melaporkan mode MANUAL dan status relay terbaru.
+        Manual control is available only when the ESP32 reports MANUAL mode and the latest relay status.
       </div>
     </div>
   );

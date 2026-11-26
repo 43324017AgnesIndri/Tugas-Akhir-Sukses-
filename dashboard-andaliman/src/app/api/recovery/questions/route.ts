@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   const body = (await req.json().catch(() => ({}))) as { username?: unknown };
   const username = typeof body.username === "string" ? body.username.trim() : "";
   if (!username || username.length > 120) {
-    return NextResponse.json({ error: "Username wajib diisi." }, { status: 400 });
+    return NextResponse.json({ error: "Username is required." }, { status: 400 });
   }
   return NextResponse.json({ questions: QUESTIONS });
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type CSSProperties, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { PASSWORD_MIN, QUESTIONS } from "@/lib/recovery-shared";
 
 type Step = "username" | "answer" | "done";
@@ -33,14 +33,14 @@ export default function LupaPasswordPage() {
     try {
       const r = await post("/api/recovery/questions", { username });
       if (!r.ok || !r.questions) {
-        setMsg(r.error ?? "Gagal memuat pertanyaan.");
+        setMsg(r.error ?? "Failed to load the security questions.");
         return;
       }
       setQuestions(r.questions);
       setAnswers(r.questions.map(() => ""));
       setStep("answer");
     } catch {
-      setMsg("Tidak dapat terhubung ke server.");
+      setMsg("Unable to connect to the server.");
     } finally {
       setBusy(false);
     }
@@ -50,23 +50,23 @@ export default function LupaPasswordPage() {
     e.preventDefault();
     setMsg(null);
     if (pw.length < PASSWORD_MIN) {
-      setMsg(`Password baru minimal ${PASSWORD_MIN} karakter.`);
+      setMsg(`The new password must be at least ${PASSWORD_MIN} characters.`);
       return;
     }
     if (pw !== pw2) {
-      setMsg("Konfirmasi password tidak sama.");
+      setMsg("The passwords do not match.");
       return;
     }
     setBusy(true);
     try {
       const r = await post("/api/recovery/reset", { username, answers, newPassword: pw });
       if (!r.ok) {
-        setMsg(r.error ?? "Gagal.");
+        setMsg(r.error ?? "Failed.");
         return;
       }
       setStep("done");
     } catch {
-      setMsg("Tidak dapat terhubung ke server.");
+      setMsg("Unable to connect to the server.");
     } finally {
       setBusy(false);
     }
@@ -75,11 +75,11 @@ export default function LupaPasswordPage() {
   return (
     <div className="rc-wrap">
       <div className="rc-card">
-        <h1>Lupa Password</h1>
+        <h1>Forgot Password</h1>
 
         {step === "username" && (
           <>
-            <p className="rc-sub">Masukkan username Anda untuk memulihkan akun.</p>
+            <p className="rc-sub">Enter your username to recover your account.</p>
             <form onSubmit={next}>
               <div className="rc-field">
                 <label htmlFor="u">Username</label>
@@ -96,16 +96,16 @@ export default function LupaPasswordPage() {
               </div>
               {msg && <div className="rc-error">{msg}</div>}
               <button type="submit" className="rc-btn" disabled={busy}>
-                {busy ? "Memproses..." : "Lanjut"}
+                {busy ? "Processing..." : "Continue"}
               </button>
             </form>
-            <Link href="/login" className="rc-back">Kembali ke halaman masuk</Link>
+            <Link href="/login" className="rc-back">Back to log in</Link>
           </>
         )}
 
         {step === "answer" && (
           <>
-            <p className="rc-sub">Jawab pertanyaan yang Anda pilih saat mengatur pemulihan akun.</p>
+            <p className="rc-sub">Answer the questions you selected when setting up account recovery.</p>
             <form onSubmit={reset}>
               {questions.map((q, i) => (
                 <div className="rc-field" key={i}>
@@ -126,29 +126,29 @@ export default function LupaPasswordPage() {
               ))}
 
               <div className="rc-field">
-                <label htmlFor="p1">Password baru</label>
+                <label htmlFor="p1">New password</label>
                 <input id="p1" type="password" autoComplete="new-password" required value={pw} onChange={(e) => setPw(e.target.value)} />
               </div>
               <div className="rc-field">
-                <label htmlFor="p2">Ulangi password baru</label>
+                <label htmlFor="p2">Confirm new password</label>
                 <input id="p2" type="password" autoComplete="new-password" required value={pw2} onChange={(e) => setPw2(e.target.value)} />
               </div>
 
               {msg && <div className="rc-error">{msg}</div>}
               <button type="submit" className="rc-btn" disabled={busy}>
-                {busy ? "Memproses..." : "Ganti password"}
+                {busy ? "Processing..." : "Change password"}
               </button>
             </form>
-            <Link href="/login" className="rc-back">Kembali ke halaman masuk</Link>
+            <Link href="/login" className="rc-back">Back to log in</Link>
           </>
         )}
 
         {step === "done" && (
           <>
             <div className="rc-ok">
-              Password berhasil diganti. Silakan masuk dengan password baru.
+              Your password has been changed. Please log in with your new password.
             </div>
-            <Link href="/login" className="rc-btn">Ke halaman masuk</Link>
+            <Link href="/login" className="rc-btn">Go to log in</Link>
           </>
         )}
       </div>

@@ -13,9 +13,10 @@
     Thresholds,
   } from "@/lib/types";
   import { ACTUATORS_OFF, DEFAULT_THRESHOLDS, severityFromStatus, toChartPoints } from "@/lib/utils";
+  import { THRESHOLD_RANGE_ERRORS } from "@/lib/threshold-validation";
 
   const tanggal = (iso: string) =>
-    new Date(iso).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+    new Date(iso).toLocaleString("en-US", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
 
   // F3: semua data diambil dari /api/... (InfluxDB dan Supabase)
   export function useDevice(historyRange: HistoryRange = "6h") {
@@ -34,16 +35,16 @@
         const res = await fetch(url, { cache: "no-store" });
         if (res.status === 401) {
           router.replace("/login");
-          throw new Error("Sesi berakhir, silakan login lagi.");
+          throw new Error("Your session has expired. Please log in again.");
         }
         const json = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error((json as { error?: string }).error ?? "Gagal mengambil data dari server.");
+        if (!res.ok) throw new Error((json as { error?: string }).error ?? "Failed to retrieve data from the server.");
         return json as T;
       },
       [router]
     );
 
-    // Data terbaru: setiap 5 detik
+    // Latest data: every 5 seconds
     useEffect(() => {
       let alive = true;
       const load = async () => {
@@ -56,7 +57,7 @@
         } catch (e) {
   if (alive) {
     setDashboard(null);
-    setError(e instanceof Error ? e.message : "Gagal mengambil data.");
+    setError(e instanceof Error ? e.message : "Failed to retrieve data.");
   }
 }finally {
           if (alive) setLoading(false);
@@ -70,7 +71,7 @@
       };
     }, [getJson]);
 
-    // Riwayat grafik mengikuti rentang dan interval agregasi yang sama dengan halaman Monitoring.
+    // Chart history uses the same range and aggregation interval as the Monitoring page.
     useEffect(() => {
       let alive = true;
       const load = async () => {
@@ -89,7 +90,7 @@
       };
     }, [getJson, historyRange]);
 
-    // Alarm: setiap 30 detik
+    // Alarms: every 30 seconds
     useEffect(() => {
       let alive = true;
       const load = async () => {
@@ -120,7 +121,7 @@
       };
     }, [getJson]);
 
-    // Threshold: sekali saat halaman dibuka
+    // Thresholds: once when the page loads
     useEffect(() => {
       let alive = true;
       getJson<{ thresholds: Thresholds }>("/api/threshold")
@@ -138,14 +139,19 @@
       };
     }, [getJson]);
 
-    // Menyimpan threshold ke Supabase (hanya admin; dijaga juga di server dan RLS)
+    // Save thresholds to Supabase (admin-only; also enforced on the server and by RLS).
     const applyThresholds = useCallback(async (v: Thresholds): Promise<ApplyResult> => {
-      if ([v.tmin, v.tmax, v.hmin, v.hmax].some((n) => Number.isNaN(n))) {
-        return { ok: false, message: "Semua kolom harus berisi angka." };
+      if ([v.tmin, v.tmax, v.hmin, v.hmax].some((n) => !Number.isFinite(n))) {
+        return { ok: false, message: "All fields must contain valid numbers." };
       }
-      if (v.tmin >= v.tmax || v.hmin >= v.hmax) {
-        return { ok: false, message: "Batas bawah harus lebih kecil dari batas atas." };
+      const rangeErrors = [];
+      if (v.tmin >= v.tmax) {
+        rangeErrors.push(THRESHOLD_RANGE_ERRORS.temperature);
       }
+      if (v.hmin >= v.hmax) {
+        rangeErrors.push(THRESHOLD_RANGE_ERRORS.humidity);
+      }
+      if (rangeErrors.length) return { ok: false, message: rangeErrors.join(" ") };
       try {
         const res = await fetch("/api/threshold", {
           method: "PUT",
@@ -154,12 +160,12 @@
         });
         const json = (await res.json().catch(() => ({}))) as { error?: string; thresholds?: Thresholds };
         if (!res.ok || !json.thresholds) {
-          return { ok: false, message: json.error ?? "Gagal menyimpan threshold." };
+          return { ok: false, message: json.error ?? "Failed to save thresholds." };
         }
         setThresholds(json.thresholds);
-        return { ok: true, message: "Threshold tersimpan di database." };
+        return { ok: true, message: "Thresholds saved to the database." };
       } catch {
-        return { ok: false, message: "Tidak dapat terhubung ke server." };
+        return { ok: false, message: "Unable to connect to the server." };
       }
     }, []);
 

@@ -16,7 +16,7 @@ function config() {
   const org = process.env.INFLUX_ORG;
   const bucket = process.env.INFLUX_BUCKET;
   if (!url || !token || !org || !bucket) {
-    throw new Error("Pengaturan INFLUX_URL, INFLUX_TOKEN, INFLUX_ORG, INFLUX_BUCKET belum lengkap di .env.local");
+    throw new Error("INFLUX_URL, INFLUX_TOKEN, INFLUX_ORG, and INFLUX_BUCKET must all be set in .env.local.");
   }
   return { url, token, org, bucket };
 }

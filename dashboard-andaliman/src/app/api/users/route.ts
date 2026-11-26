@@ -5,12 +5,12 @@ import type { Role, UserInfo } from "@/lib/types";
 
 const isRole = (v: unknown): v is Role => v === "admin" || v === "viewer";
 
-// Semua fungsi di sini hanya untuk admin. Setelah dicek, baru memakai service_role.
+// These functions are admin-only. The service_role client is created after authorization.
 async function requireAdmin() {
   const auth = await getServerAuth();
-  if (!auth) return { error: NextResponse.json({ error: "Belum login" }, { status: 401 }) };
+  if (!auth) return { error: NextResponse.json({ error: "Not logged in." }, { status: 401 }) };
   if (auth.role !== "admin") {
-    return { error: NextResponse.json({ error: "Hanya admin yang boleh mengelola pengguna." }, { status: 403 }) };
+    return { error: NextResponse.json({ error: "Only admins can manage users." }, { status: 403 }) };
   }
   return { auth };
 }
@@ -41,11 +41,11 @@ export async function GET() {
     return NextResponse.json({ users });
   } catch (e) {
     console.error("[api/users GET]", e);
-    return NextResponse.json({ error: "Tidak dapat membaca daftar pengguna. Cek SUPABASE_SERVICE_ROLE_KEY di .env.local." }, { status: 500 });
+    return NextResponse.json({ error: "Unable to retrieve the user list. Check SUPABASE_SERVICE_ROLE_KEY in .env.local." }, { status: 500 });
   }
 }
 
-// Membuat pengguna baru
+// Create a user.
 export async function POST(request: Request) {
   const check = await requireAdmin();
   if (check.error) return check.error;
@@ -59,10 +59,10 @@ export async function POST(request: Request) {
   const role: Role = isRole(body?.role) ? body.role : "viewer";
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.json({ error: "Format email tidak valid." }, { status: 400 });
+    return NextResponse.json({ error: "Invalid email format." }, { status: 400 });
   }
   if (password.length < 8) {
-    return NextResponse.json({ error: "Password minimal 8 karakter." }, { status: 400 });
+    return NextResponse.json({ error: "Password must be at least 8 characters." }, { status: 400 });
   }
 
   try {
@@ -75,30 +75,30 @@ export async function POST(request: Request) {
     });
     if (error || !data.user) {
       const dup = /already|registered|exists/i.test(error?.message ?? "");
-      return NextResponse.json({ error: dup ? "Email sudah terdaftar." : "Gagal membuat pengguna." }, { status: 400 });
+      return NextResponse.json({ error: dup ? "Email is already registered." : "Failed to create the user." }, { status: 400 });
     }
-    // Profil (role viewer) dibuat otomatis oleh trigger; naikkan jika diminta admin
+    // The trigger creates a viewer profile; promote it if requested by the admin.
     if (role === "admin") {
       await admin.from("profiles").update({ role: "admin" }).eq("id", data.user.id);
     }
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[api/users POST]", e);
-    return NextResponse.json({ error: "Gagal membuat pengguna." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create the user." }, { status: 500 });
   }
 }
 
-// Mengubah role pengguna
+// Update a user's role.
 export async function PUT(request: Request) {
   const check = await requireAdmin();
   if (check.error) return check.error;
 
   const body = (await request.json().catch(() => null)) as { id?: string; role?: string } | null;
   if (!body?.id || !isRole(body.role)) {
-    return NextResponse.json({ error: "Data tidak lengkap." }, { status: 400 });
+    return NextResponse.json({ error: "Incomplete data." }, { status: 400 });
   }
   if (body.id === check.auth.user.id) {
-    return NextResponse.json({ error: "Anda tidak dapat mengubah role akun sendiri." }, { status: 400 });
+    return NextResponse.json({ error: "You cannot change your own account role." }, { status: 400 });
   }
 
   try {
@@ -107,19 +107,19 @@ export async function PUT(request: Request) {
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[api/users PUT]", e);
-    return NextResponse.json({ error: "Gagal mengubah role." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update the role." }, { status: 500 });
   }
 }
 
-// Menghapus pengguna
+// Delete a user.
 export async function DELETE(request: Request) {
   const check = await requireAdmin();
   if (check.error) return check.error;
 
   const body = (await request.json().catch(() => null)) as { id?: string } | null;
-  if (!body?.id) return NextResponse.json({ error: "Data tidak lengkap." }, { status: 400 });
+  if (!body?.id) return NextResponse.json({ error: "Incomplete data." }, { status: 400 });
   if (body.id === check.auth.user.id) {
-    return NextResponse.json({ error: "Anda tidak dapat menghapus akun sendiri." }, { status: 400 });
+    return NextResponse.json({ error: "You cannot delete your own account." }, { status: 400 });
   }
 
   try {
@@ -128,6 +128,6 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[api/users DELETE]", e);
-    return NextResponse.json({ error: "Gagal menghapus pengguna." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete the user." }, { status: 500 });
   }
 }

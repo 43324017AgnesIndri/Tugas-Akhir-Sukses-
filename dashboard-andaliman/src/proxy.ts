@@ -100,17 +100,17 @@ export async function proxy(request: NextRequest) {
   const isLoginPage = pathname === "/login";
   const isPublic = PUBLIC_PAGES.includes(pathname) || PUBLIC_API.includes(pathname);
 
-  // Belum login: API dijawab 401, halaman lain diarahkan ke /login
+  // Unauthenticated API requests receive 401; page requests redirect to /login.
   if (!user && !isPublic) {
     if (pathname.startsWith("/api/")) {
-      return finish(NextResponse.json({ error: "Belum login" }, { status: 401 }));
+      return finish(NextResponse.json({ error: "Not logged in." }, { status: 401 }));
     }
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return finish(NextResponse.redirect(url));
   }
 
-  // Sudah login tapi membuka /login: kembalikan ke dashboard
+  // Redirect authenticated users away from /login to the dashboard.
   if (user && isLoginPage) {
     const url = request.nextUrl.clone();
     url.pathname = "/";

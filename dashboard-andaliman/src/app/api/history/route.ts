@@ -22,14 +22,14 @@ const r1 = (n: number | undefined): number | null => (typeof n === "number" ? Ma
 
 export async function GET(request: Request) {
   const auth = await getServerAuth();
-  if (!auth) return NextResponse.json({ error: "Belum login" }, { status: 401 });
+  if (!auth) return NextResponse.json({ error: "Not logged in." }, { status: 401 });
 
   const key = new URL(request.url).searchParams.get("range") ?? "24h";
   const cfg = RANGES[key];
-  if (!cfg) return NextResponse.json({ error: "Rentang tidak dikenal." }, { status: 400 });
+  if (!cfg) return NextResponse.json({ error: "Unknown time range." }, { status: 400 });
   const raw = new URL(request.url).searchParams.get("raw") === "1";
   if (raw && key !== "1h" && key !== "24h") {
-    return NextResponse.json({ error: "Data mentah hanya tersedia untuk rentang 1 jam dan 24 jam." }, { status: 400 });
+    return NextResponse.json({ error: "Raw data is only available for the 1-hour and 24-hour ranges." }, { status: 400 });
   }
 
   try {
@@ -48,6 +48,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ points });
   } catch (e) {
     console.error("[api/history]", e);
-    return NextResponse.json({ error: "Tidak dapat membaca riwayat dari InfluxDB." }, { status: 502 });
+    return NextResponse.json({ error: "Unable to retrieve history from InfluxDB." }, { status: 502 });
   }
 }

@@ -23,14 +23,14 @@ export default function KontrolPage() {
 
   return (
     <AppShell
-      title="Kontrol"
-      subtitle="Mode kerja dan kontrol aktuator"
+      title="Control"
+      subtitle="Operating mode and actuator controls"
       statusText={
         d
           ? d.online
-            ? "Perangkat online"
-            : "Perangkat offline"
-          : "Memuat data..."
+            ? "Device online"
+            : "Device offline"
+          : "Loading data..."
       }
       online={d?.online}
     >
@@ -50,7 +50,7 @@ export default function KontrolPage() {
 
       {profile && !isAdmin && (
         <div className="note tone-in page-note">
-          Akun viewer tidak dapat mengubah mode atau aktuator.
+          Viewer accounts cannot change the mode or actuators.
         </div>
       )}
 
@@ -73,19 +73,19 @@ export default function KontrolPage() {
           mode={d?.mode ?? null}
           actuators={d?.actuators ?? ACTUATORS_OFF}
           hasState={d?.hasActuatorState ?? false}
-          title="Status aktuator"
+          title="Actuator Status"
         />
       </div>
 
       <div className="c mode-explanation">
-        <h2>Penjelasan mode</h2>
+        <h2>Mode Descriptions</h2>
 
         <div className="tw">
           <table className="mode-explanation-table">
             <thead>
               <tr>
                 <th>Mode</th>
-                <th>Cara kerja</th>
+                <th>How it works</th>
               </tr>
             </thead>
 
@@ -93,16 +93,16 @@ export default function KontrolPage() {
               <tr>
                 <td>AUTO</td>
                 <td>
-                  ESP32 mengendalikan kompresor, fan, dan mist maker sesuai
-                  threshold suhu dan kelembapan. Buzzer berbunyi jika suhu atau
-                  kelembapan bertahan di luar threshold.
+                  The ESP32 controls the compressor, fan, and mist maker based on
+                  the temperature and humidity thresholds. The buzzer sounds if
+                  either reading remains outside its threshold.
                 </td>
               </tr>
 
               <tr>
                 <td>MANUAL</td>
                 <td>
-                  Admin menyalakan atau mematikan setiap aktuator langsung dari
+                  Admins can turn each actuator on or off directly from the
                   dashboard.
                 </td>
               </tr>
@@ -110,8 +110,8 @@ export default function KontrolPage() {
               <tr>
                 <td>SAFE</td>
                 <td>
-                  Mode aman: semua aktuator dimatikan. Jika sensor gagal dibaca,
-                  ESP32 masuk mode ini sendiri dan buzzer berbunyi.
+                  Safe mode: all actuators are turned off. If a sensor reading
+                  fails, the ESP32 enters this mode and the buzzer sounds.
                 </td>
               </tr>
             </tbody>

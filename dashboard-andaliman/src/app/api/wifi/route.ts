@@ -26,7 +26,7 @@ const queryLatest = (measurement: string) => (bucket: string) => `
 function parseNetworks(value: string | null): WifiNetwork[] {
   if (!value) return [];
   const parsed: unknown = JSON.parse(value);
-  if (!Array.isArray(parsed)) throw new Error("Data daftar Wi-Fi dari perangkat tidak valid.");
+  if (!Array.isArray(parsed)) throw new Error("The Wi-Fi network list from the device is invalid.");
   return parsed.flatMap((entry): WifiNetwork[] => {
     if (
       typeof entry !== "object" ||
@@ -45,7 +45,7 @@ function parseNetworks(value: string | null): WifiNetwork[] {
 
 export async function GET(request: Request) {
   const auth = await getServerAuth();
-  if (!auth) return NextResponse.json({ error: "Belum login" }, { status: 401 });
+  if (!auth) return NextResponse.json({ error: "Not logged in." }, { status: 401 });
 
   try {
     const includeScan = new URL(request.url).searchParams.get("scan") === "1";
@@ -81,15 +81,15 @@ export async function GET(request: Request) {
     return NextResponse.json(body);
   } catch (error) {
     console.error("[api/wifi GET]", error);
-    return NextResponse.json({ error: "Tidak dapat membaca status Wi-Fi dari InfluxDB." }, { status: 502 });
+    return NextResponse.json({ error: "Unable to retrieve Wi-Fi status from InfluxDB." }, { status: 502 });
   }
 }
 
 export async function POST(request: Request) {
   const auth = await getServerAuth();
-  if (!auth) return NextResponse.json({ error: "Belum login" }, { status: 401 });
+  if (!auth) return NextResponse.json({ error: "Not logged in." }, { status: 401 });
   if (auth.role !== "admin") {
-    return NextResponse.json({ error: "Hanya admin yang boleh mengubah Wi-Fi perangkat." }, { status: 403 });
+    return NextResponse.json({ error: "Only admins can change the device's Wi-Fi network." }, { status: 403 });
   }
 
   const body = (await request.json().catch(() => null)) as {
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
     password?: unknown;
   } | null;
   if (!body || (body.action !== "scan" && body.action !== "connect")) {
-    return NextResponse.json({ error: "Permintaan Wi-Fi tidak valid." }, { status: 400 });
+    return NextResponse.json({ error: "Invalid Wi-Fi request." }, { status: 400 });
   }
 
   const id = crypto.randomUUID().replaceAll("-", "").slice(0, 12);
@@ -107,13 +107,13 @@ export async function POST(request: Request) {
     payload = { action: "scan", id };
   } else {
     if (typeof body.ssid !== "string" || body.ssid.length < 1 || new TextEncoder().encode(body.ssid).length > 32) {
-      return NextResponse.json({ error: "Nama Wi-Fi harus berisi 1 sampai 32 byte." }, { status: 400 });
+      return NextResponse.json({ error: "The Wi-Fi name must be between 1 and 32 bytes." }, { status: 400 });
     }
     if (
       typeof body.password !== "string" ||
       (body.password.length > 0 && (body.password.length < 8 || body.password.length > 63))
     ) {
-      return NextResponse.json({ error: "Password Wi-Fi harus kosong untuk jaringan terbuka atau 8 sampai 63 karakter." }, { status: 400 });
+      return NextResponse.json({ error: "The Wi-Fi password must be empty for an open network, or 8–63 characters for a secured network." }, { status: 400 });
     }
     payload = { action: "connect", ssid: body.ssid, password: body.password, id };
   }
@@ -122,7 +122,7 @@ export async function POST(request: Request) {
     await publishCommand(cmdTopic("wifi"), payload);
     return NextResponse.json({ id });
   } catch (error) {
-    const reason = error instanceof Error ? error.message : "Perintah Wi-Fi gagal dikirim ke broker MQTT.";
+    const reason = error instanceof Error ? error.message : "Failed to send the Wi-Fi command to the MQTT broker.";
     console.error("[api/wifi POST] MQTT:", reason);
     return NextResponse.json({ error: reason }, { status: 502 });
   }
