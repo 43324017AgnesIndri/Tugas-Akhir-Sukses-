@@ -4939,6 +4939,32 @@ tbody tr:hover td {
     font-size: 40px;
   }
 
+  .room-card .room-card-header {
+    align-items: center;
+  }
+
+  .room-card .room-card-header p {
+    font-size: 12.5px;
+  }
+
+  .room-live-badge {
+    min-height: 26px;
+    padding: 3px 8px;
+  }
+
+  .room-row {
+    min-height: 56px;
+  }
+
+  .room-row-name {
+    gap: 8px;
+  }
+
+  .room-status {
+    min-height: 28px;
+    padding: 4px 8px;
+  }
+
   .room-guide-items {
     flex-direction: column;
     gap: 6px;

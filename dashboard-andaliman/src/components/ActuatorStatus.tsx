@@ -9,7 +9,7 @@ interface Props {
   title?: string;
 }
 
-const ACTUATOR_ICONS = {
+const ACTUATOR_ICONS: Record<ActuatorKey, typeof Snowflake> = {
   kompresor: Snowflake,
   buzzer: Volume2,
   fan: Fan,
@@ -21,12 +21,18 @@ function ActuatorIcon({ actuator }: { actuator: ActuatorKey }) {
   return <Icon size={20} strokeWidth={1.8} aria-hidden="true" />;
 }
 
+function getModeStatus(mode: Mode | null) {
+  return mode ? `mode-${mode.toLowerCase()}` : "is-unknown";
+}
+
 export default function ActuatorStatus({
   mode,
   actuators,
   hasState,
-  title = "Current Room Conditions",
+  title = "Actuator Status",
 }: Props) {
+  const modeLabel = mode ?? "No report yet";
+
   return (
     <div className="c room-card">
       <header className="room-card-header">
@@ -38,7 +44,7 @@ export default function ActuatorStatus({
           <p>Relay status reported by the ESP32</p>
         </div>
         {hasState && (
-          <span className="room-live-badge">
+          <span className="room-live-badge" aria-label="ESP32 is reporting live status">
             <i aria-hidden="true" />
             Live
           </span>
@@ -53,14 +59,19 @@ export default function ActuatorStatus({
             </span>
             <span>Control Mode</span>
           </div>
-          <span className={`room-status is-mode${mode ? ` mode-${mode.toLowerCase()}` : " is-unknown"}`}>
-            {mode ?? "No report yet"}
+          <span
+            className={`room-status is-mode ${getModeStatus(mode)}`}
+            aria-live="polite"
+          >
+            {modeLabel}
           </span>
         </div>
 
         {ACTUATORS.map((actuator) => {
           const isOn = hasState && actuators[actuator.key];
           const status = !hasState ? "unknown" : isOn ? "on" : "off";
+          const label = !hasState ? "No report yet" : isOn ? "On" : "Off";
+
           return (
             <div className="room-row" key={actuator.key}>
               <div className="room-row-name">
@@ -69,9 +80,13 @@ export default function ActuatorStatus({
                 </span>
                 <span>{actuator.nama}</span>
               </div>
-              <span className={`room-status is-${status}`}>
+              <span
+                className={`room-status is-${status}`}
+                aria-label={`${actuator.nama}: ${label}`}
+                aria-live="polite"
+              >
                 <i className={`room-status-light is-${status}`} aria-hidden="true" />
-                {hasState ? (isOn ? "On" : "Off") : "No report yet"}
+                {label}
               </span>
             </div>
           );
