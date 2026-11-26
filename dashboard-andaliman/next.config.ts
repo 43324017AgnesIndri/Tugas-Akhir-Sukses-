@@ -18,7 +18,10 @@ const contentSecurityPolicy = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["*.trycloudflare.com"],
+  allowedDevOrigins: [
+    "*.trycloudflare.com",
+    "dreams-snowboard-either-like.trycloudflare.com",
+  ],
   poweredByHeader: false,
   experimental: {
     agentFeedback: true,
