@@ -22,6 +22,7 @@ const nextConfig: NextConfig = {
     "*.trycloudflare.com",
     "dreams-snowboard-either-like.trycloudflare.com",
   ],
+  devIndicators: false,
   poweredByHeader: false,
   experimental: {
     agentFeedback: true,

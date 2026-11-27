@@ -2349,10 +2349,11 @@ td input {
 .lg-wrap {
   position: relative;
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 36px clamp(24px, 6vw, 96px);
+  padding: clamp(20px, 4.2svh, 32px) clamp(20px, 6vw, 96px);
   background: #f3efe2 url("/images/andaliman-bg.png") center / cover no-repeat;
   color: #1c201d;
   overflow: hidden;
@@ -2364,11 +2365,11 @@ td input {
 }
 
 .lg-panel {
-  width: min(680px, 100%);
+  width: min(540px, 100%);
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 22px;
+  gap: clamp(12px, 2.2svh, 18px);
 }
 
 /* --- judul di atas kartu --- */
@@ -2378,7 +2379,7 @@ td input {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 10px;
+  gap: clamp(5px, 1.1svh, 8px);
 }
 
 /* cahaya krem lembut di belakang judul agar terbaca di atas langit/gunung */
@@ -2397,8 +2398,8 @@ td input {
 
 /* logo: muncul lalu melayang pelan */
 .lg-hero > img:first-child {
-  width: 54px;
-  height: 54px;
+  width: clamp(36px, 5.7svh, 44px);
+  height: clamp(36px, 5.7svh, 44px);
   object-fit: contain;
   filter: drop-shadow(0 3px 8px rgba(40, 30, 10, 0.18));
   animation:
@@ -2408,7 +2409,7 @@ td input {
 
 .lg-hero h1 {
   margin: 0;
-  font-size: clamp(2.8rem, 4.4vw, 3.9rem);
+  font-size: clamp(2.4rem, 6.7svh, 3.2rem);
   line-height: 1;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -2519,8 +2520,8 @@ td input {
 .lg-card {
   position: relative;
   width: 100%;
-  padding: 54px 52px;
-  border-radius: 32px;
+  padding: clamp(24px, 5.2svh, 40px) clamp(22px, 3vw, 40px);
+  border-radius: clamp(22px, 3vw, 28px);
   background: rgba(251, 250, 244, 0.96);
   border: 1px solid rgba(217, 191, 134, 0.6);
   box-shadow: 0 30px 80px rgba(4, 16, 10, 0.35);
@@ -2542,7 +2543,7 @@ td input {
 
 .lg-card h2 {
   font-family: var(--font-serif, Georgia), Georgia, serif;
-  font-size: 44px;
+  font-size: clamp(28px, 4.7svh, 36px);
   line-height: 1.1;
   font-weight: 600;
   color: #14402a;
@@ -2550,21 +2551,21 @@ td input {
 }
 
 .lg-sub {
-  margin: 10px 0 34px;
+  margin: 8px 0 clamp(16px, 3.1svh, 24px);
   color: #5d675f;
-  font-size: 17px;
+  font-size: clamp(14px, 1.85svh, 16px);
 }
 
 .lg-field {
-  margin-bottom: 20px;
+  margin-bottom: clamp(10px, 1.8svh, 14px);
 }
 
 .lg-field label {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 10px;
-  font-size: 16px;
+  margin-bottom: 8px;
+  font-size: clamp(14px, 1.8svh, 16px);
   color: #5d675f;
 }
 
@@ -2583,13 +2584,13 @@ td input {
 
 .lg-input input {
   width: 100%;
-  height: 66px;
-  padding: 0 56px 0 54px;
-  border-radius: 16px;
+  height: clamp(44px, 6.8svh, 52px);
+  padding: 0 48px 0 48px;
+  border-radius: 14px;
   border: 1px solid #cfe0d8;
   background: #eef4f1;
   color: #1c201d;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .lg-input input:-webkit-autofill,
@@ -2630,8 +2631,8 @@ td input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 6px 0 28px;
-  font-size: 16px;
+  margin: 4px 0 clamp(16px, 2.6svh, 22px);
+  font-size: 14px;
 }
 
 .lg-row label {
@@ -2654,7 +2655,7 @@ td input {
   border: 0;
   background: none;
   color: #1f7a52;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   text-decoration: none;
 }
@@ -2687,12 +2688,12 @@ td input {
   justify-content: center;
   gap: 10px;
   width: 100%;
-  height: 68px;
+  height: clamp(48px, 7svh, 54px);
   border: 0;
-  border-radius: 18px;
+  border-radius: 14px;
   background: linear-gradient(180deg, #14472d, #0f3d26);
   color: #f6f4ea;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   box-shadow: inset 0 1px 0 rgba(227, 204, 150, 0.35), 0 8px 18px rgba(15, 61, 38, 0.25);
   transition: background 0.45s ease;
@@ -2711,15 +2712,16 @@ td input {
 @media (max-width: 960px) {
   .lg-wrap {
     justify-content: center;
-    padding: 32px 20px;
+    padding: clamp(20px, 4svh, 32px) 20px;
+    background-position: 34% center;
   }
 
   .lg-hero h1 {
-    font-size: clamp(2.5rem, 11vw, 3.3rem);
+    font-size: clamp(2.25rem, 8vw, 3rem);
   }
 
   .lg-card {
-    padding: 32px 24px;
+    padding: clamp(24px, 5svh, 32px) 24px;
     border-radius: 24px;
   }
 
