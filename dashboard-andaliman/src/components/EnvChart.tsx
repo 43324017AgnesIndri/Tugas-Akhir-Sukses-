@@ -52,11 +52,14 @@ export default function EnvChart({
               <Tooltip
                 cursor={{ stroke: "#AAB9AB", strokeDasharray: "4 4" }}
                 content={({ active, payload, label }) => {
-                  if (!active || !payload?.length) return null;
+                  const series = payload?.filter(
+                    (point) => point.name === "Temperature" || point.name === "Humidity"
+                  );
+                  if (!active || !series?.length) return null;
                   return (
                     <div className="chart-tooltip">
                       <p>{String(label ?? "")}</p>
-                      {payload.map((point, index) => {
+                      {series.map((point, index) => {
                         const isTemperature = point.dataKey === "suhu";
                         return (
                           <div className="chart-tooltip-row" key={`${String(point.dataKey)}-${index}`}>
